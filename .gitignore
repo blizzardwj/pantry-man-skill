@@ -1,0 +1,12 @@
+# Data files (users create their own)
+pantry/data/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+.idea/
+.vscode/
+*.swp
+*.swo
