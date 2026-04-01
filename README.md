@@ -4,7 +4,7 @@ A skill for AI agents to manage home pantry inventory, shopping lists, and purch
 
 ## Features
 
-- 📦 **Inventory Management** - Track food items by storage zone (cold/frozen/dry)
+- 📦 **Inventory Management** - Track food items by storage zone (cold/frozen/ambient)
 - 🛒 **Shopping List** - Manage shopping items with priorities and categories
 - 📊 **Purchase History** - Record and view purchase history with monthly stats
 - ⏰ **Expiry Tracking** - Check items expiring soon
@@ -12,7 +12,7 @@ A skill for AI agents to manage home pantry inventory, shopping lists, and purch
 ## Installation
 
 ```bash
-npx skills add your-username/pantry-man-skill
+npx skills add blizzardwj/pantry-man-skill
 ```
 
 ## Usage
