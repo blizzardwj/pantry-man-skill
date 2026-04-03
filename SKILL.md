@@ -1,11 +1,11 @@
 ---
 name: pantry-man
-description: Manage home pantry inventory, shopping lists, and purchase history. Use when the user asks about (1) adding/viewing/searching food inventory by zone (cold/frozen/ambient), (2) managing shopping lists for food and daily items, (3) recording purchases and viewing purchase history, (4) checking expiry dates or items running low.
+description: Manage home pantry inventory, shopping lists, and purchase history. Use when the user asks about (1) adding/viewing/searching inventory by zone (cold/frozen/ambient/daily), (2) managing shopping lists for food and daily items, (3) recording purchases and viewing purchase history, (4) checking expiry dates or items running low.
 ---
 
 # Pantry Management
 
-Manage home food inventory, shopping lists, and purchase records.
+Manage home inventory, shopping lists, and purchase records.
 
 ## Data Location
 
@@ -13,7 +13,7 @@ All data files are under `pantry/data/`:
 
 | File | Purpose |
 |------|---------|
-| `pantry.json` | Food inventory (cold/frozen/ambient zones) |
+| `pantry.json` | Inventory (cold/frozen/ambient/daily zones) |
 | `shopping.json` | Shopping list (food/daily categories) |
 | `history/YYYY-MM.json` | Purchase records by month |
 
@@ -23,7 +23,7 @@ All data files are under `pantry/data/`:
 
 **View by zone:**
 ```
-Read pantry.json → Format items from zones.cold/frozen/ambient
+Read pantry.json → Format items from zones.cold/frozen/ambient/daily
 ```
 
 **Add item:**

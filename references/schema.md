@@ -27,6 +27,11 @@ Food inventory organized by storage zone.
       "name": "Ambient Storage",
       "icon": "📦",
       "items": []
+    },
+    "daily": {
+      "name": "Daily Items",
+      "icon": "🧴",
+      "items": []
     }
   }
 }
@@ -107,7 +112,7 @@ Purchase records organized by month.
 | `date` | string | Purchase date | `2026-04-01` |
 | `items` | array | List of purchased items | See below |
 | `total` | number | Total amount spent | `27.0` |
-| `store` | string | Store name (optional) | `Hema` |
+| `store` | string | Store name (optional) | `Xiaoxiang` |
 | `notes` | string | Additional notes (optional) | `weekend shopping` |
 
 ### Purchased Item Structure (within record.items)
