@@ -89,36 +89,46 @@ Use format: `{type}_{random_6_chars}` (e.g., `item_a1b2c3`, `shop_x9y8z7`, `rec_
 
 - See [schema.md](references/schema.md) for complete data structure definitions.
 
-## Heartbeat Integration (Optional)
+## Scheduled Reminders (Recommended)
 
-Add these tasks to your `HEARTBEAT.md` for periodic reminders:
+Use cron jobs for time-specific reminders. These align with user's daily routine.
 
 ### Shopping List Reminder
 
-Check pending shopping items and remind user:
+Remind user to check shopping list during lunch break and after work:
 
-```
-1. Read pantry/data/shopping.json
-2. Count unchecked items in categories.food.items and categories.daily.items
-3. If count > 0, remind: "You have {count} items on your shopping list"
+```bash
+# Add cron jobs (Asia/Shanghai timezone)
+cron add "0 12 * * *" "Check pantry/data/shopping.json for unchecked items. If count > 0, remind: 🛒 购物提醒：你有 {count} 件商品待购买"
+cron add "30 17 * * *" "Check pantry/data/shopping.json for unchecked items. If count > 0, remind: 🛒 购物提醒：你有 {count} 件商品待购买"
 ```
 
 ### Expiry Alert
 
-Check items expiring soon:
+Remind user in the morning about items expiring soon:
 
-```
-1. Read pantry/data/pantry.json
-2. For each zone, filter items where expires date is within 3 days
-3. If found, alert: "{count} items are expiring soon: {item names}"
+```bash
+cron add "0 8 * * *" "Check pantry/data/pantry.json for items expiring within 3 days. If found, alert: ⚠️ {count} 件商品即将过期: {item names}"
 ```
 
 ### Low Stock Alert (Optional)
 
-Define minimum stock thresholds and check:
+Check if essential items are running low:
+
+```bash
+cron add "0 9 * * 1" "Check pantry/data/pantry.json for low stock items. Suggest adding to shopping list if needed."
+```
+
+## Heartbeat Tasks (Alternative)
+
+For periodic checks without specific time requirements, use `HEARTBEAT.md`:
+
+### Inventory Cleanup
+
+Periodically clean up expired items:
 
 ```
 1. Read pantry/data/pantry.json
-2. Check if essential items are running low or missing
-3. Suggest adding to shopping list if needed
+2. Remove items where expires date has passed
+3. Update the file
 ```
