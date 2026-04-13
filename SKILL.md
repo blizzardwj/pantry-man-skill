@@ -9,7 +9,7 @@ Manage home inventory, shopping lists, and purchase records.
 
 ## Data Location
 
-All data files are under `pantry/data/`:
+All data files are under each agent's home directory at [AGENT_HOME]/pantry/data:
 
 | File | Purpose |
 |------|---------|
