@@ -99,8 +99,8 @@ Remind user to check shopping list during lunch break and after work:
 
 ```bash
 # Add cron jobs (Asia/Shanghai timezone)
-cron add "0 12 * * *" "Check pantry/data/shopping.json for unchecked items. If count > 0, remind: 🛒 购物提醒：你有 {count} 件商品待购买"
-cron add "30 17 * * *" "Check pantry/data/shopping.json for unchecked items. If count > 0, remind: 🛒 购物提醒：你有 {count} 件商品待购买"
+cron add "0 12 * * *" "Check pantry/data/shopping.json for unchecked items. If count > 0, remind: 🛒 Shopping List Reminder: You have {count} items to purchase"
+cron add "30 17 * * *" "Check pantry/data/shopping.json for unchecked items. If count > 0, remind: 🛒 Shopping List Reminder: You have {count} items to purchase"
 ```
 
 ### Expiry Alert
@@ -108,7 +108,7 @@ cron add "30 17 * * *" "Check pantry/data/shopping.json for unchecked items. If 
 Remind user in the morning about items expiring soon:
 
 ```bash
-cron add "0 8 * * *" "Check pantry/data/pantry.json for items expiring within 3 days. If found, alert: ⚠️ {count} 件商品即将过期: {item names}"
+cron add "0 8 * * *" "Check pantry/data/pantry.json for items expiring within 3 days. If found, alert: ⚠️ {count} item(s) expiring soon: {item names}"
 ```
 
 ### Low Stock Alert (Optional)
