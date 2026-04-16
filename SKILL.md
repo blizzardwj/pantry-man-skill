@@ -64,6 +64,7 @@ Read shopping.json → Set item.checked = true OR remove item → Write back
 ```
 1. Determine current month file (YYYY-MM.json), create if not exists
 2. Read the file → Append record to records array → Update stats → Write back
+3. Verify JSON is valid before save (e.g., no missing commas)
 ```
 
 **View history:**
