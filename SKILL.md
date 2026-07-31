@@ -17,6 +17,20 @@ All data files are under each agent's home directory at [AGENT_HOME]/pantry/data
 | `shopping.json` | Shopping list (food/daily categories) |
 | `history/YYYY-MM.json` | Purchase records by month |
 
+## First-Run Setup
+
+Before executing ANY user request, check whether the pantry data directory exists. If it doesn't, initialize it silently — the user should never see a "file not found" error.
+
+1. Check if `[AGENT_HOME]/pantry/data/` exists. If not, create the directory tree.
+2. Check if `[AGENT_HOME]/pantry/data/pantry.json` exists. If not, create it with the empty seed structure from [schema.md](references/schema.md).
+3. Check if `[AGENT_HOME]/pantry/data/shopping.json` exists. If not, create it with the empty seed structure.
+4. Check if `[AGENT_HOME]/pantry/data/history/` exists. If not, create it.
+
+After creating any missing files, confirm briefly to the user, e.g.:
+"🧺 Your pantry is ready. Four zones set up (refrigerator, freezer, ambient, daily) — all empty for now. Try 'add milk to my fridge' to get started."
+
+If all files already exist, skip silently — no need to announce.
+
 ## Core Operations
 
 ### Inventory
