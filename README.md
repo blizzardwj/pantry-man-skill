@@ -4,10 +4,11 @@ A skill for AI agents to manage home pantry inventory, shopping lists, and purch
 
 ## Features
 
-- 📦 **Inventory Management** - Track food items by storage zone (cold/frozen/ambient)
+- 📦 **Inventory Management** - Track food items by storage zone (cold/frozen/ambient/daily)
 - 🛒 **Shopping List** - Manage shopping items with priorities and categories
 - 📊 **Purchase History** - Record and view purchase history with monthly stats
 - ⏰ **Expiry Tracking** - Check items expiring soon
+- 🗓️ **Weekly Meal Planning** - Generate weekly shopping plans and daily food pairings from a lightweight user dietary profile (health history, preferences, cooking style) — the plan fills your shopping list automatically
 
 ## Installation
 

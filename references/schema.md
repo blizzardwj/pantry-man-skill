@@ -125,6 +125,63 @@ Purchase records organized by month.
 
 ---
 
+## profile.json
+
+User dietary profile — drives weekly meal planning recommendations. **Optional file**: created by the agent during conversation (natural accumulation), not via a first-run questionnaire. The agent asks the user to confirm/correct it after the first weekly plan is generated.
+
+```json
+{
+  "meta": {
+    "lastUpdated": "2026-08-04T09:00:00+08:00"
+  },
+  "dietaryCulture": "chinese",
+  "health": {
+    "familyHistory": ["diabetes", "heart-disease"],
+    "conditions": [],
+    "notes": "父辈有糖尿病和冠心病史，需控糖护心"
+  },
+  "preferences": {
+    "avoid": ["refined-carbs", "unhealthy-fats"],
+    "prefer": ["low-gi-carbs", "heart-healthy-fats", "high-protein"],
+    "notes": "避免精制碳水，选择低升糖指数碳水"
+  },
+  "cookingStyle": ["steam", "boil", "cold-mix"],
+  "shoppingRhythm": {
+    "tripsPerWeek": 2,
+    "daysPerTrip": "3-4"
+  },
+  "confirmed": false
+}
+```
+
+### Field Structure
+
+| Field | Type | Description | Example |
+|-------|------|-------------|---------|
+| `meta.lastUpdated` | string | Last update datetime (ISO 8601 with tz) | `2026-08-04T09:00:00+08:00` |
+| `dietaryCulture` | string | Diet culture keyword | `chinese` |
+| `health.familyHistory` | array | Family genetic history keywords | `["diabetes", "heart-disease"]` |
+| `health.conditions` | array | Known personal conditions | `[]` |
+| `health.notes` | string | Free-text health notes (user language) | `父辈有糖尿病和冠心病史` |
+| `preferences.avoid` | array | Foods to avoid (keywords) | `["refined-carbs", "unhealthy-fats"]` |
+| `preferences.prefer` | array | Foods to prioritize | `["low-gi-carbs", "heart-healthy-fats"]` |
+| `preferences.notes` | string | Free-text preference notes | `避免精制碳水` |
+| `cookingStyle` | array | Preferred cooking methods | `["steam", "boil", "cold-mix"]` |
+| `shoppingRhythm.tripsPerWeek` | number | Shopping trips per week | `2` |
+| `shoppingRhythm.daysPerTrip` | string | Days covered per trip | `"3-4"` |
+| `confirmed` | boolean | Whether user has confirmed the profile | `false` |
+
+### Health & Preference Keywords (controlled vocabulary)
+
+- **familyHistory / conditions**: `diabetes`, `heart-disease`, `hypertension`, `hyperlipidemia`, `liver-disease` (护肝), `none`
+- **avoid**: `refined-carbs`, `unhealthy-fats` (saturated/trans), `high-sugar`, `alcohol`, `high-sodium`, `fried`
+- **prefer**: `low-gi-carbs`, `heart-healthy-fats` (olive/fish/nuts), `high-protein`, `high-fiber`, `low-fat`, `liver-friendly`
+- **cookingStyle**: `steam`, `boil`, `cold-mix` (凉拌), `stir-fry`, `roast`, `raw`, `slow-cook`, `air-fry`
+
+> ⚠️ Health-related recommendations are informational, not medical advice. The agent must include a disclaimer for users with chronic conditions (see SKILL.md Weekly Plan section).
+
+---
+
 ## Common Tags
 
 ### Food Categories
