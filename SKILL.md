@@ -131,13 +131,26 @@ Use profile.shoppingRhythm (default: 2 trips/week, 3-4 days per trip, e.g. Sunda
 | 油脂 oils/fats | 橄榄油、坚果（南瓜子等）、鱼油类食材 | Heart-healthy unsaturated fats |
 | 主食 staples | 糙米、燕麦、全麦、薯类 | Low-GI per profile (avoid refined carbs) |
 
-Apply the profile: avoid `refined-carbs`/`unhealthy-fats` → choose `low-gi-carbs`/`heart-healthy-fats`/`high-protein`/`high-fiber`. For each item, give a **rough quantity** (e.g., 南瓜 500g, 鸡蛋 10枚, 鸡胸肉 500g) — enough for the segment's meals.
+Apply the profile: avoid `refined-carbs`/`unhealthy-fats` → choose `low-gi-carbs`/`heart-healthy-fats`/`high-protein`/`soluble-fiber` (适量水溶性膳食纤维). For each item, give a **rough quantity** (e.g., 南瓜 500g, 鸡蛋 10枚, 鸡胸肉 500g) — enough for the segment's meals.
 
-**Step 4 — Daily pairings:**
+**Step 4 — Daily pairings (food combos, not recipes):**
 ```
-For each day, propose 2-3 dishes/meals as a combo with a short rationale
-(e.g., Monday: 蒸碗菜（南瓜+冬瓜+香菇+海带+虾皮+水煮蛋+鸡胸肉）+ 水果沙拉碗（桃子+黄瓜+青椒+生菜）+ 水煮菜+坚果碗（菜心+南瓜子）
-Rationale: 利尿、膳食纤维、高吸收率蛋白质、低热量)
+For each day, propose ingredient COMBOS (not dish names) with a short
+rationale, then the SIMPLEST healthy preparation in 1-2 short phrases.
+
+FIXED 3-PART PATTERN — every pairing MUST include all three:
+  ① 食材组合 ingredients  ② 价值 value/why  ③ 做法 simplest preparation
+
+Format per day:
+[早/午/晚] 食材1 + 食材2 + 食材3（价值：为什么这样搭）→ 做法：一句话
+(e.g., 午餐: 鸡胸肉 + 香菇 + 西兰花（价值：高蛋白+水溶性纤维+护肝）→ 做法：鸡胸肉平底锅少油烙片，香菇西兰花焯水2分钟拌橄榄油
+       晚餐: 魔芋丝 + 黄瓜 + 虾皮（价值：低GI饱腹+清爽+补钙）→ 做法：魔芋焯水30秒，黄瓜生切，虾皮拌入)
+
+Rules:
+- Combos honor profile.prefer/avoid and cookingStyle (e.g., 凉拌/煮/蒸/烙, 能生吃不焯水)
+- 价值 = the nutritional/health reason for THIS combo, 1 short phrase
+- 做法 = the simplest healthy method, 1-2 short phrases, not a recipe
+- Prefer raw over blanched, blanch over steamed/boiled, per profile (short cooking time)
 ```
 
 **Step 5 — Write to shopping list:**
