@@ -1,6 +1,6 @@
 ---
 name: pantry-man
-description: Manage home pantry inventory, shopping lists, and purchase history. Use when the user asks about (1) adding/viewing/searching inventory by zone (cold/frozen/ambient/daily), (2) managing shopping lists for food and daily items, (3) recording purchases and viewing purchase history, (4) checking expiry dates or items running low, (5) weekly meal planning — generating a weekly shopping plan and daily food pairings based on the user's dietary profile.
+description: Manage home pantry inventory, shopping lists, and purchase history. Use when the user asks about (1) adding/viewing/searching inventory by zone (cold/frozen/ambient/daily), (2) managing shopping lists for food and daily items, (3) recording purchases and viewing purchase history, (4) checking expiry dates or items running low, (5) meal planning — shopping plans (采购计划) and daily food pairings (每日搭配) as independent features, plus the weekly plan (周计划) orchestrator that chains them per the user's shopping rhythm, all based on the user's dietary profile and current stock.
 ---
 
 # Pantry Management
@@ -27,6 +27,7 @@ Before executing ANY user request, check whether the pantry data directory exist
 4. Check if `[AGENT_HOME]/pantry/data/history/` exists. If not, create it.
 
 After creating any missing files, confirm briefly to the user, e.g.:
+
 "🧺 Your pantry is ready. Four zones set up (refrigerator, freezer, ambient, daily) — all empty for now. Try 'add milk to my fridge' to get started."
 
 If all files already exist, skip silently — no need to announce.
@@ -94,16 +95,18 @@ Read history/YYYY-MM.json → Format records
 Read history/YYYY-MM.json → Return stats.totalSpent and stats.recordCount
 ```
 
-## Weekly Plan (Weekly Meal Planning)
+## Meal Planning
 
-Generates a weekly shopping plan and daily food pairings based on the user's dietary profile. This is the skill's value-generating feature: the plan fills the shopping list, so the user confirms and adjusts instead of entering data item by item.
+Two independent features — 🛒 采购计划 Shopping Plan and 🍽 每日搭配 Daily Pairings — plus 📆 周计划 Weekly Plan, an orchestrator that chains them per the user's shopping rhythm. **Order is fixed: shopping list first, pairings second.** Pairings are derived from the confirmed list (素材→组合 dependency) — never the other way around. Each feature has its own trigger, confirmation gate, and adjustment path, so the user can run any of them standalone (e.g., "今晚吃什么" only needs Daily Pairings).
+
+This is the skill's value-generating feature: planning fills the shopping list, so the user confirms and adjusts instead of entering data item by item.
 
 ### User Profile (profile.json)
 
 Stored at `[AGENT_HOME]/pantry/data/profile.json` (see [schema.md](references/schema.md) for structure). **Optional and lightweight — never conduct a first-run questionnaire.**
 
 - Build the profile **gradually from conversation**: when the user mentions dietary preferences, health history, or cooking style, record it (e.g., user says "我不吃精制碳水" → `preferences.avoid += "refined-carbs"`).
-- If `profile.json` does not exist and the user asks for a weekly plan, create it with only what you already know (can be nearly empty) and **generate the plan anyway** — do not block on missing profile fields.
+- If `profile.json` does not exist and the user asks for any meal planning feature (采购计划/每日搭配/周计划), create it with only what you already know (can be nearly empty) and **generate the plan anyway** — do not block on missing profile fields.
 - After the **first** generated plan, briefly show the profile summary and ask the user to confirm or correct it (one confirmation beats a questionnaire). Set `confirmed: true` after confirmation.
 - If `confirmed` is false, the plan is a proposal — invite corrections.
 
@@ -122,7 +125,7 @@ Fresh items are always recommended per the weekly rhythm.
 **Cold-start probe (general rule — fires on ANY inventory read, not just planning):**
 When pantry.json has no long-cycle items recorded (empty, or only short-cycle fresh items) and `meta.longCycleProbed` is not `true`, probe with ONE friendly opening — then proceed with whatever the user asked for. Never audit the whole pantry, never block the request.
 
-- **Trigger points:** Viewing inventory (primary), and Weekly Plan Step 1 (below). Both share the same flag — whichever comes first fires the probe once.
+- **Trigger points:** Viewing inventory (primary), and 采购计划 Shopping Plan step 3 (below). Both share the same flag — whichever comes first fires the probe once.
 - **Flag semantics:** set `meta.longCycleProbed: true` in pantry.json once the user RESPONDS — whether they confirm items or say there are none. If the user doesn't answer, leave it unset; the next natural touchpoint may try the opening once more.
 - **Outcome:** confirmed items are recorded into the ambient zone (no expiry needed for staples) → future plans skip them; "none" → plans recommend staples normally (nothing in stock to skip).
 
@@ -140,28 +143,23 @@ When pantry.json has no long-cycle items recorded (empty, or only short-cycle fr
 - Expiry alert → ask "吃完了吗？" → remove from inventory (consume = deplete)
 - Never require a one-time full inventory audit.
 
-### Generating a Weekly Plan
+### 🛒 采购计划 Shopping Plan (independent feature)
 
-Trigger: user asks for a weekly shopping plan / "这周买什么" / "本周吃什么".
+Trigger: user wants to buy ingredients / "列个采购清单" / "帮我看看这周买什么" — standalone, or called by the Weekly Plan orchestrator.
 
-**Step 1 — Load context:**
+Flow:
 ```
-1. Read profile.json (create if missing, see above)
+1. Read profile.json (create if missing, see User Profile above) → note prefer/avoid rules
 2. Read shopping.json → note unchecked items (already needed — avoid duplicates)
-3. Read pantry.json → note existing long-cycle stock (ambient/daily zones)
-   → Apply the stock-aware rule above: skip items already in stock
-   → If pantry has no long-cycle items recorded and meta.longCycleProbed
-     is not true → use the cold-start UX opening (see Inventory
-     Awareness; it may already have fired on an earlier inventory view)
+3. Read pantry.json → apply the stock-aware rule: skip long-cycle items already
+   in stock (ambient/daily zones); briefly mention skipped staples (e.g.,
+   "橄榄油已有库存，未列入") so the user sees the plan is stock-aware
+   → If pantry has no long-cycle items recorded and meta.longCycleProbed is
+     not true → fire the cold-start probe (see Inventory Awareness; it may
+     already have fired on an earlier inventory view)
+4. Determine the segment length (default 3-4 days; Weekly Plan passes its segment)
+5. Recommend items by category, each with **variety AND approximate quantity**:
 ```
-
-**Step 2 — Shopping rhythm:**
-```
-Use profile.shoppingRhythm (default: 2 trips/week, 3-4 days per trip, e.g. Sunday + Wednesday)
-→ Split the week into segments (e.g., Sun-Wed, Wed-Sat)
-```
-
-**Step 3 — Recommend items by category** (each with **variety AND approximate quantity**):
 
 | Category | Chinese examples | Notes |
 |----------|-----------------|-------|
@@ -171,37 +169,75 @@ Use profile.shoppingRhythm (default: 2 trips/week, 3-4 days per trip, e.g. Sunda
 | 油脂 oils/fats | 橄榄油、坚果（南瓜子等）、鱼油类食材 | Heart-healthy unsaturated fats |
 | 主食 staples | 糙米、燕麦、全麦、薯类 | Low-GI per profile (avoid refined carbs) |
 
-Apply the profile: avoid `refined-carbs`/`unhealthy-fats` → choose `low-gi-carbs`/`heart-healthy-fats`/`high-protein`/`soluble-fiber` (适量水溶性膳食纤维). For each item, give a **rough quantity** (e.g., 南瓜 500g, 鸡蛋 10枚, 鸡胸肉 500g) — enough for the segment's meals. **Skip long-cycle items already in stock** (per the stock-aware rule above); when a staple (oils/nuts/grains) is skipped, mention it briefly (e.g., "橄榄油已有库存，未列入") so the user sees the plan is stock-aware.
+Apply the profile: avoid `refined-carbs`/`unhealthy-fats` → choose `low-gi-carbs`/`heart-healthy-fats`/`high-protein`/`soluble-fiber` (适量水溶性膳食纤维). For each item, give a **rough quantity** (e.g., 南瓜 500g, 鸡蛋 10枚, 鸡胸肉 500g) — enough for the segment's meals.
 
-**Step 4 — Daily pairings (food combos, not recipes):**
 ```
-For each day, propose ingredient COMBOS (not dish names) with a short
-rationale, then the SIMPLEST healthy preparation in 1-2 short phrases.
+6. **CONFIRMATION GATE — do NOT write to shopping.json yet:**
+   Show the proposed list (category + item + quantity) and ask the user to
+   confirm or adjust (quantities, items, budget). Only after the user confirms,
+   append the (adjusted) items to shopping.json categories.food.items, then
+   tell the user: "已加入购物清单，可继续修改数量或删除"
+```
 
-FIXED 3-PART PATTERN — every pairing MUST include all three:
-  ① 食材组合 ingredients  ② 价值 value/why  ③ 做法 simplest preparation
+### 🍽 每日搭配 Daily Pairings (independent feature)
 
-Format per day:
-[早/午/晚] 食材1 + 食材2 + 食材3（价值：为什么这样搭）→ 做法：一句话
-(e.g., 午餐: 鸡胸肉 + 香菇 + 西兰花（价值：高蛋白+水溶性纤维+护肝）→ 做法：鸡胸肉平底锅少油烙片，香菇西兰花焯水2分钟拌橄榄油
-       晚餐: 魔芋丝 + 黄瓜 + 虾皮（价值：低GI饱腹+清爽+补钙）→ 做法：魔芋焯水30秒，黄瓜生切，虾皮拌入)
+Trigger: "今晚吃什么" / "明天怎么搭" / meals for this segment — standalone, or called by the Weekly Plan orchestrator after its shopping plan is confirmed.
+
+**Ingredient pool (hard constraint):** pairings draw ONLY from
+- the current segment's confirmed shopping items (shopping.json categories.food.items — the unchecked items), plus
+- pantry stock (esp. long-cycle staples: dried goods, oils, nuts).
+
+If the shopping list has no items for the current segment, tell the user to generate/confirm a 采购计划 first — never propose ingredients that are neither bought nor stocked (素材→组合 dependency).
+
+Flow:
+```
+1. Read shopping.json (current segment items) + pantry.json (stock) → build the ingredient pool
+2. For each day in the segment, propose 3 meals (早/午/晚), each with the
+   FIXED 3-PART PATTERN — every pairing MUST include all three:
+     ① 食材组合 ingredients  ② 价值 value/why  ③ 做法 simplest preparation
+3. Display as per-day blocks with meals as LIST items:
+   📅 周三（8/5）
+   - 早餐：食材1 + 食材2 + 食材3（价值：为什么这样搭）→ 做法：一句话
+   - 午餐：鸡胸肉 + 香菇 + 西兰花（价值：高蛋白+水溶性纤维+护肝）→ 做法：鸡胸肉平底锅少油烙片，香菇西兰花焯水2分钟拌橄榄油
+   - 晚餐：魔芋丝 + 黄瓜 + 虾皮（价值：低GI饱腹+清爽+补钙）→ 做法：魔芋焯水30秒，黄瓜生切，虾皮拌入
+4. Confirmation & adjustment:
+   - Invite the user to adjust any specific meal (e.g., "周四晚餐换个素的")
+     → regenerate ONLY that meal, keep the rest unchanged
+   - If the user later changes the shopping list (adds/removes items), regenerate
+     the affected meals — pairings must stay consistent with the confirmed list
+```
 
 Rules:
 - Combos honor profile.prefer/avoid and cookingStyle (e.g., 凉拌/煮/蒸/烙, 能生吃不焯水)
 - 价值 = the nutritional/health reason for THIS combo, 1 short phrase
 - 做法 = the simplest healthy method, 1-2 short phrases, not a recipe
 - Prefer raw over blanched, blanch over steamed/boiled, per profile (short cooking time)
-```
 
-**Step 5 — Write to shopping list:**
-```
-Append recommended items (with quantities) to shopping.json categories.food.items
-→ Tell the user: "已加入购物清单，可修改数量或删除"
-```
+### 📆 周计划 Weekly Plan (orchestrator)
 
-**Step 6 — Confirm profile (first plan only):**
+Trigger: "这周买什么" / "本周怎么安排" / weekly planning. This feature chains the two independent features above — it does NOT duplicate their logic.
+
+Flow:
 ```
-Show profile summary → ask user to confirm/correct → update profile.json → set confirmed: true
+1. Load context:
+   - Read profile.json (create if missing, see User Profile)
+   - Read shopping.json → note unchecked items (avoid duplicates)
+   - Read pantry.json → apply the stock-aware rule; fire the cold-start probe
+     if needed (see Inventory Awareness; may already have fired)
+2. Split the week by profile.shoppingRhythm (default: 2 trips/week, 3-4 days per
+   trip, e.g. Sunday + Wednesday) → segments (e.g., Sun-Wed, Wed-Sat)
+3. Plan ONE segment per invocation (the next upcoming trip), segment by segment:
+   a. Call 🛒 采购计划 Shopping Plan for this segment
+      → present list → user confirms/adjusts → write to shopping.json
+   b. Call 🍽 每日搭配 Daily Pairings for this segment
+      → present per-day meal lists → user confirms/adjusts
+4. Do NOT dump the whole week at once — the second segment is planned when the
+   user is ready ("继续下一段"), so its list and pairings can reflect what was
+   actually bought and consumed in the first segment. If the user explicitly
+   asks to see the whole week up front, draft all segments but still confirm
+   each segment's list before writing.
+5. First plan only: show profile summary → ask user to confirm/correct →
+   update profile.json → set confirmed: true (see User Profile)
 ```
 
 ### ⚠️ Health Disclaimer

@@ -8,7 +8,7 @@ A skill for AI agents to manage home pantry inventory, shopping lists, and purch
 - 🛒 **Shopping List** - Manage shopping items with priorities and categories
 - 📊 **Purchase History** - Record and view purchase history with monthly stats
 - ⏰ **Expiry Tracking** - Check items expiring soon
-- 🗓️ **Weekly Meal Planning** - Generate weekly shopping plans and daily food pairings from a lightweight user dietary profile (health history, preferences, cooking style) — the plan fills your shopping list automatically
+- 🗓️ **Meal Planning** - Three modes: 🛒 Shopping Plan (stock-aware shopping list with a confirmation step), 🍽 Daily Pairings (per-day breakfast/lunch/dinner combos drawn from your confirmed list + stock), and 📆 Weekly Plan (chains both per your shopping rhythm, segment by segment) — all driven by a lightweight dietary profile
 
 ## Installation
 
@@ -26,6 +26,9 @@ Once installed, your AI agent can help you with:
 - "Record a purchase: milk 15 yuan, bread 12 yuan"
 - "What items are expiring this week?"
 - "Show my purchase history for last month"
+- "列个采购清单" (Shopping Plan — stock-aware list with a confirmation step)
+- "今晚吃什么" (Daily Pairings — per-day meal combos from your list + stock)
+- "这周买什么" (Weekly Plan — chains both, segment by segment)
 
 ## Data Structure
 
