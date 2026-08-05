@@ -106,6 +106,9 @@ This is the skill's value-generating feature: planning fills the shopping list, 
 Stored at `[AGENT_HOME]/pantry/data/profile.json` (see [schema.md](references/schema.md) for structure). **Optional and lightweight — never conduct a first-run questionnaire.**
 
 - Build the profile **gradually from conversation**: when the user mentions dietary preferences, health history, or cooking style, record it (e.g., user says "我不吃精制碳水" → `preferences.avoid += "refined-carbs"`).
+- `household.persons` (default 1): how many people the plan feeds — required by
+  the Shopping Plan quantity check. Infer from conversation (e.g., "一个人吃")
+  or default to 1.
 - If `profile.json` does not exist and the user asks for any meal planning feature (采购计划/每日搭配/周计划), create it with only what you already know (can be nearly empty) and **generate the plan anyway** — do not block on missing profile fields.
 - After the **first** generated plan, briefly show the profile summary and ask the user to confirm or correct it (one confirmation beats a questionnaire). Set `confirmed: true` after confirmation.
 - If `confirmed` is false, the plan is a proposal — invite corrections.
@@ -172,11 +175,23 @@ Flow:
 Apply the profile: avoid `refined-carbs`/`unhealthy-fats` → choose `low-gi-carbs`/`heart-healthy-fats`/`high-protein`/`soluble-fiber` (适量水溶性膳食纤维). For each item, give a **rough quantity** (e.g., 南瓜 500g, 鸡蛋 10枚, 鸡胸肉 500g) — enough for the segment's meals.
 
 ```
-6. **CONFIRMATION GATE — do NOT write to shopping.json yet:**
-   Show the proposed list (category + item + quantity) and ask the user to
-   confirm or adjust (quantities, items, budget). Only after the user confirms,
-   append the (adjusted) items to shopping.json categories.food.items, then
-   tell the user: "已加入购物清单，可继续修改数量或删除"
+6. **QUANTITY CHECK — benchmark before the gate:**
+   Read [quantity_benchmark.md](references/quantity_benchmark.md) (adult daily
+   reference ranges, typical piece weights, category assignment). For each
+   category, compute the segment target range = daily range × segment days ×
+   `household.persons` (default 1), compare with the proposed total, and show
+   a compact check report: ✅ within range / ⚠️ slightly over or under / ❌ way
+   off — each with a suggested converged quantity.
+   - Fresh items (vegetables, fruit, fish) — strict: overage means spoilage
+   - Shelf-stable staples (rice, dried goods, oils) — lenient: extra stock is fine
+   - Soft flag only, never hard-block — the user decides at the confirmation gate
+   Example: "蔬菜 914g/天 vs 300–500 ❌ → 建议 ~1600g（绿叶菜减半）"
+7. **CONFIRMATION GATE — do NOT write to shopping.json yet:**
+   Show the proposed list (category + item + quantity, with the check report
+   from step 6) and ask the user to confirm or adjust (quantities, items,
+   budget). Only after the user confirms, append the (adjusted) items to
+   shopping.json categories.food.items, then tell the user: "已加入购物清单，
+   可继续修改数量或删除"
 ```
 
 ### 🍽 每日搭配 Daily Pairings (independent feature)
@@ -258,6 +273,8 @@ Use format: `{type}_{random_6_chars}` (e.g., `item_a1b2c3`, `shop_x9y8z7`, `rec_
 ## References
 
 - See [schema.md](references/schema.md) for complete data structure definitions.
+- See [quantity_benchmark.md](references/quantity_benchmark.md) for the adult
+  daily intake baselines used by the Shopping Plan quantity check.
 
 ## Scheduled Reminders (Recommended)
 

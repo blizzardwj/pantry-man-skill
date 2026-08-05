@@ -138,6 +138,9 @@ User dietary profile — drives weekly meal planning recommendations. **Optional
     "lastUpdated": "2026-08-04T09:00:00+08:00"
   },
   "dietaryCulture": "chinese",
+  "household": {
+    "persons": 1
+  },
   "health": {
     "familyHistory": ["diabetes", "heart-disease"],
     "conditions": [],
@@ -163,6 +166,7 @@ User dietary profile — drives weekly meal planning recommendations. **Optional
 |-------|------|-------------|---------|
 | `meta.lastUpdated` | string | Last update datetime (ISO 8601 with tz) | `2026-08-04T09:00:00+08:00` |
 | `dietaryCulture` | string | Diet culture keyword | `chinese` |
+| `household.persons` | number | How many people the plan feeds (default 1) | `1` |
 | `health.familyHistory` | array | Family genetic history keywords | `["diabetes", "heart-disease"]` |
 | `health.conditions` | array | Known personal conditions | `[]` |
 | `health.notes` | string | Free-text health notes (user language) | `父辈有糖尿病和冠心病史` |
