@@ -104,6 +104,35 @@ Stored at `[AGENT_HOME]/pantry/data/profile.json` (see [schema.md](references/sc
 - After the **first** generated plan, briefly show the profile summary and ask the user to confirm or correct it (one confirmation beats a questionnaire). Set `confirmed: true` after confirmation.
 - If `confirmed` is false, the plan is a proposal — invite corrections.
 
+### Inventory Awareness (stock-aware planning)
+
+Long-cycle staples (dry goods, oils, nuts, grains) are stocked for weeks, not days — recommending them every week causes duplicate purchases. Short-cycle fresh items (vegetables, fruit, fish, tofu) are bought weekly anyway, so stock awareness matters little for them.
+
+**Stock-aware rule:**
+```
+Read pantry.json → for each long-cycle category (oils/fats, nuts, staples,
+dry goods), if the item already exists in ambient/daily zones → SKIP it in
+the plan (or suggest a refill only if quantity is nearly depleted).
+Fresh items are always recommended per the weekly rhythm.
+```
+
+**Cold-start (pantry.json empty or no long-cycle items recorded):**
+Do NOT audit the whole pantry and do NOT block planning. Probe only the **high-leverage long-cycle items** (dry goods, cooking oil, nuts, staples) with one friendly opening — then generate the plan anyway.
+
+**UX copy pattern (de-AI-fied, 4 turns):**
+1. Acknowledge the user's identity first — never open with a data request
+2. Use empathetic inference instead of a direct question (lowers answer pressure; user only confirms)
+3. Frame the request as a service — value belongs to the user ("我来帮你记住")
+4. State the user benefit, not the agent's logic (never say "规划时我会避开")
+   - 示例开场 (long-cycle cold-start):
+     "初次接触，像你这样注重健康饮食的人，我觉得应该有干货和食用油囤货。我来帮你记住这些，更好地为您提供食材搭配。"
+   - Record what the user confirms into pantry.json (ambient zone, no expiry needed for staples) → future plans skip them.
+
+**Stock grows through daily behaviors, not audits:**
+- Purchase → also append to pantry.json (buy = restock)
+- Expiry alert → ask "吃完了吗？" → remove from inventory (consume = deplete)
+- Never require a one-time full inventory audit.
+
 ### Generating a Weekly Plan
 
 Trigger: user asks for a weekly shopping plan / "这周买什么" / "本周吃什么".
@@ -112,7 +141,10 @@ Trigger: user asks for a weekly shopping plan / "这周买什么" / "本周吃�
 ```
 1. Read profile.json (create if missing, see above)
 2. Read shopping.json → note unchecked items (already needed — avoid duplicates)
-3. Phase 2 (when implemented): read pantry.json → note remaining stock to avoid re-buying
+3. Read pantry.json → note existing long-cycle stock (ambient/daily zones)
+   → Apply the stock-aware rule above: skip items already in stock
+   → If pantry has no long-cycle items recorded → use the cold-start
+     UX opening to probe them (one friendly message, then proceed)
 ```
 
 **Step 2 — Shopping rhythm:**
@@ -131,7 +163,7 @@ Use profile.shoppingRhythm (default: 2 trips/week, 3-4 days per trip, e.g. Sunda
 | 油脂 oils/fats | 橄榄油、坚果（南瓜子等）、鱼油类食材 | Heart-healthy unsaturated fats |
 | 主食 staples | 糙米、燕麦、全麦、薯类 | Low-GI per profile (avoid refined carbs) |
 
-Apply the profile: avoid `refined-carbs`/`unhealthy-fats` → choose `low-gi-carbs`/`heart-healthy-fats`/`high-protein`/`soluble-fiber` (适量水溶性膳食纤维). For each item, give a **rough quantity** (e.g., 南瓜 500g, 鸡蛋 10枚, 鸡胸肉 500g) — enough for the segment's meals.
+Apply the profile: avoid `refined-carbs`/`unhealthy-fats` → choose `low-gi-carbs`/`heart-healthy-fats`/`high-protein`/`soluble-fiber` (适量水溶性膳食纤维). For each item, give a **rough quantity** (e.g., 南瓜 500g, 鸡蛋 10枚, 鸡胸肉 500g) — enough for the segment's meals. **Skip long-cycle items already in stock** (per the stock-aware rule above); when a staple (oils/nuts/grains) is skipped, mention it briefly (e.g., "橄榄油已有库存，未列入") so the user sees the plan is stock-aware.
 
 **Step 4 — Daily pairings (food combos, not recipes):**
 ```
