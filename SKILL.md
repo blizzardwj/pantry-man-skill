@@ -40,6 +40,9 @@ If all files already exist, skip silently — no need to announce.
 Read pantry.json → Format items from zones.cold/frozen/ambient/daily
 ```
 
+**Cold-start probe on view (see Inventory Awareness below):**
+If the inventory has NO long-cycle items recorded (empty, or only short-cycle fresh items) and `meta.longCycleProbed` is not `true` → fire the one-time friendly probe along with the (empty) inventory, then show the view. Never block the view on the probe.
+
 **Add item:**
 ```
 Read pantry.json → Append to zones.{zone}.items → Write back
@@ -116,8 +119,12 @@ the plan (or suggest a refill only if quantity is nearly depleted).
 Fresh items are always recommended per the weekly rhythm.
 ```
 
-**Cold-start (pantry.json empty or no long-cycle items recorded):**
-Do NOT audit the whole pantry and do NOT block planning. Probe only the **high-leverage long-cycle items** (dry goods, cooking oil, nuts, staples) with one friendly opening — then generate the plan anyway.
+**Cold-start probe (general rule — fires on ANY inventory read, not just planning):**
+When pantry.json has no long-cycle items recorded (empty, or only short-cycle fresh items) and `meta.longCycleProbed` is not `true`, probe with ONE friendly opening — then proceed with whatever the user asked for. Never audit the whole pantry, never block the request.
+
+- **Trigger points:** Viewing inventory (primary), and Weekly Plan Step 1 (below). Both share the same flag — whichever comes first fires the probe once.
+- **Flag semantics:** set `meta.longCycleProbed: true` in pantry.json once the user RESPONDS — whether they confirm items or say there are none. If the user doesn't answer, leave it unset; the next natural touchpoint may try the opening once more.
+- **Outcome:** confirmed items are recorded into the ambient zone (no expiry needed for staples) → future plans skip them; "none" → plans recommend staples normally (nothing in stock to skip).
 
 **UX copy pattern (de-AI-fied, 4 turns):**
 1. Acknowledge the user's identity first — never open with a data request
@@ -126,7 +133,7 @@ Do NOT audit the whole pantry and do NOT block planning. Probe only the **high-l
 4. State the user benefit, not the agent's logic (never say "规划时我会避开")
    - 示例开场 (long-cycle cold-start):
      "初次接触，像你这样注重健康饮食的人，我觉得应该有干货和食用油囤货。我来帮你记住这些，更好地为您提供食材搭配。"
-   - Record what the user confirms into pantry.json (ambient zone, no expiry needed for staples) → future plans skip them.
+   - Record what the user confirms into pantry.json (ambient zone, no expiry needed for staples) and set `meta.longCycleProbed: true` → future plans skip them (or recommend them if the user said none).
 
 **Stock grows through daily behaviors, not audits:**
 - Purchase → also append to pantry.json (buy = restock)
@@ -143,8 +150,9 @@ Trigger: user asks for a weekly shopping plan / "这周买什么" / "本周吃�
 2. Read shopping.json → note unchecked items (already needed — avoid duplicates)
 3. Read pantry.json → note existing long-cycle stock (ambient/daily zones)
    → Apply the stock-aware rule above: skip items already in stock
-   → If pantry has no long-cycle items recorded → use the cold-start
-     UX opening to probe them (one friendly message, then proceed)
+   → If pantry has no long-cycle items recorded and meta.longCycleProbed
+     is not true → use the cold-start UX opening (see Inventory
+     Awareness; it may already have fired on an earlier inventory view)
 ```
 
 **Step 2 — Shopping rhythm:**

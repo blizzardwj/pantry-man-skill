@@ -10,7 +10,8 @@ Food inventory organized by storage zone.
 {
   "meta": {
     "lastUpdated": "2026-04-01T17:45:00+08:00",
-    "version": "1.0"
+    "version": "1.0",
+    "longCycleProbed": false
   },
   "zones": {
     "cold": {
@@ -50,6 +51,8 @@ Food inventory organized by storage zone.
 | `status` | string | fresh / expiring_soon / expired | `fresh` |
 
 ---
+
+`meta.longCycleProbed` (boolean, optional): whether the one-time long-cycle staples probe (see SKILL.md Inventory Awareness) has been answered. Treat a missing value as `false` — existing data files remain valid.
 
 ## shopping.json
 
