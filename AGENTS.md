@@ -10,6 +10,7 @@ references/schema.md     # JSON data schemas (pantry.json, shopping.json, histor
 README.md                # User-facing docs (installation, usage)
 IDEAS.md                 # Idea backlog — NOT-YET-implemented ideas
 DECISIONS.md             # Decision record — every design decision + rationale
+RESEARCH.md              # Research notes — RQ investigation, candidate designs, constraints
 LICENSE                  # MIT
 ```
 
