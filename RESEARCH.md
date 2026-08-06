@@ -55,10 +55,66 @@
 4. **数据落点收敛** — 反馈尽量落入既有三落点（profile.json 画像 / pantry+shopping 数据 / 搭配规则），不为反馈另起炉灶（除非评估证明必须）
 5. **健康建议边界** — 机制产出一律为"一般性建议，非医疗建议"，免责声明不因机制而省略
 
+### 数据结构设计（2026-08-05 三决策定稿）
+
+**决策 1：独立 `feedback.json`**（`[AGENT_HOME]/pantry/data/feedback.json`）— profile 与 feedback 职责分离：profile 是"已收敛的画像"，feedback 是"原始反馈日志 + 沉淀轨迹"。实体数据仍落 pantry/shopping/profile（约束 4 落点收敛不变），feedback.json 只记日志与指针。
+**决策 2：importance 1-5 分制**
+**决策 3：保持 4 类反馈类型**，不新增 organization-feedback——存储/归置习惯归 preference-correction，在 content 中注明即可
+
+#### 记录结构（字段定稿）
+
+```json
+{
+  "id": "fb_x9y8z7",
+  "type": "ingredient-fact | preference-correction | stock-change | pairing-feedback",
+  "capturedAt": "2026-08-05T13:30:00+08:00",
+  "source": "用户原话摘要",
+  "importance": 1,
+  "content": "结构化事实/纠正内容",
+  "landing": { "target": "pantry|shopping|profile|rule", "applied": true, "detail": "落到哪、怎么落" },
+  "status": "active | decayed | evicted",
+  "mergedInto": "被合并到的记录 id（可选）"
+}
+```
+
+#### 四类反馈定义
+
+| type | 判定要点 | 典型落点 | 四杠杆 |
+|------|---------|---------|--------|
+| ingredient-fact | 新食材/新实体出现 | pantry（入库存）| merge 同实体细节 |
+| preference-correction | 推翻/修改既有画像或做法（含存储习惯）| profile / shopping / rule | 画像级，不 decay |
+| stock-change | 存量状态变化（吃完/耗竭/补货）| pantry / shopping | decay 短期事实；补货后 evict |
+| pairing-feedback | 对计划/搭配的满意度或改进建议 | rule / shopping | 流程级，固化进规则 |
+
+#### importance 锚点（1-5）
+
+| 分值 | 含义 | 实例（2026-08-05）|
+|------|------|-------------------|
+| 5 | 画像级/流程级 | 根茎类=非精制碳水；数量校验需求 |
+| 4 | 长期习惯 | 新鲜食材统一冷藏；常备自制酸奶+洋葱 |
+| 3 | 状态事实 | 苹果/黄瓜已吃完 |
+| 2 | 一次性微调 | 鲈鱼→鲷鱼片 |
+| 1 | 噪音/待观察 | 暂不沉淀 |
+
+#### 四杠杆在 feedback.json 的运作
+
+- **merge**：同实体多条反馈 → 实体数据只更新一次，其余记录置 `mergedInto` 指针
+- **decay**：stock-change 类短期事实 → 补货/新采购后置 `decayed`
+- **eviction**：已 decay 且无引用价值的 → 置 `evicted`（保留日志，不删记录）
+- **salience floor**：importance ≥ 4 的反馈不因时间 evict（对齐 Hindsight 框架）
+
+#### 真实示例（2026-08-05 对话）
+
+- ① ingredient-fact，imp 4："早餐有洋葱、自制酸奶"→ 入冷藏库存；酸奶"奶粉+益生菌"细节 merge 进同一实体
+- ② preference-correction，imp 5："根茎类=非精制碳水"→ profile.prefer += root-vegetable-carbs，永不 decay
+- ③ stock-change，imp 3："苹果黄瓜吃完"→ 黄瓜保持待购；补货后 evict
+- ④ pairing-feedback，imp 5："数量需校验"→ SKILL.md QUANTITY CHECK 步骤（c66baab），固化进规则
+- ⑤ preference-correction，imp 4："新鲜食材存冷藏"→ pantry 6 项移冷藏（content 注明存储习惯）
+- ⑥ preference-correction，imp 2："鲈鱼改鲷鱼片"→ shopping 替换，不升级为画像规则
+
 ### 当前倾向（待确认）
 
 - 组合 **②③④ 的轻量版**：反馈打 importance 分级 → 纠正/新事实即触发反思 → 按落点复用；**避开 ① 自动全量提取**（噪音大、违背最小打扰）
-- 待决策项:
-  1. 反馈数据结构设计（字段：类型 / 内容 / importance / 时间 / 落点？）
-  2. 触发规则细则（哪些反馈事件必反思、哪些延迟到计划生成时）
-  3. 存储位置：新增 feedback 存储 vs 并入 profile.json（倾向并入，符合约束 4）
+- 待决策项（数据结构已定稿，剩余两项）:
+  1. 触发规则细则（哪些反馈事件必反思、哪些延迟到计划生成时）
+  2. 复用规则（feedback → 落点的判定流程；搭配/计划生成时如何引用沉淀）
