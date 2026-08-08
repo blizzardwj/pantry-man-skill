@@ -10,6 +10,19 @@
 - 备注: ...
 -->
 
+## [2026-08-05] RQ-5 反馈机制设计：feedback.json + 三层触发 + 三级复用
+- 决策: 用户建议与反馈的沉淀机制整体设计定稿——① 独立 `feedback.json`（4 类反馈 × importance 1-5，四杠杆整理：merge/decay/eviction + salience floor≥4）；② 三层触发（即时捕获：对话信号即记录、imp≥3 立即落点；阈值反思：当日累积 ≥8 或同实体 ≥3 条 merge 或同类型 ≥3 条升级；计划时回顾：仅当天有 feedback 时补漏落点）；③ 概念消解为「流程规则 / 画像偏好 / 偏好模板」三件套；④ 复用 = 生成时三级引用（模板层 > 画像层 > 通用准则层）+ 模板轮换 + 耗尽候选机制（与库存感知配对）
+- 理由: 2026-08-05 实况演练证明即兴处理无保证（洋葱/酸奶靠追问才入库）。调研 4 类方案（Mem0 事实提取 / Hindsight 四杠杆 / GA 阈值反思 / Reflexion 失败触发）后选型 ②③④ 轻量组合，避开 ① 自动全量提取。约束：No-code 纯指令、跨 agent 通用、最小打扰、数据落点收敛
+- 被否决的选项:
+  - 引入 Mem0/Letta 等记忆框架 —— 否决：违反 AGENTS.md「No code, no scripts」硬规则，且依赖特定执行环境
+  - feedback 并入 profile.json —— 否决：profile 是已收敛画像，feedback 是原始日志+沉淀轨迹，职责分离（用户决策，2026-08-05）
+  - 新增第 5 类 organization-feedback —— 否决：存储/归置习惯归 preference-correction，content 注明即可（用户决策）
+  - 保留"搭配规则"独立概念 —— 否决：与偏好模板重叠，按来源+生命周期消解为三件套（用户决策）
+  - 自动全量事实提取（Mem0 式，异步无差别抽取）—— 否决：噪音大、违背最小打扰
+  - 触发阈值设 ≥6 或 ≥10 —— 否决：≥8 为灵敏度与克制的中位（用户决策）
+  - 第三层回顾每次计划都跑 —— 否决：仅当天有 feedback 时跑，省 token（用户决策）
+- 备注: 设计底稿 RESEARCH.md（RQ-5 条目）；实施规划：SKILL.md 指令 + references/schema.md（feedback.json + pairingTemplates）+ README + 数据初始化，待执行
+
 ## [2026-08-05] 保留 Scheduled Reminders 中的 `cron add` 作为占位示例
 - 决策: SKILL.md 底部 Scheduled Reminders 章节的 `cron add` 命令（Hermes 专属语法）不改动，保留为**占位示例**，表示该 skill 支持定时提醒能力（购物清单提醒/过期提醒/低库存提醒）
 - 理由: 用户明确决定（2026-08-05）——该处仅占位示意"支持提醒"这一能力，不是可执行指令；各 agent 用自己的定时机制实现同样语义，跨 agent 通用性由语义保证，不因示例命令形式受影响
