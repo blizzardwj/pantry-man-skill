@@ -171,6 +171,22 @@ Record format (see [schema.md](references/schema.md)):
 - **重复 = 确认信号**：同一内容第二次出现 → 原记录 importance +1（上限 5）并视为已确认
 - **防噪音**：寒暄/无信息确认（"好的""谢谢"）不触发；imp = 1 只日志不沉淀
 
+### Feedback loop (closed)
+
+```
+对话反馈 → ① Capture（写 feedback.json）
+        → ② 落点判定（冲突避免后写入 pantry / shopping / profile）
+        → ③ 三层触发整理（阈值反思 merge/升级；计划时回顾补漏+耗尽候选+澄清）
+        → ④ 生成时消费（计划遵循 profile.rules + 候选；搭配按 模板>画像>通用）
+升级路径（确认后，均用户数据，不改 SKILL.md）:
+  约束 constraint → profile prefer/avoid/cookingStyle/notes
+  结构 structure  → profile.pairingTemplates（confirmed: true）
+  流程 flow       → profile.rules
+  状态 state      → pantry/shopping（applied）
+```
+
+SKILL.md 只承载通用框架——任何用户的个性化规则、模板、偏好都沉淀在用户数据中。
+
 ## Meal Planning
 
 Two independent features — 🛒 采购计划 Shopping Plan and 🍽 每日搭配 Daily Pairings — plus 📆 周计划 Weekly Plan, an orchestrator that chains them per the user's shopping rhythm. **Order is fixed: shopping list first, pairings second.** Pairings are derived from the confirmed list (素材→组合 dependency) — never the other way around. Each feature has its own trigger, confirmation gate, and adjustment path, so the user can run any of them standalone (e.g., "今晚吃什么" only needs Daily Pairings).
