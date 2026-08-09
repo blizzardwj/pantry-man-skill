@@ -156,6 +156,18 @@ User dietary profile — drives weekly meal planning recommendations. **Optional
     "tripsPerWeek": 2,
     "daysPerTrip": "3-4"
   },
+  "pairingTemplates": [
+    {
+      "id": "pt_x9y8z7",
+      "meal": "breakfast",
+      "pattern": "protein + root/tuber + 2-3 veg + fruit + homemade-yogurt",
+      "source": "2026-08-05 早餐报告",
+      "confirmed": true
+    }
+  ],
+  "rules": [
+    "生成采购计划前先确认人数"
+  ],
   "confirmed": false
 }
 ```
@@ -176,6 +188,8 @@ User dietary profile — drives weekly meal planning recommendations. **Optional
 | `cookingStyle` | array | Preferred cooking methods | `["steam", "boil", "cold-mix"]` |
 | `shoppingRhythm.tripsPerWeek` | number | Shopping trips per week | `2` |
 | `shoppingRhythm.daysPerTrip` | string | Days covered per trip | `"3-4"` |
+| `pairingTemplates` | array | Confirmed meal-structure templates (user-specific, from feedback; see SKILL.md Feedback section) | `[{"meal":"breakfast","pattern":"protein + root/tuber + 2-3 veg + fruit + yogurt"}]` |
+| `rules` | array | User-level flow rules (confirmed, from feedback — never edits to SKILL.md) | `["生成采购计划前先确认人数"]` |
 | `confirmed` | boolean | Whether user has confirmed the profile | `false` |
 
 ### Health & Preference Keywords (controlled vocabulary)
