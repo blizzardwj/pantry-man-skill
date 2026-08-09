@@ -189,6 +189,61 @@ User dietary profile — drives weekly meal planning recommendations. **Optional
 
 ---
 
+## feedback.json
+
+User feedback log — raw records of corrections, new facts, stock changes, and pairing/plan feedback (see SKILL.md Feedback section). Kept separate from profile.json: **profile holds the converged picture, feedback holds the raw log + landing trail**.
+
+```json
+{
+  "meta": {
+    "lastUpdated": "2026-08-05T13:30:00+08:00"
+  },
+  "records": []
+}
+```
+
+### Record Structure
+
+| Field | Type | Description | Example |
+|-------|------|-------------|---------|
+| `id` | string | Unique identifier | `fb_x9y8z7` |
+| `type` | string | `ingredient-fact` / `preference-correction` / `stock-change` / `pairing-feedback` | `stock-change` |
+| `capturedAt` | string | Capture datetime (ISO 8601 with tz) | `2026-08-05T13:30:00+08:00` |
+| `source` | string | User utterance summary | `苹果和黄瓜都已经吃完了` |
+| `importance` | number | 1-5 (see anchors below) | `3` |
+| `content` | string | Structured fact / correction | `黄瓜、苹果已耗尽` |
+| `landing` | object | Where the feedback landed | See below |
+| `status` | string | `active` / `decayed` / `evicted` | `active` |
+| `mergedInto` | string | id of record this was merged into (optional) | `fb_a1b2c3` |
+
+### landing Structure
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `target` | string | `pantry` / `shopping` / `profile` / `rule` (templates land on `profile` with detail noting `pairingTemplates`) |
+| `applied` | boolean | Whether the data file was already updated |
+| `detail` | string | What/where exactly |
+
+### Type & Importance Anchors
+
+| type | 判定要点 | 典型落点 |
+|------|---------|---------|
+| `ingredient-fact` | 新食材/新实体出现 | pantry |
+| `preference-correction` | 推翻/修改既有画像或做法（含存储习惯）| profile / shopping |
+| `stock-change` | 存量状态变化（吃完/耗竭/补货）| pantry / shopping |
+| `pairing-feedback` | 对计划/搭配的满意度或改进建议 | rule / shopping |
+
+importance 1-5: 5=画像/流程级（如"根茎类=非精制碳水"）；4=长期习惯（如"新鲜食材冷藏"）；3=状态事实（如"苹果吃完"）；2=一次性微调（如"鲈鱼→鲷鱼片"）；1=噪音/待观察（暂不沉淀）。
+
+### Consolidation (four levers)
+
+- **merge**: same entity across multiple records → entity data updated once, other records point to it via `mergedInto`
+- **decay**: stock-change short-term facts → set `decayed` after refill/new purchase
+- **eviction**: decayed records with no reference value → set `evicted` (log kept, never delete)
+- **salience floor**: importance ≥ 4 records are never evicted by time alone
+
+---
+
 ## Common Tags
 
 ### Food Categories
