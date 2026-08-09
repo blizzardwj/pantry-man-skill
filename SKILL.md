@@ -97,6 +97,57 @@ Read history/YYYY-MM.json → Format records
 Read history/YYYY-MM.json → Return stats.totalSpent and stats.recordCount
 ```
 
+## Feedback Capture & Reuse（反馈沉淀与复用）
+
+User corrections, new facts, and preferences are the highest-value signal for profile convergence — capture them when they happen, so plans improve without the user re-entering data. **Raw log**: `feedback.json`. **Personalized outputs** (preferences, templates, user-level flow rules) always land in user data (`profile.json` / `pantry.json` / `shopping.json`) — **never edit SKILL.md for a user's rules**; SKILL.md stays the generic cross-user framework.
+
+### Capture (instant)
+
+When the conversation shows one of these signals, write a feedback record:
+
+| Signal | Example | type | default importance |
+|--------|---------|------|--------------------|
+| 纠正/替换 correction | "鲈鱼改成鲷鱼片" | preference-correction | 2 |
+| 推翻画像级认知 | "根茎类都算非精制碳水" | preference-correction | 5 |
+| 已有/别买 already have | "虾皮鸡蛋青椒已有" | stock-change | 3 |
+| 新食材/新事实 new fact | "早餐有洋葱、自制酸奶" | ingredient-fact | 4 |
+| 状态变化 state change | "苹果黄瓜吃完了" | stock-change | 3 |
+| 流程建议 flow suggestion | "是否需要用 Python 验证数量？" | pairing-feedback | 5 |
+| 对方案不满 dissatisfaction | 搭配被要求重做 | pairing-feedback | 3-4 |
+
+importance anchors: 5=画像/流程级 · 4=长期习惯 · 3=状态事实 · 2=一次性微调 · 1=噪音/待观察（只日志，不沉淀）。
+
+Record format (see [schema.md](references/schema.md)):
+
+```json
+{
+  "id": "fb_x9y8z7",
+  "type": "ingredient-fact | preference-correction | stock-change | pairing-feedback",
+  "capturedAt": "<ISO8601+tz>",
+  "source": "<user utterance summary>",
+  "importance": 3,
+  "content": "<structured fact / correction>",
+  "landing": { "target": "pantry | shopping | profile | rule", "applied": false, "detail": "<what/where>" },
+  "status": "active"
+}
+```
+
+### Conflict avoidance (check before writing any landing file)
+
+```
+① 查重: does the entity already exist in the landing file?
+② 同实体合并: if yes → update/merge, never duplicate (feedback records set mergedInto)
+③ 以新为准: new feedback contradicts old profile/records → new wins, old marked decayed
+④ 幂等: repeated content with no new info → no new record; raise original importance (+1, cap 5)
+```
+
+### Landing decision (may apply multiple)
+
+- 状态事实 state fact → `pantry` / `shopping`（imp ≥ 3 applied immediately；"吃完"类写 `landing.applied: false` 作为**耗尽候选 depleted candidate**，计划时消费）
+- 约束偏好 constraint preference → `profile`（prefer / avoid / cookingStyle / notes）
+- 结构偏好 structure preference → `profile.pairingTemplates`（新增或修正模板）
+- 流程规则 flow rule → `profile.rules`（用户级，不改 SKILL.md）
+
 ## Meal Planning
 
 Two independent features — 🛒 采购计划 Shopping Plan and 🍽 每日搭配 Daily Pairings — plus 📆 周计划 Weekly Plan, an orchestrator that chains them per the user's shopping rhythm. **Order is fixed: shopping list first, pairings second.** Pairings are derived from the confirmed list (素材→组合 dependency) — never the other way around. Each feature has its own trigger, confirmation gate, and adjustment path, so the user can run any of them standalone (e.g., "今晚吃什么" only needs Daily Pairings).
