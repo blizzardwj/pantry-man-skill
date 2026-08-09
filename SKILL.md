@@ -228,7 +228,8 @@ Trigger: user wants to buy ingredients / "列个采购清单" / "帮我看看这
 
 Flow:
 ```
-1. Read profile.json (create if missing, see User Profile above) → note prefer/avoid rules
+1. Read profile.json (create if missing, see User Profile above) → note prefer/avoid
+   rules and `rules` (user-level flow rules — follow them; never SKILL.md edits)
 2. Read shopping.json → note unchecked items (already needed — avoid duplicates)
 3. Read pantry.json → apply the stock-aware rule: skip long-cycle items already
    in stock (ambient/daily zones); briefly mention skipped staples (e.g.,
@@ -251,7 +252,13 @@ Flow:
 Apply the profile: avoid `refined-carbs`/`unhealthy-fats` → choose `low-gi-carbs`/`heart-healthy-fats`/`high-protein`/`soluble-fiber` (适量水溶性膳食纤维). For each item, give a **rough quantity** (e.g., 南瓜 500g, 鸡蛋 10枚, 鸡胸肉 500g) — enough for the segment's meals.
 
 ```
-6. **QUANTITY CHECK — benchmark before the gate:**
+6. **PLAN-TIME REVIEW — feedback backfill (only when today has feedback):**
+   a. Retrieve active feedback with imp ≥ 3 → backfill any missed landing
+   b. Depleted candidates: stock-change "吃完" records (`applied: false`) → list
+      them in their category with note "上次已吃完，可补" (user decides at the gate)
+   c. Clarification: if the last confirmation gate had ≥ 3 deletions → ask ONE
+      high-value question before generating (largest-impact dimension only)
+7. **QUANTITY CHECK — benchmark before the gate:**
    Read [quantity_benchmark.md](references/quantity_benchmark.md) (adult daily
    reference ranges, typical piece weights, category assignment). For each
    category, compute the segment target range = daily range × segment days ×
@@ -262,9 +269,9 @@ Apply the profile: avoid `refined-carbs`/`unhealthy-fats` → choose `low-gi-car
    - Shelf-stable staples (rice, dried goods, oils) — lenient: extra stock is fine
    - Soft flag only, never hard-block — the user decides at the confirmation gate
    Example: "蔬菜 914g/天 vs 300–500 ❌ → 建议 ~1600g（绿叶菜减半）"
-7. **CONFIRMATION GATE — do NOT write to shopping.json yet:**
+8. **CONFIRMATION GATE — do NOT write to shopping.json yet:**
    Show the proposed list (category + item + quantity, with the check report
-   from step 6) and ask the user to confirm or adjust (quantities, items,
+   from step 7) and ask the user to confirm or adjust (quantities, items,
    budget). Only after the user confirms, append the (adjusted) items to
    shopping.json categories.food.items, then tell the user: "已加入购物清单，
    可继续修改数量或删除"
