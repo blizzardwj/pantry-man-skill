@@ -290,9 +290,17 @@ If the shopping list has no items for the current segment, tell the user to gene
 Flow:
 ```
 1. Read shopping.json (current segment items) + pantry.json (stock) → build the ingredient pool
-2. For each day in the segment, propose 3 meals (早/午/晚), each with the
-   FIXED 3-PART PATTERN — every pairing MUST include all three:
-     ① 食材组合 ingredients  ② 价值 value/why  ③ 做法 simplest preparation
+   → Also read profile.json: `pairingTemplates`, prefer/avoid/cookingStyle
+2. For each day in the segment, propose 3 meals (早/午/晚) with THREE-LEVEL
+   REFERENCE (template > profile > generic — see Feedback section):
+     ① 模板层 template: confirmed `pairingTemplates` for that meal define the
+        structure (e.g. breakfast = protein + root/tuber + 2-3 veg + fruit +
+        yogurt); multiple templates for one meal → rotate to avoid repetition
+     ② 画像层 profile: prefer/avoid/cookingStyle govern ingredient choice & method
+     ③ 通用准则层 generic: FIXED 3-PART PATTERN — every pairing MUST include:
+        ① 食材组合 ingredients  ② 价值 value/why  ③ 做法 simplest preparation
+   Conflict: templates are structure, never break health constraints —
+   profile/health rules win, template downgraded to reference.
 3. Display as per-day blocks with meals as LIST items:
    📅 周三（8/5）
    - 早餐：食材1 + 食材2 + 食材3（价值：为什么这样搭）→ 做法：一句话
