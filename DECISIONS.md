@@ -21,7 +21,7 @@
   - 自动全量事实提取（Mem0 式，异步无差别抽取）—— 否决：噪音大、违背最小打扰
   - 触发阈值设 ≥6 或 ≥10 —— 否决：≥8 为灵敏度与克制的中位（用户决策）
   - 第三层回顾每次计划都跑 —— 否决：仅当天有 feedback 时跑，省 token（用户决策）
-- 备注: 设计底稿 RESEARCH.md（RQ-5 条目）；实施规划：SKILL.md 指令 + references/schema.md（feedback.json + pairingTemplates）+ README + 数据初始化，待执行
+- 备注: 设计底稿 RESEARCH.md（RQ-5 条目）；已实施（commit 2b91c88..6e6da4d）：SKILL.md Feedback 章节 + 采购计划/每日搭配接入 + schema.md（feedback.json/pairingTemplates/rules）+ README + 用户数据初始化
 
 ## [2026-08-05] 保留 Scheduled Reminders 中的 `cron add` 作为占位示例
 - 决策: SKILL.md 底部 Scheduled Reminders 章节的 `cron add` 命令（Hermes 专属语法）不改动，保留为**占位示例**，表示该 skill 支持定时提醒能力（购物清单提醒/过期提醒/低库存提醒）
