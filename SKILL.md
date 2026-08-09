@@ -148,6 +148,29 @@ Record format (see [schema.md](references/schema.md)):
 - 结构偏好 structure preference → `profile.pairingTemplates`（新增或修正模板）
 - 流程规则 flow rule → `profile.rules`（用户级，不改 SKILL.md）
 
+### Reflection triggers (three layers)
+
+**Layer 1 — instant capture（即上节 Capture，对话中即时执行，不打断用户）**
+
+**Layer 2 — threshold reflection（静默整理，同一自然日内触发）：**
+满足任一即静默整理，不打断对话：
+- 当日新反馈 importance 累积 ≥ 8
+- 同实体 feedback ≥ 3 条 → merge（实体数据只更新一次，其余记录置 `mergedInto`）
+- 同类型 feedback ≥ 3 条 → 检查升级：约束 → 画像偏好；结构 → pairingTemplates；流程 → profile.rules
+
+动作：merge 同类、矛盾消解（新反馈推翻旧画像 → 旧记录置 decayed，画像以新为准）、升级沉淀（需 imp ≥ 4 或重复确认）。
+
+**Layer 3 — plan-time review（兜底，仅当天有 feedback 时）：**
+🛒采购计划或 🍽每日搭配生成时，若当天有 feedback：
+1. 检索 active 且 imp ≥ 3 的反馈
+2. 核对落点是否已应用；**漏落的补落**
+3. **耗尽候选**：stock-change"吃完"记录（`applied: false`）→ 对应品类列为候选，标注"上次已吃完，可补"
+4. **主动澄清**：上次确认闸门被删 ≥ 3 项 → 本次生成前补问一个高价值问题（仅一次，影响最大维度）
+
+**Support rules：**
+- **重复 = 确认信号**：同一内容第二次出现 → 原记录 importance +1（上限 5）并视为已确认
+- **防噪音**：寒暄/无信息确认（"好的""谢谢"）不触发；imp = 1 只日志不沉淀
+
 ## Meal Planning
 
 Two independent features — 🛒 采购计划 Shopping Plan and 🍽 每日搭配 Daily Pairings — plus 📆 周计划 Weekly Plan, an orchestrator that chains them per the user's shopping rhythm. **Order is fixed: shopping list first, pairings second.** Pairings are derived from the confirmed list (素材→组合 dependency) — never the other way around. Each feature has its own trigger, confirmation gate, and adjustment path, so the user can run any of them standalone (e.g., "今晚吃什么" only needs Daily Pairings).
