@@ -16,6 +16,7 @@ All data files are under each agent's home directory at [AGENT_HOME]/pantry/data
 | `pantry.json` | Inventory (cold/frozen/ambient/daily zones) |
 | `shopping.json` | Shopping list (food/daily categories) |
 | `history/YYYY-MM.json` | Purchase records by month |
+| `feedback.json` | User feedback log (corrections, new facts, stock changes, pairing feedback — see Feedback section) |
 
 ## First-Run Setup
 
@@ -25,6 +26,7 @@ Before executing ANY user request, check whether the pantry data directory exist
 2. Check if `[AGENT_HOME]/pantry/data/pantry.json` exists. If not, create it with the empty seed structure from [schema.md](references/schema.md).
 3. Check if `[AGENT_HOME]/pantry/data/shopping.json` exists. If not, create it with the empty seed structure.
 4. Check if `[AGENT_HOME]/pantry/data/history/` exists. If not, create it.
+5. Check if `[AGENT_HOME]/pantry/data/feedback.json` exists. If not, create it with the empty seed structure (`{"meta": {"lastUpdated": "<now>"}, "records": []}`).
 
 After creating any missing files, confirm briefly to the user, e.g.:
 
