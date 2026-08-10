@@ -102,3 +102,4 @@
 - 备注: 2026-08-09 真实试用暴露早餐雷同问题后讨论产出；实施时同步检查 schema.md 中 landing 定义是否随迁或互链
 - 触发点模型（2026-08-09 确认）: flow 双向触发——①写侧：对话中反馈信号出现即读 flow（Capture→Conflict avoidance→Landing decision→写 feedback.json+落点文件），不经计划生成；②读侧：采购计划/每日搭配生成前读 flow（Layer 3 plan-time review：检索 active 反馈、补漏落点、耗尽候选补清单、删改≥3项时澄清）。①②同一状态机首尾，`landing.applied:false` 的记录即读侧消费的耗尽候选。因此 citation 至少出现在 SKILL.md 两处：反馈捕获章节 + 计划生成步骤
 - 迁移边界（2026-08-09 确认）: Reflection triggers（三层 + Support rules）**必须整体迁入** feedback_flow.md——Layer 1=Capture、Layer 2=同日静默整理（merge/消解/升级）、Layer 3=读侧消费，三层跨写读两侧，拆出则状态机残缺。SKILL.md 反馈章节仅留概述 + 原则声明（用户数据 vs SKILL.md 分工）+ 双处 citation；schema.md 数据结构定义不动，与 flow 互链
+- 术语（2026-08-09 确认）: 统一为**三层 hooks**——capture hook / threshold hook / review hook（agent 无常驻进程，整理只能挂在宿主流程自然执行点上，hooks 同时编码"何时触发"与"挂在哪里"）；见 DECISIONS.md [2026-08-09]

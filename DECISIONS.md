@@ -10,6 +10,16 @@
 - 备注: ...
 -->
 
+## [2026-08-09] feedback flow 触发机制术语：三层 hooks
+- 决策: feedback flow 的反射触发机制统一命名为**三层 hooks**——Layer 1 即时捕获 = `capture hook`、Layer 2 阈值整理 = `threshold hook`、Layer 3 计划前兜底 = `review hook`；术语进入 SKILL.md 反馈章节与（未来独立的）references/feedback_flow.md
+- 理由: agent 无常驻进程——不存在"后台自己找活干"的守护进程，一切整理只能挂在宿主流程的自然执行点上（对话处理 / 日界 / 计划生成）；hooks 恰好同时编码"何时触发"与"挂在哪里"，比 triggers 多表达宿主-挂接关系。Layer 2 的阈值触发有文献出处：Generative Agents（Park 2023）重要性分数累积触发反思、MemGPT memory pressure 触发上下文整理
+- 被否决的选项:
+  - daemon（守护进程）—— 否决：agent 无常驻进程，无"主动监控"语义，时机由宿主决定而非自身
+  - callback（回调）—— 否决：只覆盖即时触发（Layer 1），无法表达阈值批处理与消费时兜底
+  - trigger policy / trigger points —— 否决：只表达"会触发"，不表达挂接位置与宿主关系，信息量不足
+  - opportunistic reflection（机会式反思）—— 否决为术语，保留为语义注解：它准确描述了三层 hooks 的设计哲学（利用自然触点、不打扰用户），适合作为 hooks 的说明性描述而非正式命名
+- 备注: 与 IDEAS.md「Feedback flow 独立成 reference」条目配套；实施 feedback_flow.md 迁移时统一采用三层 hooks 术语
+
 ## [2026-08-05] RQ-5 反馈机制设计：feedback.json + 三层触发 + 三级复用
 - 决策: 用户建议与反馈的沉淀机制整体设计定稿——① 独立 `feedback.json`（4 类反馈 × importance 1-5，四杠杆整理：merge/decay/eviction + salience floor≥4）；② 三层触发（即时捕获：对话信号即记录、imp≥3 立即落点；阈值反思：当日累积 ≥8 或同实体 ≥3 条 merge 或同类型 ≥3 条升级；计划时回顾：仅当天有 feedback 时补漏落点）；③ 概念消解为「流程规则 / 画像偏好 / 偏好模板」三件套；④ 复用 = 生成时三级引用（模板层 > 画像层 > 通用准则层）+ 模板轮换 + 耗尽候选机制（与库存感知配对）
 - 理由: 2026-08-05 实况演练证明即兴处理无保证（洋葱/酸奶靠追问才入库）。调研 4 类方案（Mem0 事实提取 / Hindsight 四杠杆 / GA 阈值反思 / Reflexion 失败触发）后选型 ②③④ 轻量组合，避开 ① 自动全量提取。约束：No-code 纯指令、跨 agent 通用、最小打扰、数据落点收敛
