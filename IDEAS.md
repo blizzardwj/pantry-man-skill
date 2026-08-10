@@ -93,3 +93,10 @@
 - 动机: 真实试用复算对照《中国居民膳食指南》发现——计划分量无基准，agent 凭直觉给量，清单总量超单人 3-4 天需求 1.5-2 倍（蔬菜 914g/天 vs 300-500、水果 777g/天 vs 200-350、肉鱼 314g/天 vs 120-200、薯类缺失）；确认闸门只查品种不查数量，超配未被拦截
 - 评估: 校验必须内建且置于确认闸门之前。采用纯指令式——基准表放 references/quantity_benchmark.md（成人每日参考量/单件克重/品类归属/容差规则），agent 读表做简单算术（每日区间 × 段天数 × 人数）；不引入脚本，符合 AGENTS.md「No code, no scripts」与跨 agent 原则——开发期 Python 仅用于定位问题，其产出沉淀为基准表
 - 备注: 配套决策见 DECISIONS.md [2026-08-05] 数量校验；profile.json 新增 household.persons（默认 1）；生鲜从严、耐放从宽、只软提示不硬拦
+
+## Feedback flow 独立成 reference 文件
+- 状态: **idea**
+- 日期: 2026-08-09
+- 动机: feedback flow（Capture → Conflict avoidance → Landing decision → 三层触发 → 闭环）是 agent + skill 运行的重点，目前以散文形式嵌在 SKILL.md 正文。风险：①SKILL.md 正文越长，agent 一次载入成本越高、关键流程被浏览略过的概率越大，可靠性下降；②feedback 流程与库存/购物等常规操作性质不同——它是跨章节的状态机，理应独立
+- 评估: 成本低（从 SKILL.md 移出流程文本到 `references/feedback_flow.md`，正文保留一行 citation 链接）；收益——SKILL.md 瘦身、流程可独立维护与演进、与 `references/quantity_benchmark.md` 的既有模式同构；风险——agent 必须按 citation 主动加载 reference 才能执行流程，citation 要写得明确（如"生成搭配/计划前必读"）
+- 备注: 2026-08-09 真实试用暴露早餐雷同问题后讨论产出；实施时同步检查 schema.md 中 landing 定义是否随迁或互链
