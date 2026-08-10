@@ -95,7 +95,7 @@
 - 备注: 配套决策见 DECISIONS.md [2026-08-05] 数量校验；profile.json 新增 household.persons（默认 1）；生鲜从严、耐放从宽、只软提示不硬拦
 
 ## Feedback flow 独立成 reference 文件
-- 状态: **idea**
+- 状态: **implemented** (commit 60e34ae)
 - 日期: 2026-08-09
 - 动机: feedback flow（Capture → Conflict avoidance → Landing decision → 三层触发 → 闭环）是 agent + skill 运行的重点，目前以散文形式嵌在 SKILL.md 正文。风险：①SKILL.md 正文越长，agent 一次载入成本越高、关键流程被浏览略过的概率越大，可靠性下降；②feedback 流程与库存/购物等常规操作性质不同——它是跨章节的状态机，理应独立
 - 评估: 成本低（从 SKILL.md 移出流程文本到 `references/feedback_flow.md`，正文保留一行 citation 链接）；收益——SKILL.md 瘦身、流程可独立维护与演进、与 `references/quantity_benchmark.md` 的既有模式同构；风险——agent 必须按 citation 主动加载 reference 才能执行流程，citation 要写得明确（如"生成搭配/计划前必读"）

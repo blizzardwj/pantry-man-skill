@@ -10,6 +10,12 @@
 - 备注: ...
 -->
 
+## [2026-08-09] Feedback flow 独立为 references/feedback_flow.md（实施三层 hooks）
+- 决策: 将 SKILL.md 反馈章节的完整状态机迁移至独立文件 `references/feedback_flow.md`，按三层 hooks（capture / threshold / review）组织；SKILL.md 只保留概述 + 原则声明（用户数据 vs SKILL.md 分工）+ 三处 citation（反馈章节、采购计划 PLAN-TIME REVIEW、每日搭配流程）；schema.md 互链 feedback_flow.md
+- 理由: feedback flow 是 skill 运行重点，散文嵌正文导致每次 skill 加载都携带完整状态机、且正文越长越易被浏览略过；独立后按需加载（写侧捕获/落点时、读侧生成计划/搭配前），与 quantity_benchmark.md 的引用模式同构。SKILL.md 净减 ~87 行
+- 被否决的选项: 无——本决策是既定想法的实施（IDEAS.md 条目），术语选型已在同日「三层 hooks」决策中完成
+- 备注: commit 60e34ae；IDEAS.md「Feedback flow 独立成 reference 文件」→ implemented；三层 hooks 术语落地（capture hook / threshold hook / review hook）
+
 ## [2026-08-09] feedback flow 触发机制术语：三层 hooks
 - 决策: feedback flow 的反射触发机制统一命名为**三层 hooks**——Layer 1 即时捕获 = `capture hook`、Layer 2 阈值整理 = `threshold hook`、Layer 3 计划前兜底 = `review hook`；术语进入 SKILL.md 反馈章节与（未来独立的）references/feedback_flow.md
 - 理由: agent 无常驻进程——不存在"后台自己找活干"的守护进程，一切整理只能挂在宿主流程的自然执行点上（对话处理 / 日界 / 计划生成）；hooks 恰好同时编码"何时触发"与"挂在哪里"，比 triggers 多表达宿主-挂接关系。Layer 2 的阈值触发有文献出处：Generative Agents（Park 2023）重要性分数累积触发反思、MemGPT memory pressure 触发上下文整理
