@@ -188,7 +188,7 @@ User dietary profile — drives weekly meal planning recommendations. **Optional
 | `cookingStyle` | array | Preferred cooking methods | `["steam", "boil", "cold-mix"]` |
 | `shoppingRhythm.tripsPerWeek` | number | Shopping trips per week | `2` |
 | `shoppingRhythm.daysPerTrip` | string | Days covered per trip | `"3-4"` |
-| `pairingTemplates` | array | Confirmed meal-structure templates (user-specific, from feedback; see SKILL.md Feedback section) | `[{"meal":"breakfast","pattern":"protein + root/tuber + 2-3 veg + fruit + yogurt"}]` |
+| `pairingTemplates` | array | Confirmed meal-structure templates (user-specific, from feedback; see [feedback_flow.md](feedback_flow.md)) | `[{"meal":"breakfast","pattern":"protein + root/tuber + 2-3 veg + fruit + yogurt"}]` |
 | `rules` | array | User-level flow rules (confirmed, from feedback — never edits to SKILL.md) | `["生成采购计划前先确认人数"]` |
 | `confirmed` | boolean | Whether user has confirmed the profile | `false` |
 
@@ -205,7 +205,7 @@ User dietary profile — drives weekly meal planning recommendations. **Optional
 
 ## feedback.json
 
-User feedback log — raw records of corrections, new facts, stock changes, and pairing/plan feedback (see SKILL.md Feedback section). Kept separate from profile.json: **profile holds the converged picture, feedback holds the raw log + landing trail**.
+User feedback log — raw records of corrections, new facts, stock changes, and pairing/plan feedback (see [feedback_flow.md](feedback_flow.md)). Kept separate from profile.json: **profile holds the converged picture, feedback holds the raw log + landing trail**.
 
 ```json
 {
