@@ -103,3 +103,10 @@
 - 触发点模型（2026-08-09 确认）: flow 双向触发——①写侧：对话中反馈信号出现即读 flow（Capture→Conflict avoidance→Landing decision→写 feedback.json+落点文件），不经计划生成；②读侧：采购计划/每日搭配生成前读 flow（Layer 3 plan-time review：检索 active 反馈、补漏落点、耗尽候选补清单、删改≥3项时澄清）。①②同一状态机首尾，`landing.applied:false` 的记录即读侧消费的耗尽候选。因此 citation 至少出现在 SKILL.md 两处：反馈捕获章节 + 计划生成步骤
 - 迁移边界（2026-08-09 确认）: Reflection triggers（三层 + Support rules）**必须整体迁入** feedback_flow.md——Layer 1=Capture、Layer 2=同日静默整理（merge/消解/升级）、Layer 3=读侧消费，三层跨写读两侧，拆出则状态机残缺。SKILL.md 反馈章节仅留概述 + 原则声明（用户数据 vs SKILL.md 分工）+ 双处 citation；schema.md 数据结构定义不动，与 flow 互链
 - 术语（2026-08-09 确认）: 统一为**三层 hooks**——capture hook / threshold hook / review hook（agent 无常驻进程，整理只能挂在宿主流程自然执行点上，hooks 同时编码"何时触发"与"挂在哪里"）；见 DECISIONS.md [2026-08-09]
+
+## SKILL.md 示例与输出解耦：示例锚定问题
+- 状态: **implemented**（2026-08-09 方式 A 示例去食材化，commit e47b3c8）
+- 日期: 2026-08-09
+- 动机: 真实试用发现——每日搭配推荐大量复用 SKILL.md 示例的具体食材与做法措辞（"鸡胸肉平底锅少油烙片""焯水N分钟拌油"一字不差复现）。LLM 把示例当模板库，内容锚定远强于格式学习；示例本意是格式示范，却同时锚定了输出内容，导致搭配趋同（叠加早餐雷同问题）
+- 评估: 根因是示例同时传递「格式」与「内容」两个信号，未显式解耦。方案 A（示例去食材化，类别占位符保留格式骨架）= 最小改动，当前采用；方案 B（保留示例 + 显式反锚定声明）；方案 C（示例降级 references/pairing_examples.md，2-3 个不同风格示例，SKILL.md 只留 workflow + general guide + citation，与 feedback_flow/quantity_benchmark 架构一致）= 未来演进方向
+- 备注: 采购计划类别表（蔬菜/蛋白质/油脂枚举）性质为「内容推荐」而非「格式示例」，锚定风险低（枚举非组合示例），本次不动；若未来推荐出现趋同再评估
