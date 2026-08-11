@@ -238,7 +238,8 @@ Flow:
         yogurt); multiple templates for one meal → rotate to avoid repetition
      ② 画像层 profile: prefer/avoid/cookingStyle govern ingredient choice & method
      ③ 通用准则层 generic: FIXED 3-PART PATTERN — every pairing MUST include:
-        ① 食材组合 ingredients  ② 价值 value/why  ③ 做法 simplest preparation
+        ① 食材组合 ingredients  ② 价值 value/why  ③ 做法 minimal grouped
+        preparation（极简分组式，见 Rules）
    Conflict: templates are structure, never break health constraints —
    profile/health rules win, template downgraded to reference.
 3. Display as per-day blocks with meals as LIST items — the format example
@@ -259,8 +260,11 @@ Flow:
 Rules:
 - Combos honor profile.prefer/avoid and cookingStyle (e.g., 凉拌/煮/蒸/烙, 能生吃不焯水)
 - 价值 = the nutritional/health reason for THIS combo, 1 short phrase
-- 做法 = the simplest healthy method, 1-2 short phrases, not a recipe
-- Prefer raw over blanched, blanch over steamed/boiled, per profile (short cooking time)
+- 做法 = 极简分组式，以整个食材组合为单位设计，不是"每食材一动作"的排比：
+  ① 最少方法种类——能一种方法覆盖全部食材就一种（如全部焯水后亚麻籽油拌、
+     全部蒸后撒调料）；一种不够才按处理需求分组（能生吃的不焯水，需熟的
+     才焯水/蒸/煮/烙），每组一句（"X、Y 焯水拌油，Z 生切"）
+  ② 目标：方法种类最少、烹饪强度最低，最大限度保留原始营养与风味
 
 ### 📆 周计划 Weekly Plan (orchestrator)
 
