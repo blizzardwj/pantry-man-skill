@@ -241,11 +241,14 @@ Flow:
         ① 食材组合 ingredients  ② 价值 value/why  ③ 做法 simplest preparation
    Conflict: templates are structure, never break health constraints —
    profile/health rules win, template downgraded to reference.
-3. Display as per-day blocks with meals as LIST items:
+3. Display as per-day blocks with meals as LIST items — the format example
+   below shows SHAPE ONLY: ingredients are category placeholders, generate
+   your own combos, values, and cooking wording from stock + profile
+   (never reuse this example's items or phrasing):
    📅 周三（8/5）
-   - 早餐：食材1 + 食材2 + 食材3（价值：为什么这样搭）→ 做法：一句话
-   - 午餐：鸡胸肉 + 香菇 + 西兰花（价值：高蛋白+水溶性纤维+护肝）→ 做法：鸡胸肉平底锅少油烙片，香菇西兰花焯水2分钟拌橄榄油
-   - 晚餐：魔芋丝 + 黄瓜 + 虾皮（价值：低GI饱腹+清爽+补钙）→ 做法：魔芋焯水30秒，黄瓜生切，虾皮拌入
+   - 早餐：主食类 + 蛋白类 + 蔬果类（价值：为什么这样搭）→ 做法：一句话
+   - 午餐：蛋白类 + 绿叶菜类 + 根茎类主食（价值：营养理由一句话）→ 做法：蛋白蒸或烙，绿叶菜焯水拌油
+   - 晚餐：低GI主食类 + 清爽蔬菜类 + 干鲜类（价值：营养理由一句话）→ 做法：主食焯水，蔬菜生切，干鲜拌入
 4. Confirmation & adjustment:
    - Invite the user to adjust any specific meal (e.g., "周四晚餐换个素的")
      → regenerate ONLY that meal, keep the rest unchanged
