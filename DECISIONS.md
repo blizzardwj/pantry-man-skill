@@ -10,6 +10,16 @@
 - 备注: ...
 -->
 
+## [2026-08-13] 硬规则 #2 从「No code」放宽为「No-code core, optional scripts」（渐进增强）
+
+- 决策: 推翻 AGENTS.md 硬规则 #2「No code, no scripts」，改为「No-code core, optional scripts」——skill 契约（SKILL.md + references）保持纯 prompt/schema，任何 agent 零代码执行即可用；新增可选 `scripts/` 目录承载确定性增强（JSON 完整性校验、数量校验算术、feedback 去重/幂等），有 shell 的 agent 执行拿更强保证，无 shell 的 agent 退回纯指令（优雅降级）。脚本永不替代 LLM 判断（搭配生成、健康建议）。
+- 理由: 原「No code」一刀切是自我加严——Open Agent Skills / Claude Code 官方规范本身允许 skill 捆绑 scripts/（agent 经 bash 执行，`$SKILL_PATH/scripts/default.sh` 为标准惯例）。加严同时伤两块：(a) 开发期可测试性（无法自动化回归）；(b) 运行期可靠性（LLM 手写 JSON 缺逗号、算术出错、查重遗漏——恰是确定性环节，脚本最擅长）。放宽 = 回归规范，非背叛。核心定位：脚本是「增强层」非「依赖」——核心能力 100% no-code 守住跨 agent 底线。
+- 被否决的选项:
+  - 保持「No code」原样 —— 否决：可测试性与运行期可靠性持续缺失，且比规范更严、无必要
+  - 整体改「low code」（脚本成为 skill 能力一部分）—— 否决：暗示部分能力依赖代码，破坏跨 agent 底线；正确定位是 no-code 核心 + 可选增强
+  - 脚本塞进 references/ —— 否决：references/ 是给 agent 读的文档，scripts/ 是给 agent 执行的代码，语义与官方惯例应分离
+- 备注: 两个正交层次——dev/（开发者验证，不进分发）vs scripts/（运行时增强，进分发），职责不同勿混。配套落点：AGENTS.md 硬规则 #2 + Repository Layout 补 scripts/。运行期脚本清单（validate_json.py / quantity_check.py / dedup.py）与开发期验证（validate_static.py / golden cases）随后续 step 落地。
+
 ## [2026-08-11] 每日搭配做法原则：组合级极简分组式（最少方法种类）
 - 决策: 做法生成从"每食材一动作"改为**组合级极简分组式**——以整个食材组合为单位设计做法，优先用最少方法种类覆盖全部食材（能一种就一种：全部焯水后亚麻籽油拌 / 全部蒸后撒调料）；一种不够才按处理需求分组（能生吃的不焯水，需熟的才焯水/蒸/煮/烙），每组一句（"X、Y 焯水拌油，Z 生切"）。目标：方法种类最少、烹饪强度最低，最大限度保留原始营养与风味
 - 理由: 2026-08-11 试用暴露"香菇煮汤"式失真输出——为凑排比句式给单味干香菇配复合做法，根因是做法规则只约束句式（1-2 short phrases）与健康性，缺组合级设计与可执行性约束。用户给出更本质的原则：极简烹饪——同一种做法处理尽可能多的食材（鸡胸肉+胡萝卜+洋葱+香菇 → 全部焯水后油拌 / 蒸后撒料），做法数量由食材处理需求决定（秋葵+生菜+黄瓜+苹果 → 秋葵焯水、其余生吃）

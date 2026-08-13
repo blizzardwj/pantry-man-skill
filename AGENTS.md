@@ -6,7 +6,8 @@ This repository is **pantry-man-skill**: a skill for AI agents to manage home pa
 
 ```
 SKILL.md                 # The skill itself (agent-facing instructions)
-references/schema.md     # JSON data schemas (pantry.json, shopping.json, history)
+references/              # Reference docs the agent reads on demand (schema, quantity benchmark, feedback flow)
+scripts/                 # Optional deterministic helpers — see Hard Rule #2 (JSON check, quantity arithmetic, dedup)
 README.md                # User-facing docs (installation, usage)
 IDEAS.md                 # Idea backlog — NOT-YET-implemented ideas
 DECISIONS.md             # Decision record — every design decision + rationale
@@ -18,7 +19,7 @@ LICENSE                  # MIT
 
 1. **Never break cross-agent compatibility.** Use `[AGENT_HOME]` as the placeholder for the agent's home directory — never hardcode `~/.hermes`, `~/.claude`, or any single agent's path. The skill must read identically for every agent.
 
-2. **No code, no scripts.** This is a prompt/instruction skill. Changes should be to instructions and schemas, not executable code. If you think code is needed, record it as an idea in `IDEAS.md` first and discuss before implementing.
+2. **No-code core, optional scripts.** The skill's contract (SKILL.md + references) must stay pure prompt/schema — any agent must be able to use it with zero code execution. An optional `scripts/` directory may provide deterministic helpers (JSON integrity check, quantity arithmetic, dedup) that agents with a shell run for stronger guarantees; the skill must remain fully usable without them (graceful degradation). Scripts never replace LLM judgment (pairing generation, health advice).
 
 3. **Keep instructions unambiguous.** Every operation the skill describes (read, add, remove, check, record) must be stated as a concrete step with a defined data path and schema reference. Agents execute these literally.
 
