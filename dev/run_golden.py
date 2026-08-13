@@ -53,8 +53,8 @@ def target_path(agent_home, data_dir, target):
     return data_dir / target
 
 
-def delegation_prompt(case, data_dir):
-    return (
+def delegation_prompt(case, data_dir, agent_home):
+    prompt = (
         "你是 pantry-man skill 的执行者。用 pantry-man-skill 的规则处理下面这条用户指令。\n\n"
         "【数据目录覆盖 — 必须遵守】\n"
         f"本任务中，skill 里所有 [AGENT_HOME]/pantry/data 路径一律替换为：{data_dir}\n"
@@ -67,6 +67,14 @@ def delegation_prompt(case, data_dir):
         f"- 数据只写到 {data_dir}，不碰其他路径\n"
         "- 最后用一两句话报告：改动了哪些文件、加了/改了什么数据"
     )
+    if "response.txt" in case["assert"]:
+        prompt += (
+            "\n\n【回复落盘 — 必须遵守】\n"
+            f"你的完整回复正文（面向用户的实际回答，如搭配建议全文）必须原样写入文件 "
+            f"{agent_home / 'response.txt'}（UTF-8 纯文本）。不要只写'已完成'——"
+            "response.txt 里放的是你作为 pantry-man 给用户的实际答复。\n"
+        )
+    return prompt
 
 
 def run_assertions(case, agent_home):
@@ -101,7 +109,7 @@ def cmd_prepare(case_id):
         "prompt": case["prompt"],
         "home": str(agent_home),
         "data_dir": str(data_dir),
-        "delegation_prompt": delegation_prompt(case, data_dir),
+        "delegation_prompt": delegation_prompt(case, data_dir, agent_home),
     }
     print(json.dumps(out, ensure_ascii=False, indent=2))
 
