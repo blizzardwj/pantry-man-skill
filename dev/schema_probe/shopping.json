@@ -1,0 +1,27 @@
+{
+  "meta": {
+    "lastUpdated": "2026-08-13T00:00:00+08:00"
+  },
+  "categories": {
+    "food": {
+      "name": "Food",
+      "icon": "🥬",
+      "items": [
+        {
+          "id": "shop_probe1",
+          "name": "糙米",
+          "quantity": {"value": 1, "unit": "kg"},
+          "priority": "normal",
+          "added": "2026-08-13",
+          "checked": false,
+          "tags": ["staple", "low-gi"]
+        }
+      ]
+    },
+    "daily": {
+      "name": "Daily Items",
+      "icon": "🧴",
+      "items": []
+    }
+  }
+}

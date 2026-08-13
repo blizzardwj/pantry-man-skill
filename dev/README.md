@@ -14,13 +14,14 @@ pantry-man-skill 的**开发期验证层**，与运行时脚本 `scripts/`（进
 - `lib/assert_engine.py` — 断言引擎（纯函数，零 LLM）
 - `fixtures/` — 初始数据快照（每个 fixture 一个目录，含 pantry.json 等）
 - `golden_cases/` — 用例定义（`{id, prompt, fixture, assert}`，agent 无关）
+- `schema_probe/` — schema 黄金样例（写满全部字段，供 L1 字段覆盖检查，CI 可用）
 
 ## 用法
 
 ```bash
 # L1 静态校验
-python3 dev/validate_static.py
-python3 dev/validate_static.py --data ~/.hermes/pantry/data/pantry.json   # 附加 schema 字段覆盖
+python3 dev/validate_static.py                                          # 含黄金样例字段覆盖（CI 安全）
+python3 dev/validate_static.py --data ~/.hermes/pantry/data/pantry.json # 附真实数据字段覆盖
 
 # L2 黄金用例（manual executor）
 python3 dev/run_golden.py --all                # 每个用例 setup 后暂停，手动跑 agent 再回车断言

@@ -1,0 +1,19 @@
+{
+  "month": "2026-08",
+  "records": [
+    {
+      "id": "rec_probe1",
+      "date": "2026-08-13",
+      "items": [
+        {"name": "牛奶", "quantity": {"value": 1, "unit": "L"}, "price": 15.0}
+      ],
+      "total": 15.0,
+      "store": "示例超市",
+      "notes": "示例"
+    }
+  ],
+  "stats": {
+    "totalSpent": 15.0,
+    "recordCount": 1
+  }
+}

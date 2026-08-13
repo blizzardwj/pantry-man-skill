@@ -105,16 +105,7 @@ def check_agent_specific():
             )
 
 
-def check_schema_coverage(data_path):
-    print(f"\n[5] schema field coverage (--data {data_path})")
-    import json
-    try:
-        data = json.loads(Path(data_path).read_text(encoding="utf-8"))
-    except Exception as e:
-        fail(f"cannot load data file: {e}")
-        return
-    schema_text = read(REFERENCES / "schema.md")
-
+def _collect_keys(data):
     keys = set()
 
     def collect(obj):
@@ -127,12 +118,41 @@ def check_schema_coverage(data_path):
                 collect(it)
 
     collect(data)
+    return keys
+
+
+def check_schema_keys(keys, label):
+    schema_text = read(REFERENCES / "schema.md")
     missing = sorted(k for k in keys if k not in schema_text)
     if missing:
         for k in missing:
-            warn(f"key not mentioned in schema.md: {k}")
+            warn(f"{label}: key not mentioned in schema.md: {k}")
     else:
-        ok(f"all {len(keys)} data keys mentioned in schema.md")
+        ok(f"{label}: all {len(keys)} data keys mentioned in schema.md")
+
+
+def check_schema_probe():
+    import json
+    print("\n[5] schema field coverage (golden probe)")
+    probe = REPO / "dev" / "schema_probe"
+    if not probe.is_dir():
+        warn("no dev/schema_probe/ - skip")
+        return
+    keys = set()
+    for f in sorted(probe.glob("**/*.json")):
+        keys |= _collect_keys(json.loads(f.read_text(encoding="utf-8")))
+    check_schema_keys(keys, "golden probe")
+
+
+def check_schema_coverage(data_path):
+    import json
+    print(f"\n[6] schema field coverage (--data {data_path})")
+    try:
+        data = json.loads(Path(data_path).read_text(encoding="utf-8"))
+    except Exception as e:
+        fail(f"cannot load data file: {e}")
+        return
+    check_schema_keys(_collect_keys(data), "real data")
 
 
 def main():
@@ -144,6 +164,7 @@ def main():
     check_frontmatter()
     check_references()
     check_agent_specific()
+    check_schema_probe()
     if args.data:
         check_schema_coverage(args.data)
 

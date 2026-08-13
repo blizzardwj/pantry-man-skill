@@ -1,0 +1,22 @@
+{
+  "meta": {
+    "lastUpdated": "2026-08-13T00:00:00+08:00"
+  },
+  "records": [
+    {
+      "id": "fb_probe1",
+      "type": "ingredient-fact",
+      "capturedAt": "2026-08-13T00:00:00+08:00",
+      "source": "示例",
+      "importance": 4,
+      "content": "示例",
+      "landing": {
+        "target": "pantry",
+        "applied": true,
+        "detail": "示例"
+      },
+      "status": "active",
+      "mergedInto": "fb_probe0"
+    }
+  ]
+}

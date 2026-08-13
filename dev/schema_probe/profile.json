@@ -1,0 +1,35 @@
+{
+  "meta": {
+    "lastUpdated": "2026-08-13T00:00:00+08:00"
+  },
+  "dietaryCulture": "chinese",
+  "household": {
+    "persons": 1
+  },
+  "health": {
+    "familyHistory": ["diabetes"],
+    "conditions": ["liver-function-concern"],
+    "notes": "示例"
+  },
+  "preferences": {
+    "avoid": ["refined-carbs"],
+    "prefer": ["low-gi-carbs", "root-vegetable-carbs"],
+    "notes": "示例"
+  },
+  "cookingStyle": ["steam", "boil", "cold-mix"],
+  "shoppingRhythm": {
+    "tripsPerWeek": 2,
+    "daysPerTrip": "3-4"
+  },
+  "pairingTemplates": [
+    {
+      "id": "pt_probe1",
+      "meal": "breakfast",
+      "pattern": "protein + root/tuber + veg + fruit + yogurt",
+      "source": "示例",
+      "confirmed": true
+    }
+  ],
+  "rules": ["示例规则"],
+  "confirmed": false
+}

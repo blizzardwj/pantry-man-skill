@@ -1,0 +1,39 @@
+{
+  "meta": {
+    "lastUpdated": "2026-08-13T00:00:00+08:00",
+    "version": "1.0",
+    "longCycleProbed": true
+  },
+  "zones": {
+    "cold": {
+      "name": "Refrigerator",
+      "icon": "🧊",
+      "items": [
+        {
+          "id": "item_probe1",
+          "name": "牛奶",
+          "quantity": {"value": 2, "unit": "L"},
+          "bought": "2026-08-13",
+          "expires": "2026-08-20",
+          "tags": ["dairy"],
+          "status": "fresh"
+        }
+      ]
+    },
+    "frozen": {
+      "name": "Freezer",
+      "icon": "❄️",
+      "items": []
+    },
+    "ambient": {
+      "name": "Ambient Storage",
+      "icon": "📦",
+      "items": []
+    },
+    "daily": {
+      "name": "Daily Items",
+      "icon": "🧴",
+      "items": []
+    }
+  }
+}
