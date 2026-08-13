@@ -110,3 +110,10 @@
 - 动机: 真实试用发现——每日搭配推荐大量复用 SKILL.md 示例的具体食材与做法措辞（"鸡胸肉平底锅少油烙片""焯水N分钟拌油"一字不差复现）。LLM 把示例当模板库，内容锚定远强于格式学习；示例本意是格式示范，却同时锚定了输出内容，导致搭配趋同（叠加早餐雷同问题）
 - 评估: 根因是示例同时传递「格式」与「内容」两个信号，未显式解耦。方案 A（示例去食材化，类别占位符保留格式骨架）= 最小改动，当前采用；方案 B（保留示例 + 显式反锚定声明）；方案 C（示例降级 references/pairing_examples.md，2-3 个不同风格示例，SKILL.md 只留 workflow + general guide + citation，与 feedback_flow/quantity_benchmark 架构一致）= 未来演进方向
 - 备注: 采购计划类别表（蔬菜/蛋白质/油脂枚举）性质为「内容推荐」而非「格式示例」，锚定风险低（枚举非组合示例），本次不动；若未来推荐出现趋同再评估
+
+## 时间戳时区格式一致性：+08:00 vs +0800
+- 状态: idea
+- 日期: 2026-08-13
+- 动机: L2 黄金用例 add_inventory 首次端到端跑通时，真实 agent 把 meta.lastUpdated 写成 2026-08-13T11:23:01+0800（无冒号），而 SKILL.md Timestamp Format 与 schema.md 示例均为 +08:00（带冒号）。两者都合法 ISO 8601，但暴露「指令说 +08:00、agent 写 +0800」的 gap
+- 评估: 轻微、不影响功能（dates 用 YYYY-MM-DD 是对的）。处理选项：①SKILL.md 明确要求带冒号（收紧）②schema 放宽接受两种（兼容）③断言引擎加时间戳/日期格式校验（增强 golden case，通用价值高）④不管（太轻微）。倾向 ③ 顺带做——把「时间戳/日期格式校验」作为断言引擎的通用谓词，可复用到所有涉及 bought/expires/capturedAt 的用例
+- 备注: 由 dev/run_golden.py + delegate_task 端到端首跑暴露；是 golden case 价值的第一个实证（测出指令 vs 执行的细微落差，而非仅 PASS/FAIL）
