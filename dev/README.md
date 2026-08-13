@@ -58,12 +58,14 @@ python3 dev/run_golden.py --all --no-wait      # 跳过暂停，断言当前状�
 ### 断言谓词
 
 结构化（`*.json`，作用于点号路径 `path`）：
-- `contains` / `not_contains` — 数组内按 `name` 字段匹配
+- `contains` / `not_contains` — 数组内匹配（dict 数组按 `name` 字段；字符串数组直接匹配）
 - `record_exists` — 数组内存在元素满足所有 `字段路径 == 值`
 - `field_equals` — 路径解析值相等
 - `count_gte` / `count_equals` — 数组长度
 
-文本（`*.txt`）：`contains` / `not_contains` 子串检查。
+文本（`*.txt`）：
+- `contains` / `not_contains` — 子串检查（负向词表，如 `not_contains ["汤"]` 抓「香菇煮汤」失真）
+- `max_method_types` — 统计做法中烹饪动词种类数 ≤ max（如 `{"methods": ["焯","蒸","煮","烙","拌","炒","炖","煎","炸","烤"], "max": 3}`，抓「每食材一动作」排比）
 
 ## 原则
 
