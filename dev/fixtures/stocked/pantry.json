@@ -1,0 +1,54 @@
+{
+  "meta": {
+    "lastUpdated": "2026-08-13T00:00:00+08:00",
+    "version": "1.0",
+    "longCycleProbed": true
+  },
+  "zones": {
+    "cold": {
+      "name": "Refrigerator",
+      "icon": "🧊",
+      "items": [
+        {
+          "id": "item_ap1",
+          "name": "苹果",
+          "quantity": {"value": 3, "unit": "个"},
+          "bought": "2026-08-10",
+          "tags": ["fruit"],
+          "status": "fresh"
+        },
+        {
+          "id": "item_cu2",
+          "name": "黄瓜",
+          "quantity": {"value": 2, "unit": "根"},
+          "bought": "2026-08-10",
+          "tags": ["fruit-vegetable"],
+          "status": "fresh"
+        },
+        {
+          "id": "item_eg3",
+          "name": "鸡蛋",
+          "quantity": {"value": 6, "unit": "个"},
+          "bought": "2026-08-10",
+          "tags": ["protein"],
+          "status": "fresh"
+        }
+      ]
+    },
+    "frozen": {
+      "name": "Freezer",
+      "icon": "❄️",
+      "items": []
+    },
+    "ambient": {
+      "name": "Ambient Storage",
+      "icon": "📦",
+      "items": []
+    },
+    "daily": {
+      "name": "Daily Items",
+      "icon": "🧴",
+      "items": []
+    }
+  }
+}

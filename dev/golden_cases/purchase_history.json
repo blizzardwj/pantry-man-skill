@@ -1,0 +1,10 @@
+{
+  "id": "purchase_history",
+  "prompt": "记录一笔购买：牛奶 15 元，面包 12 元",
+  "fixture": "empty",
+  "assert": {
+    "history/2026-08.json": [
+      {"path": "records", "count_gte": 1}
+    ]
+  }
+}

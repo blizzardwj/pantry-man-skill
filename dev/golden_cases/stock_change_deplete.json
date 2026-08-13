@@ -1,0 +1,14 @@
+{
+  "id": "stock_change_deplete",
+  "prompt": "苹果和黄瓜都吃完了",
+  "fixture": "stocked",
+  "assert": {
+    "pantry.json": [
+      {"path": "zones.cold.items", "not_contains": ["苹果", "黄瓜"]},
+      {"path": "zones.cold.items", "contains": ["鸡蛋"]}
+    ],
+    "feedback.json": [
+      {"path": "records", "record_exists": {"type": "stock-change"}}
+    ]
+  }
+}

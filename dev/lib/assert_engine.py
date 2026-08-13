@@ -39,7 +39,13 @@ def resolve_path(obj, path):
 def _names(arr):
     if not isinstance(arr, list):
         return []
-    return [x["name"] for x in arr if isinstance(x, dict) and "name" in x]
+    out = []
+    for x in arr:
+        if isinstance(x, dict) and "name" in x:
+            out.append(x["name"])
+        elif isinstance(x, str):
+            out.append(x)
+    return out
 
 
 def evaluate_json(data, assertion):
