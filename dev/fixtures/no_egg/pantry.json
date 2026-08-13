@@ -1,0 +1,71 @@
+{
+  "meta": {
+    "lastUpdated": "2026-08-13T00:00:00+08:00",
+    "version": "1.0",
+    "longCycleProbed": true
+  },
+  "zones": {
+    "cold": {
+      "name": "Refrigerator",
+      "icon": "🧊",
+      "items": [
+        {
+          "id": "item_ck1",
+          "name": "鸡胸肉",
+          "quantity": {"value": 300, "unit": "g"},
+          "bought": "2026-08-12",
+          "tags": ["protein", "low-fat"],
+          "status": "fresh"
+        },
+        {
+          "id": "item_tf2",
+          "name": "北豆腐",
+          "quantity": {"value": 400, "unit": "g"},
+          "bought": "2026-08-12",
+          "tags": ["protein", "liver-friendly"],
+          "status": "fresh"
+        },
+        {
+          "id": "item_bc3",
+          "name": "西兰花",
+          "quantity": {"value": 200, "unit": "g"},
+          "bought": "2026-08-12",
+          "tags": ["vegetable", "liver-friendly"],
+          "status": "fresh"
+        },
+        {
+          "id": "item_pk4",
+          "name": "南瓜",
+          "quantity": {"value": 500, "unit": "g"},
+          "bought": "2026-08-12",
+          "tags": ["vegetable", "low-gi"],
+          "status": "fresh"
+        }
+      ]
+    },
+    "frozen": {
+      "name": "Freezer",
+      "icon": "❄️",
+      "items": []
+    },
+    "ambient": {
+      "name": "Ambient Storage",
+      "icon": "📦",
+      "items": [
+        {
+          "id": "item_om5",
+          "name": "燕麦片",
+          "quantity": {"value": 1, "unit": "份"},
+          "bought": "2026-08-12",
+          "tags": ["grain", "breakfast"],
+          "status": "fresh"
+        }
+      ]
+    },
+    "daily": {
+      "name": "Daily Items",
+      "icon": "🧴",
+      "items": []
+    }
+  }
+}

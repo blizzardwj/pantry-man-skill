@@ -1,0 +1,13 @@
+{
+  "id": "landing_onion_yogurt",
+  "prompt": "我今天的早餐是鸡肉、洋葱、自制酸奶",
+  "fixture": "empty",
+  "assert": {
+    "pantry.json": [
+      {"path": "zones.cold.items", "contains": ["洋葱", "自制酸奶"]}
+    ],
+    "feedback.json": [
+      {"path": "records", "record_exists": {"type": "ingredient-fact"}}
+    ]
+  }
+}

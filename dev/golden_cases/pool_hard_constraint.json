@@ -1,0 +1,10 @@
+{
+  "id": "pool_hard_constraint",
+  "prompt": "今晚吃什么",
+  "fixture": "no_egg",
+  "assert": {
+    "response.txt": [
+      {"not_contains": ["鸡蛋"]}
+    ]
+  }
+}
