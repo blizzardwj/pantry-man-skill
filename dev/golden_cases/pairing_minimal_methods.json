@@ -1,0 +1,10 @@
+{
+  "id": "pairing_minimal_methods",
+  "prompt": "今晚吃什么",
+  "fixture": "no_egg",
+  "assert": {
+    "response.txt": [
+      {"max_method_types": {"methods": ["焯", "蒸", "煮", "烙", "拌", "炒", "炖", "煎", "炸", "烤"], "max": 3}}
+    ]
+  }
+}

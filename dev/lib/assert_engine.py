@@ -93,6 +93,11 @@ def evaluate_text(text, assertion):
     if "not_contains" in assertion:
         hit = [w for w in assertion["not_contains"] if w in text]
         return (not hit, f"text not_contains {assertion['not_contains']} (found: {hit})")
+    if "max_method_types" in assertion:
+        methods = assertion["max_method_types"]["methods"]
+        max_n = assertion["max_method_types"]["max"]
+        found = [m for m in methods if m in text]
+        return (len(found) <= max_n, f"text method types <= {max_n} (found {len(found)}: {found})")
     raise AssertionError(f"unknown text assertion: {assertion}")
 
 

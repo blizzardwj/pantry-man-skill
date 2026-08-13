@@ -1,0 +1,38 @@
+{
+  "meta": {
+    "lastUpdated": "2026-08-13T00:00:00+08:00",
+    "version": "1.0",
+    "longCycleProbed": true
+  },
+  "zones": {
+    "cold": {
+      "name": "Refrigerator",
+      "icon": "🧊",
+      "items": []
+    },
+    "frozen": {
+      "name": "Freezer",
+      "icon": "❄️",
+      "items": []
+    },
+    "ambient": {
+      "name": "Ambient Storage",
+      "icon": "📦",
+      "items": [
+        {
+          "id": "item_mu1",
+          "name": "香菇",
+          "quantity": {"value": 1, "unit": "份"},
+          "bought": "2026-08-12",
+          "tags": ["vegetable", "dry-goods"],
+          "status": "fresh"
+        }
+      ]
+    },
+    "daily": {
+      "name": "Daily Items",
+      "icon": "🧴",
+      "items": []
+    }
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "id": "dry_good_no_soup",
+  "prompt": "香菇怎么吃",
+  "fixture": "single_dry_good",
+  "assert": {
+    "response.txt": [
+      {"not_contains": ["汤"]}
+    ]
+  }
+}
