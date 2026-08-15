@@ -1,6 +1,6 @@
 ---
 name: pantry-man
-description: Manage home pantry inventory, shopping lists, and purchase history. Use when the user asks about (1) adding/viewing/searching inventory by zone (cold/frozen/ambient/daily), (2) managing shopping lists for food and daily items, (3) recording purchases and viewing purchase history, (4) checking expiry dates or items running low, (5) meal planning — shopping plans (采购计划) and daily food pairings (每日搭配) as independent features, plus the weekly plan (周计划) orchestrator that chains them per the user's shopping rhythm, all based on the user's dietary profile and current stock.
+description: Manage home pantry inventory, shopping lists, and purchase history. Use when the user asks about (1) adding/viewing/searching inventory by zone (cold/frozen/ambient/daily), (2) managing shopping lists for food and daily items, (3) recording purchases and viewing purchase history, (4) checking expiry dates or items running low, (5) meal planning — shopping plans (采购计划), daily food pairings (每日搭配), and ingredient consultation (食材咨询) as independent features, plus the weekly plan (周计划) orchestrator that chains them per the user's shopping rhythm, all based on the user's dietary profile and current stock.
 ---
 
 # Pantry Management
@@ -111,7 +111,7 @@ SKILL.md 只承载通用框架——任何用户的个性化规则、模板、�
 
 ## Meal Planning
 
-Two independent features — 🛒 采购计划 Shopping Plan and 🍽 每日搭配 Daily Pairings — plus 📆 周计划 Weekly Plan, an orchestrator that chains them per the user's shopping rhythm. **Order is fixed: shopping list first, pairings second.** Pairings are derived from the confirmed list (素材→组合 dependency) — never the other way around. Each feature has its own trigger, confirmation gate, and adjustment path, so the user can run any of them standalone (e.g., "今晚吃什么" only needs Daily Pairings).
+Three independent features — 🛒 采购计划 Shopping Plan, 🍽 每日搭配 Daily Pairings, and 🥗 食材咨询 Ingredient Consultation — plus 📆 周计划 Weekly Plan, an orchestrator that chains the first two per the user's shopping rhythm. **Order is fixed: shopping list first, pairings second.** Pairings are derived from the confirmed list (素材→组合 dependency) — never the other way around. Each feature has its own trigger, so the user can run any of them standalone (e.g., "今晚吃什么" only needs Daily Pairings); 采购计划/每日搭配 carry a confirmation gate, 食材咨询 is read-only.
 
 This is the skill's value-generating feature: planning fills the shopping list, so the user confirms and adjusts instead of entering data item by item.
 
@@ -266,9 +266,31 @@ Rules:
      才焯水/蒸/煮/烙），每组一句（"X、Y 焯水拌油，Z 生切"）
   ② 目标：方法种类最少、烹饪强度最低，最大限度保留原始营养与风味
 
+### 🥗 食材咨询 Ingredient Consultation (independent feature)
+
+Trigger: user names a food category / specific food and asks how to eat or pair it ("海带怎么吃" / "魔芋怎么搭" / "这类食材怎么搭") — distinct from 采购计划 (买什么) and 每日搭配 (今天吃什么).
+
+Flow:
+```
+1. Map the food to its category in [ingredient_knowledge.md](references/ingredient_knowledge.md)
+   → read that category's three parts (① 特性 ② 提味原理 ③ 安全建议).
+2. Read profile.json → apply prefer/avoid/cookingStyle/health as the personalization
+   layer (e.g. 肝功能不佳 → 控钠建议生效；avoid refined-carbs → 不用糖提味).
+3. Output the combined answer — grounded in the knowledge file, personalized by profile:
+   ① 特性（简要带出为什么这么吃）② 提味/做法方向（提味原理 × cookingStyle）
+   ③ 安全建议（按画像过滤：控钠/控糖/护肝等生效）.
+4. Include the health disclaimer when the answer touches chronic conditions
+   (see ⚠️ Health Disclaimer below).
+```
+
+Rules:
+- This entry answers "how to handle / flavor / watch out for THIS food category" — NOT "今天三顿怎么组合" (that is 每日搭配), NOT a fixed recipe list (无固定食谱；跨食材组合保持动态).
+- 通用知识 from ingredient_knowledge.md, 个性化 from profile.json — never hardcode a user's rules into SKILL.md.
+- If the user follows up with "今晚怎么吃这个", hand off to 每日搭配 (it draws the actual meal combo from current stock).
+
 ### 📆 周计划 Weekly Plan (orchestrator)
 
-Trigger: "这周买什么" / "本周怎么安排" / weekly planning. This feature chains the two independent features above — it does NOT duplicate their logic.
+Trigger: "这周买什么" / "本周怎么安排" / weekly planning. This feature chains 🛒 采购计划 and 🍽 每日搭配 above (not 食材咨询) — it does NOT duplicate their logic.
 
 Flow:
 ```
@@ -313,6 +335,7 @@ Use format: `{type}_{random_6_chars}` (e.g., `item_a1b2c3`, `shop_x9y8z7`, `rec_
 - See [schema.md](references/schema.md) for complete data structure definitions.
 - See [quantity_benchmark.md](references/quantity_benchmark.md) for the adult
   daily intake baselines used by the Shopping Plan quantity check.
+- See [ingredient_knowledge.md](references/ingredient_knowledge.md) for per-category food knowledge (特性/提味原理/安全建议) used by 食材咨询.
 
 ## Scheduled Reminders (Recommended)
 
