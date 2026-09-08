@@ -165,6 +165,18 @@ User dietary profile — drives weekly meal planning recommendations. **Optional
       "confirmed": true
     }
   ],
+  "exemplars": [
+    {
+      "id": "ex_a1b2c3",
+      "name": "蒸鲷鱼山药",
+      "ingredients": ["鲷鱼", "山药"],
+      "method": "鲷鱼、山药同锅蒸，出锅撒少量欧芹海盐大蒜粉",
+      "meal": "any",
+      "source": "2026-08-28 用户自创",
+      "confirmed": true,
+      "addedAt": "2026-08-28"
+    }
+  ],
   "rules": [
     "生成采购计划前先确认人数"
   ],
@@ -189,8 +201,24 @@ User dietary profile — drives weekly meal planning recommendations. **Optional
 | `shoppingRhythm.tripsPerWeek` | number | Shopping trips per week | `2` |
 | `shoppingRhythm.daysPerTrip` | string | Days covered per trip | `"3-4"` |
 | `pairingTemplates` | array | Confirmed meal-structure templates (user-specific, from feedback; see [feedback_flow.md](feedback_flow.md)) | `[{"meal":"breakfast","pattern":"protein + root/tuber + 2-3 veg + fruit + yogurt"}]` |
+| `exemplars` | array | User-verified concrete dishes — **instance-level** feedback (distinct from `pairingTemplates` structure). Consumed by Daily Pairings as in-context positive examples; multiple similar exemplars can later be promoted to a `pairingTemplates` entry (instance→structure). See [feedback_flow.md](feedback_flow.md) | `[{"name":"蒸鲷鱼山药","ingredients":["鲷鱼","山药"],"method":"同锅蒸…"}]` |
 | `rules` | array | User-level flow rules (confirmed, from feedback — never edits to SKILL.md) | `["生成采购计划前先确认人数"]` |
 | `confirmed` | boolean | Whether user has confirmed the profile | `false` |
+
+### Exemplar Structure（实例级范例）
+
+| Field | Type | Description | Example |
+|-------|------|-------------|---------|
+| `id` | string | Unique identifier（前缀 `ex_`）| `ex_a1b2c3` |
+| `name` | string | 简短名，便于检索/引用 | `蒸鲷鱼山药` |
+| `ingredients` | array | 主食材组合（只列食材名，不带做法动词/成菜名；调味料归 method）| `["鲷鱼","山药"]` |
+| `method` | string | 做法一句话（组合级极简分组式，含调味）| `同锅蒸，出锅撒少量欧芹海盐大蒜粉` |
+| `meal` | string | 适用餐次 `breakfast / lunch / dinner / any` | `any` |
+| `source` | string | 来源 | `2026-08-28 用户自创` |
+| `confirmed` | boolean | 是否确认（用户提供即 true）| `true` |
+| `addedAt` | string | 添加日期 | `2026-08-28` |
+
+- **消费方式**（RQ-6，见 [feedback_flow.md](feedback_flow.md)）：每日搭配生成时，凡范例的主食材 ⊆ 当前食材池 → 优先以 in-context 范例引用（"照你上次的蒸鲷鱼山药做"）；多道相似范例 → 可提升为 `pairingTemplates` 结构模板（instance→structure）。
 
 ### Health & Preference Keywords (controlled vocabulary)
 
