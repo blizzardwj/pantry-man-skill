@@ -172,9 +172,9 @@ User dietary profile — drives weekly meal planning recommendations. **Optional
       "ingredients": ["鲷鱼", "山药"],
       "method": "鲷鱼、山药同锅蒸，出锅撒少量欧芹海盐大蒜粉",
       "meal": "any",
-      "source": "2026-08-28 用户自创",
+      "source": "2026-09-08 用户自创",
       "confirmed": true,
-      "addedAt": "2026-08-28"
+      "addedAt": "2026-09-08"
     }
   ],
   "rules": [
@@ -214,9 +214,10 @@ User dietary profile — drives weekly meal planning recommendations. **Optional
 | `ingredients` | array | 主食材组合（只列食材名，不带做法动词/成菜名；调味料归 method）| `["鲷鱼","山药"]` |
 | `method` | string | 做法一句话（组合级极简分组式，含调味）| `同锅蒸，出锅撒少量欧芹海盐大蒜粉` |
 | `meal` | string | 适用餐次 `breakfast / lunch / dinner / any` | `any` |
-| `source` | string | 来源 | `2026-08-28 用户自创` |
+| `source` | string | 来源 | `2026-09-08 用户自创` |
 | `confirmed` | boolean | 是否确认（用户提供即 true）| `true` |
-| `addedAt` | string | 添加日期 | `2026-08-28` |
+| `addedAt` | string | 添加日期 | `2026-09-08` |
+| `structure` | string | （可选）同结构归组标签，固定下来时才记（RQ-6 上升路径阶段 B）| `protein-fish + root-staple + steam` |
 
 - **消费方式**（RQ-6，见 [feedback_flow.md](feedback_flow.md)）：每日搭配生成时，凡范例的主食材 ⊆ 当前食材池 → 优先以 in-context 范例引用（"照你上次的蒸鲷鱼山药做"）；多道相似范例 → 可提升为 `pairingTemplates` 结构模板（instance→structure）。
 
