@@ -229,19 +229,25 @@ If the shopping list has no items for the current segment, tell the user to gene
 Flow:
 ```
 1. Read shopping.json (current segment items) + pantry.json (stock) → build the ingredient pool
-   → Also read profile.json: `pairingTemplates`, prefer/avoid/cookingStyle
+   → Also read profile.json: `exemplars`, `pairingTemplates`, prefer/avoid/cookingStyle
    → If today has feedback, run the Review hook first (see [feedback_flow.md](references/feedback_flow.md))
-2. For each day in the segment, propose 3 meals (早/午/晚) with THREE-LEVEL
-   REFERENCE (template > profile > generic — see [feedback_flow.md](references/feedback_flow.md)):
-     ① 模板层 template: confirmed `pairingTemplates` for that meal define the
+2. For each day in the segment, propose 3 meals (早/午/晚) with FOUR-LEVEL
+   REFERENCE (exemplar > template > profile > generic — see [feedback_flow.md](references/feedback_flow.md)):
+     ① 范例层 exemplar: user-verified concrete dishes (`profile.exemplars`).
+        If an exemplar's `ingredients` ⊆ the current ingredient pool AND its
+        `meal` matches the slot (or is `any`) → cite it as an in-context
+        positive example（"照你上次的蒸鲷鱼山药做"）, reusing its combo +
+        method; when several fit, rotate to avoid repetition. This is
+        instance-level reuse, distinct from the structural templates below.
+     ② 模板层 template: confirmed `pairingTemplates` for that meal define the
         structure (e.g. breakfast = protein + root/tuber + 2-3 veg + fruit +
         yogurt); multiple templates for one meal → rotate to avoid repetition
-     ② 画像层 profile: prefer/avoid/cookingStyle govern ingredient choice & method
-     ③ 通用准则层 generic: FIXED 3-PART PATTERN — every pairing MUST include:
+     ③ 画像层 profile: prefer/avoid/cookingStyle govern ingredient choice & method
+     ④ 通用准则层 generic: FIXED 3-PART PATTERN — every pairing MUST include:
         ① 食材组合 ingredients  ② 价值 value/why  ③ 做法 minimal grouped
         preparation（极简分组式，见 Rules）
-   Conflict: templates are structure, never break health constraints —
-   profile/health rules win, template downgraded to reference.
+   Conflict: exemplars and templates are instance/structure, never break health
+   constraints — profile/health rules win, exemplar/template downgraded to reference.
 3. Display as per-day blocks with meals as LIST items — the format example
    below shows SHAPE ONLY: ingredients are category placeholders, generate
    your own combos, values, and cooking wording from stock + profile
