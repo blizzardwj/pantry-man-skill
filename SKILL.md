@@ -245,11 +245,15 @@ Flow:
 2. For each day in the segment, propose 3 meals (早/午/晚) with FOUR-LEVEL
    REFERENCE (exemplar > template > profile > generic — see [feedback_flow.md](references/feedback_flow.md)):
      ① 范例层 exemplar: user-verified concrete dishes (`profile.exemplars`).
-        If an exemplar's `ingredients` ⊆ the current ingredient pool AND its
-        `meal` matches the slot (or is `any`) → cite it as an in-context
-        positive example（"照你上次的蒸鲷鱼山药做"）, reusing its combo +
-        method; when several fit, rotate to avoid repetition. This is
-        instance-level reuse, distinct from the structural templates below.
+        - 直接复用 direct reuse: if an exemplar's `ingredients` ⊆ the pool AND
+          its `meal` matches the slot (or `any`) → cite it in-context（"照你
+          上次的蒸鲷鱼山药做"）; when several fit, rotate to avoid repetition.
+        - 结构泛化 structure generalization（experimental）: map the exemplar's
+          ingredients to categories（鲷鱼→fish/protein，山药→root-staple）, then
+          swap in same-category items already in the pool → propose a new combo
+          that keeps the structure but changes the ingredients（如「蒸鲷鱼山药」
+          →「蒸鳕鱼土豆」）. This tests whether the structure generalizes before
+          it is ever promoted to a template.
      ② 模板层 template: confirmed `pairingTemplates` for that meal define the
         structure (e.g. breakfast = protein + root/tuber + 2-3 veg + fruit +
         yogurt); multiple templates for one meal → rotate to avoid repetition
