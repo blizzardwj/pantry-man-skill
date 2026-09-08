@@ -61,6 +61,7 @@ Record format（字段定义见 [schema.md](schema.md)）：
 | 状态事实 state fact | `pantry` / `shopping` | imp ≥ 3 applied immediately；"吃完"类写 `landing.applied: false` 作为**耗尽候选 depleted candidate**，计划时消费 |
 | 约束偏好 constraint preference | `profile` | prefer / avoid / cookingStyle / notes |
 | 结构偏好 structure preference | `profile.pairingTemplates` | 新增或修正模板 |
+| 实例偏好 instance preference（验证过的具体菜/正向范例）| `profile.exemplars` | 新增 confirmed 范例；多道相似范例可提升为结构模板（instance→structure）|
 | 流程规则 flow rule | `profile.rules` | 用户级，不改 SKILL.md |
 
 ## ④ Threshold hook（写侧 · 同日静默整理）
@@ -93,10 +94,11 @@ Record format（字段定义见 [schema.md](schema.md)）：
         → ③ 落点判定（写入 pantry / shopping / profile）
         → ④ Threshold hook（同日阈值整理：merge / 消解 / 升级）
         → ⑤ Review hook（生成计划/搭配时：补漏落点 + 耗尽候选 + 主动澄清）
-        → 生成时消费（计划遵循 profile.rules + 候选；搭配按 模板>画像>通用）
+        → 生成时消费（计划遵循 profile.rules + 候选 + 范例保供；搭配按 范例>模板>画像>通用）
 升级路径（确认后，均用户数据，不改 SKILL.md）:
   约束 constraint → profile prefer/avoid/cookingStyle/notes
   结构 structure  → profile.pairingTemplates（confirmed: true）
+  实例 instance   → profile.exemplars（confirmed: true）
   流程 flow       → profile.rules
   状态 state      → pantry/shopping（applied）
 ```
