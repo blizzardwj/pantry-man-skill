@@ -189,6 +189,17 @@ Flow:
 
 Apply the profile: avoid `refined-carbs`/`unhealthy-fats` → choose `low-gi-carbs`/`heart-healthy-fats`/`high-protein`/`soluble-fiber` (适量水溶性膳食纤维). For each item, give a **rough quantity** (e.g., 南瓜 500g, 鸡蛋 10枚, 鸡胸肉 500g) — enough for the segment's meals.
 
+**Exemplar replenish（拿手菜主料保供）:**
+```
+5b. Read profile.exemplars (if any) → for each confirmed exemplar's
+    ingredients, check pantry.json stock:
+    - NOT in stock → add it to its corresponding category with note
+      「你的拿手菜『<name>』还差 <ingredient>，本次已列入」
+    - in stock → skip (the stock-aware rule above already covers it)
+    Stock absence is the only criterion — do not judge by storage shelf-life.
+    （数量仍由 step 7 QUANTITY CHECK 兜底）
+```
+
 ```
 6. **PLAN-TIME REVIEW — feedback backfill (only when today has feedback):**
    Run the Review hook per [feedback_flow.md](references/feedback_flow.md):
