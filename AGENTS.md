@@ -6,14 +6,18 @@ This repository is **pantry-man-skill**: a skill for AI agents to manage home pa
 
 ```
 SKILL.md                 # The skill itself (agent-facing instructions)
-references/              # Reference docs the agent reads on demand (schema, quantity benchmark, feedback flow)
-scripts/                 # Optional deterministic helpers — see Hard Rule #2 (JSON check, quantity arithmetic, dedup)
+references/              # On-demand docs (schema, quantity benchmarks, feedback flow, ingredient knowledge)
+dev/                     # Architecture proposals, development validation, regression cases, and fixtures
+AGENTS.md                # Contributor instructions for coding agents
 README.md                # User-facing docs (installation, usage)
-IDEAS.md                 # Idea backlog — NOT-YET-implemented ideas
+IDEAS.md                 # Idea backlog with status and history (idea, planned, implemented, dropped)
 DECISIONS.md             # Decision record — every design decision + rationale
 RESEARCH.md              # Research notes — RQ investigation, candidate designs, constraints
 LICENSE                  # MIT
+.gitignore               # User data and local artifact exclusions
 ```
+
+`scripts/` is optional and has not been created. It may contain deterministic runtime helpers (JSON checks, quantity arithmetic, deduplication); see Hard Rule #2. `dev/` contains design documents and development-only validation and is not part of the skill distribution.
 
 ## Hard Rules
 

@@ -1,10 +1,10 @@
-# dev/ — 开发期验证（dev-only，不进 skill 分发）
+# dev/ — 设计文档与开发期验证（dev-only，不进 skill 分发）
 
-pantry-man-skill 的**开发期验证层**，与运行时脚本 `scripts/`（进分发）正交：
+pantry-man-skill 的**设计文档与开发期验证层**，与可选运行时脚本 `scripts/`（创建后进分发）分开：
 
 | 目录 | 用途 | 进分发 |
 |------|------|--------|
-| `dev/`（本目录） | 测 skill 本身对不对（回归） | 否 |
+| `dev/`（本目录） | 架构方案、开发期验证与回归 | 否 |
 | `scripts/` | 帮 agent 运行时把操作做对（校验） | 是 |
 
 ## 内容
@@ -70,7 +70,7 @@ python3 dev/run_golden.py --all --no-wait      # 跳过暂停，断言当前状�
 
 ## 原则
 
-- 纯 Python 标准库，零依赖
+- 验证工具使用纯 Python 标准库，零依赖
 - 断言只针对数据文件最终状态（objective ground truth），不评文案好坏
 - executor 是薄接口：现在 manual，后续接 Hermes delegate / `claude -p` / `codex exec`
 - 不进入 skill 分发
