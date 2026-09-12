@@ -188,6 +188,7 @@ Flow:
 | 主食 staples | 糙米、燕麦、全麦、薯类 | Low-GI per profile (avoid refined carbs) |
 
 Apply the profile: avoid `refined-carbs`/`unhealthy-fats` → choose `low-gi-carbs`/`heart-healthy-fats`/`high-protein`/`soluble-fiber` (适量水溶性膳食纤维). For each item, give a **rough quantity** (e.g., 南瓜 500g, 鸡蛋 10枚, 鸡胸肉 500g) — enough for the segment's meals.
+Within a category, prefer the higher-fiber-density variety when the profile calls for 膳食纤维 (e.g. 鲜豆类／菌藻／高纤蔬菜) — see `references/ingredient_knowledge.md` → 「膳食纤维速查（跨类别）」. Mind the 口径 there: 鲜品与干品数值不可直接比较.
 
 **Exemplar replenish（拿手菜主料保供）:**
 ```
@@ -298,6 +299,10 @@ Flow:
 ```
 1. Map the food to its category in [ingredient_knowledge.md](references/ingredient_knowledge.md)
    → read that category's three parts (① 特性 ② 提味原理 ③ 安全建议).
+   → For 纤维含量/排序/选品类问题（"哪种纤维高"、"这次该多买哪类"、"纤维够不够"）
+     ALSO read the 「膳食纤维速查（跨类别）」section — cross-category ranking lives
+     there, not in the per-category tables. Check 口径 first (鲜重/干重、
+     不溶性/总纤维): numbers with different baselines are NOT comparable.
 2. Read profile.json → apply prefer/avoid/cookingStyle/health as the personalization
    layer (e.g. 肝功能不佳 → 控钠建议生效；avoid refined-carbs → 不用糖提味).
 3. Output the combined answer — grounded in the knowledge file, personalized by profile:
@@ -359,7 +364,7 @@ Use format: `{type}_{random_6_chars}` (e.g., `item_a1b2c3`, `shop_x9y8z7`, `rec_
 - See [schema.md](references/schema.md) for complete data structure definitions.
 - See [quantity_benchmark.md](references/quantity_benchmark.md) for the adult
   daily intake baselines used by the Shopping Plan quantity check.
-- See [ingredient_knowledge.md](references/ingredient_knowledge.md) for per-category food knowledge (特性/提味原理/安全建议) used by 食材咨询.
+- See [ingredient_knowledge.md](references/ingredient_knowledge.md) for per-category food knowledge (特性/提味原理/安全建议) used by 食材咨询, plus the cross-category 「膳食纤维速查」 used by 食材咨询 and 采购计划 selection.
 
 ## Scheduled Reminders (Recommended)
 
