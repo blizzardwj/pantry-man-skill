@@ -1,0 +1,49 @@
+{
+  "meta": {
+    "lastUpdated": "2026-08-28T09:00:00+08:00",
+    "version": "1.0",
+    "longCycleProbed": true
+  },
+  "zones": {
+    "cold": {
+      "name": "Refrigerator",
+      "icon": "🧊",
+      "items": [
+        {
+          "id": "item_okr002",
+          "name": "北豆腐",
+          "quantity": { "value": 300, "unit": "g" },
+          "bought": "2026-08-28",
+          "tags": ["protein", "liver-friendly"],
+          "status": "fresh",
+          "itemKey": "food_tofu"
+        }
+      ]
+    },
+    "frozen": {
+      "name": "Freezer",
+      "icon": "❄️",
+      "items": []
+    },
+    "ambient": {
+      "name": "Ambient Storage",
+      "icon": "📦",
+      "items": [
+        {
+          "id": "item_ric001",
+          "name": "糙米",
+          "quantity": { "value": 1, "unit": "kg" },
+          "bought": "2026-08-13",
+          "tags": ["staple", "low-gi"],
+          "status": "fresh",
+          "itemKey": "food_brown_rice"
+        }
+      ]
+    },
+    "daily": {
+      "name": "Daily Items",
+      "icon": "🧴",
+      "items": []
+    }
+  }
+}

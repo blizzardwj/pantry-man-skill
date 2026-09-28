@@ -1,0 +1,15 @@
+{
+  "id": "refill_decay",
+  "prompt": "我刚买了 300g 秋葵，帮我记一下",
+  "fixture": "depleted_okra",
+  "assert": {
+    "pantry.json": [
+      { "path": "zones.cold.items", "contains": ["秋葵"] }
+    ],
+    "feedback.json": [
+      { "path": "records", "record_exists": { "id": "fb_okra01", "status": "decayed" } },
+      { "path": "records", "record_exists": { "itemKey": "food_okra", "status": "active" } },
+      { "path": "records", "count_gte": 2 }
+    ]
+  }
+}
