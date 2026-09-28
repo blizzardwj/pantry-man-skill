@@ -26,7 +26,7 @@ Before executing ANY user request, check whether the pantry data directory exist
 2. Check if `[AGENT_HOME]/pantry/data/pantry.json` exists. If not, create it with the empty seed structure from [schema.md](references/schema.md).
 3. Check if `[AGENT_HOME]/pantry/data/shopping.json` exists. If not, create it with the empty seed structure.
 4. Check if `[AGENT_HOME]/pantry/data/history/` exists. If not, create it.
-5. Check if `[AGENT_HOME]/pantry/data/feedback.json` exists. If not, create it with the empty seed structure (`{"meta": {"lastUpdated": "<now>"}, "records": []}`).
+5. Check if `[AGENT_HOME]/pantry/data/feedback.json` exists. If not, create its version 2 seed from [schema.md](references/schema.md). Legacy feedback is not migrated or interpreted; follow the legacy-data rule in [feedback_flow.md](references/feedback_flow.md).
 
 After creating any missing files, confirm briefly to the user, e.g.:
 
@@ -35,6 +35,8 @@ After creating any missing files, confirm briefly to the user, e.g.:
 If all files already exist, skip silently — no need to announce.
 
 ## Core Operations
+
+Before mutations, read the relevant structures in [schema.md](references/schema.md) and the write/recovery steps in [feedback_flow.md](references/feedback_flow.md). Reuse `itemKey` across inventory, shopping and feedback; item IDs identify individual entries. Explicit user operations take effect regardless of feedback importance; agent-generated purchase suggestions require confirmation. A later explicit edit cancels conflicting pending writes, so recovery cannot re-add an item the user removed.
 
 ### Inventory
 
@@ -48,12 +50,20 @@ If the inventory has NO long-cycle items recorded (empty, or only short-cycle fr
 
 **Add item:**
 ```
-Read pantry.json → Append to zones.{zone}.items → Write back
+Read pantry.json + feedback.json → identify itemKey and existing stock
+→ record the reported stock fact and apply its landings per feedback_flow.md
+→ update the relevant zone without duplicating stock; decay only superseded
+  depletion records for that item. "Already have" does not prove a purchase.
 ```
 
 **Remove item:**
 ```
 Read pantry.json → Remove from zones.{zone}.items by id → Write back
+Use feedback_flow.md to record the actual removal and supersede conflicting
+unfinished writes; do not create a depletion fact without a depletion report.
+If the user explicitly reports depletion, capture one depleted record per food
+and remove only the stock covered by that statement. A plain removal request
+does not prove the item was consumed; expiry alone is not a depletion report.
 ```
 
 **Check expiry:**
@@ -70,21 +80,34 @@ Read shopping.json → Format items from categories.food/daily
 
 **Add item:**
 ```
-Read shopping.json → Append to categories.{category}.items → Write back
+Read shopping.json → match itemKey among unchecked items → add/update only the
+requested item in categories.{category}.items → Write back
+Record the authorized update via landings in feedback_flow.md.
+Adding to the list does not replenish inventory or decay depletion feedback.
 ```
+
+**Remove item:** remove the requested shopping entry through the write/recovery steps in feedback_flow.md, superseding any unfinished addition of that entry. Do not infer purchase, stock, or lasting dislike; leave depletion feedback unchanged. Later plans may selectively recommend it again. Do not automatically re-add it during the same adjustment.
 
 **Mark as bought:**
 ```
-Read shopping.json → Set item.checked = true OR remove item → Write back
+Read shopping.json + pantry.json + feedback.json → run the purchase steps in
+feedback_flow.md: update actual stock, set the purchased entry checked = true,
+record supported purchase details, and decay only that item's older depletion.
+Reuse the same feedback event and target IDs on retry; do not add stock twice.
 ```
 
 ### Purchase History
 
 **Record a purchase:**
 ```
-1. Determine current month file (YYYY-MM.json), create if not exists
-2. Read the file → Append record to records array → Update stats → Write back
-3. Verify JSON is valid before save (e.g., no missing commas)
+1. Run the purchase steps in feedback_flow.md, including inventory, matching
+   shopping items, and depletion feedback; this is the same event as "bought".
+2. Use the reported purchase date to choose history/YYYY-MM.json. Do not infer
+   purchase date from capture time. If date is unknown, retain the purchase
+   fact in feedback.json; defer the monthly record until the date is known.
+3. Reuse the record ID on retry, recompute stats from records, validate and save.
+   A historical purchase does not establish current stock; apply only known
+   current stock effects. Never invent quantities, dates, prices or totals.
 ```
 
 **View history:**
@@ -105,6 +128,8 @@ User corrections, new facts, and preferences are the highest-value signal for pr
 
 - **三层 hooks（术语）**：agent 无常驻进程，反馈处理挂在宿主流程的自然执行点上——`capture hook`（对话中即时捕获）→ `threshold hook`（同日阈值静默整理）→ `review hook`（生成计划/搭配前兜底消费）。写侧（capture/threshold）与读侧（review）双向触发，同一状态机首尾相接。
 - **落点**：个性化输出（偏好/模板/用户级流程规则）始终沉淀到用户数据（`profile.json` / `pantry.json` / `shopping.json`）——**never edit SKILL.md for a user's rules**；SKILL.md 保持跨用户通用框架。
+- **事实与操作分开**：feedback 每种食材单独记录 `itemKey`、`stockEvent`；`landings[]` 分别记录已授权的数据更新，`applied` 只表示该更新是否完成。库存已清零、耗尽事实仍为 active，可以同时成立；不买、删清单、加入待购均不使它 decayed。
+- **读取与补问**：每次生成计划前核对有效耗尽事实和未完成操作，不限当天；候选结合画像、库存、已有清单和本次目标选择。采购确认中删 ≥3 项时当场补问一次，使用 `shopping.json.confirmation` 防止重复；未回答不猜测、不跨计划追问。
 - 📖 **完整流程（信号表 / 冲突避免 / 落点判定 / 三层 hooks / 支持规则 / 闭环图）见 [feedback_flow.md](references/feedback_flow.md)——生成搭配与采购计划前、捕获反馈落点时必读。**
 
 SKILL.md 只承载通用框架——任何用户的个性化规则、模板、偏好都沉淀在用户数据中。
@@ -129,14 +154,16 @@ Stored at `[AGENT_HOME]/pantry/data/profile.json` (see [schema.md](references/sc
 
 ### Inventory Awareness (stock-aware planning)
 
-Long-cycle staples (dry goods, oils, nuts, grains) are stocked for weeks, not days — recommending them every week causes duplicate purchases. Short-cycle fresh items (vegetables, fruit, fish, tofu) are bought weekly anyway, so stock awareness matters little for them.
+Long-cycle staples (dry goods, oils, nuts, grains) are stocked for weeks, not days. Fresh items follow the shopping rhythm, but existing usable stock still counts toward the segment's needs.
 
 **Stock-aware rule:**
 ```
 Read pantry.json → for each long-cycle category (oils/fats, nuts, staples,
 dry goods), if the item already exists in ambient/daily zones → SKIP it in
 the plan (or suggest a refill only if quantity is nearly depleted).
-Fresh items are always recommended per the weekly rhythm.
+For fresh items, subtract known usable stock from planned needs; unknown
+quantity is not zero. Do not describe an item as depleted when stock is known
+to be available. Check unchecked shopping items to avoid duplicate demand.
 ```
 
 **Cold-start probe (general rule — fires on ANY inventory read, not just planning):**
@@ -156,8 +183,8 @@ When pantry.json has no long-cycle items recorded (empty, or only short-cycle fr
    - Record what the user confirms into pantry.json (ambient zone, no expiry needed for staples) and set `meta.longCycleProbed: true` → future plans skip them (or recommend them if the user said none).
 
 **Stock grows through daily behaviors, not audits:**
-- Purchase → also append to pantry.json (buy = restock)
-- Expiry alert → ask "吃完了吗？" → remove from inventory (consume = deplete)
+- Current purchase/restock → update pantry.json and affected depletion feedback via feedback_flow.md
+- Expiry alert → ask "吃完了吗？" → only an explicit depletion answer triggers depletion capture
 - Never require a one-time full inventory audit.
 
 ### 🛒 采购计划 Shopping Plan (independent feature)
@@ -166,7 +193,9 @@ Trigger: user wants to buy ingredients / "列个采购清单" / "帮我看看这
 
 Flow:
 ```
-1. Read profile.json (create if missing, see User Profile above) → note prefer/avoid
+1. Run Review in feedback_flow.md before reading the planning inputs (every
+   plan, even with no new feedback today); reconcile authorized pending writes.
+   Read profile.json (create if missing, see User Profile above) → note prefer/avoid
    rules and `rules` (user-level flow rules — follow them; never SKILL.md edits)
 2. Read shopping.json → note unchecked items (already needed — avoid duplicates)
 3. Read pantry.json → apply the stock-aware rule: skip long-cycle items already
@@ -202,13 +231,13 @@ Within a category, prefer the higher-fiber-density variety when the profile call
 ```
 
 ```
-6. **PLAN-TIME REVIEW — feedback backfill (only when today has feedback):**
-   Run the Review hook per [feedback_flow.md](references/feedback_flow.md):
-   a. Retrieve active feedback with imp ≥ 3 → backfill any missed landing
-   b. Depleted candidates: stock-change "吃完" records (`applied: false`) → list
-      them in their category with note "上次已吃完，可补" (user decides at the gate)
-   c. Clarification: if the last confirmation gate had ≥ 3 deletions → ask ONE
-      high-value question before generating (largest-impact dimension only)
+6. **SELECTIVE DEPLETION REUSE:**
+   Read active, unmerged stockEvent = depleted records from feedback.json,
+   regardless of capture date or landings[].applied. Match by itemKey against
+   current pantry and unchecked shopping items. Select only useful candidates
+   for this profile, meal goal and quantity needs; not every depleted food must
+   appear. Label selected ones "上次已吃完，可补". Do not add shopping entries yet.
+   No carryover question about a previous plan's unanswered deletion reason.
 7. **QUANTITY CHECK — benchmark before the gate:**
    Read [quantity_benchmark.md](references/quantity_benchmark.md) (adult daily
    reference ranges, typical piece weights, category assignment). For each
@@ -220,12 +249,19 @@ Within a category, prefer the higher-fiber-density variety when the profile call
    - Shelf-stable staples (rice, dried goods, oils) — lenient: extra stock is fine
    - Soft flag only, never hard-block — the user decides at the confirmation gate
    Example: "蔬菜 914g/天 vs 300–500 ❌ → 建议 ~1600g（绿叶菜减半）"
-8. **CONFIRMATION GATE — do NOT write to shopping.json yet:**
+8. **CONFIRMATION GATE — do NOT add proposed items to the shopping list yet:**
    Show the proposed list (category + item + quantity, with the check report
    from step 7) and ask the user to confirm or adjust (quantities, items,
-   budget). Only after the user confirms, append the (adjusted) items to
-   shopping.json categories.food.items, then tell the user: "已加入购物清单，
-   可继续修改数量或删除"
+   budget). Save this proposal separately in shopping.json.confirmation per
+   schema.md; reuse its ID for follow-up adjustments. Proposed items there
+   are not shopping items and cannot enter the Daily Pairings pool.
+   Apply explicit edits immediately. Run the confirmation steps in
+   feedback_flow.md: ≥3 distinct deletions with unknown reasons → ask once
+   now, after edits; persist clarificationAskedAt before sending the question.
+   No reply does not block the edits or an already confirmed purchase list.
+   Only on confirmation, merge adjusted items into categories.food.items
+   without duplicates and mark confirmation.status = confirmed. Then tell the
+   user: "已加入购物清单，可继续修改数量或删除". This does not mean bought.
 ```
 
 ### 🍽 每日搭配 Daily Pairings (independent feature)
@@ -240,9 +276,10 @@ If the shopping list has no items for the current segment, tell the user to gene
 
 Flow:
 ```
-1. Read shopping.json (current segment items) + pantry.json (stock) → build the ingredient pool
+1. Run Review in feedback_flow.md on every plan, then read shopping.json
+   (current segment confirmed items, never confirmation.proposedItems)
+   + pantry.json (stock) → build the ingredient pool from the refreshed data
    → Also read profile.json: `exemplars`, `pairingTemplates`, prefer/avoid/cookingStyle
-   → If today has feedback, run the Review hook first (see [feedback_flow.md](references/feedback_flow.md))
 2. For each day in the segment, propose 3 meals (早/午/晚) with FOUR-LEVEL
    REFERENCE (exemplar > template > profile > generic — see [feedback_flow.md](references/feedback_flow.md)):
      ① 范例层 exemplar: user-verified concrete dishes (`profile.exemplars`).

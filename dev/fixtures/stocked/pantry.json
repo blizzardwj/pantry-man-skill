@@ -12,26 +12,44 @@
         {
           "id": "item_ap1",
           "name": "苹果",
-          "quantity": {"value": 3, "unit": "个"},
+          "quantity": {
+            "value": 3,
+            "unit": "个"
+          },
           "bought": "2026-08-10",
-          "tags": ["fruit"],
-          "status": "fresh"
+          "tags": [
+            "fruit"
+          ],
+          "status": "fresh",
+          "itemKey": "food_apple"
         },
         {
           "id": "item_cu2",
           "name": "黄瓜",
-          "quantity": {"value": 2, "unit": "根"},
+          "quantity": {
+            "value": 2,
+            "unit": "根"
+          },
           "bought": "2026-08-10",
-          "tags": ["fruit-vegetable"],
-          "status": "fresh"
+          "tags": [
+            "fruit-vegetable"
+          ],
+          "status": "fresh",
+          "itemKey": "food_cucumber"
         },
         {
           "id": "item_eg3",
           "name": "鸡蛋",
-          "quantity": {"value": 6, "unit": "个"},
+          "quantity": {
+            "value": 6,
+            "unit": "个"
+          },
           "bought": "2026-08-10",
-          "tags": ["protein"],
-          "status": "fresh"
+          "tags": [
+            "protein"
+          ],
+          "status": "fresh",
+          "itemKey": "food_egg"
         }
       ]
     },

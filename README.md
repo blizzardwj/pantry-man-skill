@@ -8,7 +8,7 @@ A skill for AI agents to manage home pantry inventory, shopping lists, and purch
 - 🛒 **Shopping List** - Manage shopping items with priorities and categories
 - 📊 **Purchase History** - Record and view purchase history with monthly stats
 - ⏰ **Expiry Tracking** - Check items expiring soon
-- 🔄 **Feedback Loop** - Captures corrections, new facts, and stock changes from conversation into `feedback.json`; reflects them into profile preferences, pairing templates, user-level rules, and inventory (three-layer triggers, depleted-candidate refills)
+- 🔄 **Feedback Loop** - Remembers corrections and stock changes to improve later plans. Depleted foods may be suggested again; skipping or deleting an item affects this plan only, while replenishing it clears the old depletion. After several deletions during shopping-plan confirmation, asks once about the reason and continues even without an answer.
 - 🗓️ **Meal Planning** - Three modes: 🛒 Shopping Plan (stock-aware shopping list with a dietary-guideline quantity check and a confirmation step), 🍽 Daily Pairings (per-day breakfast/lunch/dinner combos drawn from your confirmed list + stock), and 📆 Weekly Plan (chains both per your shopping rhythm, segment by segment) — all driven by a lightweight dietary profile
 
 ## Installation

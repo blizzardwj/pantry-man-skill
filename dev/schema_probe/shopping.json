@@ -10,11 +10,18 @@
         {
           "id": "shop_probe1",
           "name": "糙米",
-          "quantity": {"value": 1, "unit": "kg"},
+          "quantity": {
+            "value": 1,
+            "unit": "kg"
+          },
           "priority": "normal",
           "added": "2026-08-13",
           "checked": false,
-          "tags": ["staple", "low-gi"]
+          "tags": [
+            "staple",
+            "low-gi"
+          ],
+          "itemKey": "food_brown_rice"
         }
       ]
     },
@@ -23,5 +30,16 @@
       "icon": "🧴",
       "items": []
     }
+  },
+  "confirmation": {
+    "id": "plan_probe",
+    "status": "confirmed",
+    "proposedItems": [],
+    "removedItemKeys": [
+      "food_spinach",
+      "food_celery",
+      "food_lettuce"
+    ],
+    "clarificationAskedAt": "2026-09-28T12:00:00+08:00"
   }
 }

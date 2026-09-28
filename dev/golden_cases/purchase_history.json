@@ -1,10 +1,24 @@
 {
   "id": "purchase_history",
-  "prompt": "记录一笔购买：牛奶 15 元，面包 12 元",
+  "prompt": "补记 2026-08-13 的一笔购买：牛奶 15 元，面包 12 元，共 27 元。这是历史记录，不代表现在还有库存。",
   "fixture": "empty",
   "assert": {
     "history/2026-08.json": [
-      {"path": "records", "count_gte": 1}
+      {
+        "path": "records",
+        "record_exists": {
+          "date": "2026-08-13",
+          "total": 27
+        }
+      },
+      {
+        "path": "stats.recordCount",
+        "field_equals": 1
+      },
+      {
+        "path": "stats.totalSpent",
+        "field_equals": 27
+      }
     ]
   }
 }
