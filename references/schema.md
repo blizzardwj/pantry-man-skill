@@ -234,17 +234,17 @@ User dietary profile — drives weekly meal planning recommendations. **Optional
 
 | Field | Type | Description | Example |
 |-------|------|-------------|---------|
-| `id` | string | Unique identifier（前缀 `ex_`）| `ex_a1b2c3` |
-| `name` | string | 简短名，便于检索/引用 | `蒸鲷鱼山药` |
-| `ingredients` | array | 主食材组合（只列食材名，不带做法动词/成菜名；调味料归 method）| `["鲷鱼","山药"]` |
-| `method` | string | 做法一句话（组合级极简分组式，含调味）| `同锅蒸，出锅撒少量欧芹海盐大蒜粉` |
-| `meal` | string | 适用餐次 `breakfast / lunch / dinner / any` | `any` |
-| `source` | string | 来源 | `2026-09-08 用户自创` |
-| `confirmed` | boolean | 是否确认（用户提供即 true）| `true` |
-| `addedAt` | string | 添加日期 | `2026-09-08` |
-| `structure` | string | （可选）同结构归组标签，固定下来时才记（RQ-6 上升路径阶段 B）| `protein-fish + root-staple + steam` |
+| `id` | string | Unique identifier with the `ex_` prefix | `ex_a1b2c3` |
+| `name` | string | Short name for retrieval and reference | `蒸鲷鱼山药` |
+| `ingredients` | array | Main ingredients: food names only, without cooking verbs or dish names; seasonings belong in method | `["鲷鱼","山药"]` |
+| `method` | string | One-sentence preparation using minimal grouped steps for the whole combination, including seasoning（组合级极简分组式）| `同锅蒸，出锅撒少量欧芹海盐大蒜粉` |
+| `meal` | string | Applicable meal: `breakfast / lunch / dinner / any` | `any` |
+| `source` | string | Source of the exemplar | `2026-09-08 用户自创` |
+| `confirmed` | boolean | Whether confirmed; true when supplied by the user | `true` |
+| `addedAt` | string | Date added | `2026-09-08` |
+| `structure` | string | Optional tag grouping exemplars with the same structure; record only once the structure is established (RQ-6 promotion path, stage B) | `protein-fish + root-staple + steam` |
 
-- **消费方式**（RQ-6，见 [feedback_flow.md](feedback_flow.md)）：每日搭配生成时，凡范例的主食材 ⊆ 当前食材池 → 优先以 in-context 范例引用（"照你上次的蒸鲷鱼山药做"）；多道相似范例 → 可提升为 `pairingTemplates` 结构模板（instance→structure）。
+- **Reuse（消费方式）** (RQ-6; see [feedback_flow.md](feedback_flow.md)): when generating Daily Pairings, prioritize exemplars whose main ingredients are a subset of the current ingredient pool as in-context references (e.g., "照你上次的蒸鲷鱼山药做"). Multiple similar exemplars may be promoted to a `pairingTemplates` structure template (instance→structure).
 
 ### Health & Preference Keywords (controlled vocabulary)
 
@@ -339,21 +339,21 @@ On recovery, first check newer facts. If current target equals after, mark appli
 
 ### Type & Importance Anchors
 
-| type | 判定要点 | 典型目标 |
+| Type | Classification criteria | Typical targets |
 |------|---------|----------|
-| `ingredient-fact` | 新食材／新实体事实 | pantry.json |
-| `preference-correction` | 更正偏好或本次操作；一次替换不是长期偏好 | profile.json / shopping.json |
-| `stock-change` | 吃完、现有库存、购买；逐食材记录 | pantry.json / shopping.json / history |
-| `pairing-feedback` | 用户对搭配、计划或流程的实际反馈 | profile.json / shopping.json |
+| `ingredient-fact` | Facts about a new ingredient or entity | pantry.json |
+| `preference-correction` | Corrections to preferences or the current operation; a one-time substitution is not a lasting preference | profile.json / shopping.json |
+| `stock-change` | Depletion, current stock or purchases; recorded per food | pantry.json / shopping.json / history |
+| `pairing-feedback` | Actual user feedback on pairings, plans or workflows | profile.json / shopping.json |
 
-importance：5=画像／流程级；4=长期习惯；3=状态事实；2=一次性微调；1=噪音／待观察（不沉淀）。明确操作不因低分延迟；提问本身和未回答均不是用户反馈，大量删除也不自动产生 imp 4。
+Importance: 5 = profile/workflow-level changes; 4 = lasting habits; 3 = state facts; 2 = one-time adjustments; 1 = noise or observations awaiting further evidence (no consolidation). A low score must not delay an explicit operation. Asking a question or receiving no answer is not user feedback; a large number of deletions does not automatically warrant importance 4.
 
 ### Consolidation
 
-- **merge**：只归并同一事实／事件的重复记录，其他记录指向 mergedInto；不跨食材或补货周期，不重放实际数据更新。
-- **decay**：明确的后续库存／补货事实只使被覆盖食材的旧耗尽记录 decayed。买回苹果只影响苹果，不影响黄瓜；确认加购、本次不买、删清单和时间流逝都不单独触发。
-- **eviction**：无参考价值且没有尚需执行的落点的 decayed 记录可置 evicted；日志保留，不删除。
-- **salience floor**：importance≥4 不仅因时间被淘汰；不妨碍被明确新事实取代。
+- **merge**: merge only duplicate records of the same fact/event; other records point to the retained record via mergedInto. Do not merge across foods or replenishment cycles, or replay actual data updates.
+- **decay**: explicit subsequent stock/replenishment facts mark only the superseded depletion records for the affected food as decayed. Buying apples affects only apples, not cucumbers. Confirming a shopping addition, skipping a purchase this time, deleting a list item or the passage of time does not trigger decay on its own.
+- **eviction**: decayed records with no reference value and no landings still requiring execution may be marked evicted; retain the log rather than deleting it.
+- **salience floor**: records with importance ≥4 must not be evicted solely because time has passed; explicit new facts may still supersede them.
 
 ---
 
