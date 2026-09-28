@@ -21,12 +21,14 @@ pantry-man-skill 的**设计文档与开发期验证层**，与可选运行时�
 ```bash
 # L1 静态校验
 python3 dev/validate_static.py                                          # 含黄金样例字段覆盖（CI 安全）
-python3 dev/validate_static.py --data ~/.hermes/pantry/data/pantry.json # 附真实数据字段覆盖
+python3 dev/validate_static.py --data [AGENT_HOME]/pantry/data/pantry.json # 附真实数据字段覆盖
 
-# L2 黄金用例（manual executor）
-python3 dev/run_golden.py --all                # 每个用例 setup 后暂停，手动跑 agent 再回车断言
-python3 dev/run_golden.py --case add_inventory
-python3 dev/run_golden.py --all --no-wait      # 跳过暂停，断言当前状态（自测用）
+# L2 黄金用例
+python3 dev/run_golden.py prepare <case_id>   # setup fixture，输出 {home, data_dir, delegation_prompt}
+#   把 delegation_prompt 交给执行者（delegate_task / claude -p / codex exec）
+python3 dev/run_golden.py assert <case_id> --home <home>   # 对执行结果断言
+python3 dev/run_golden.py run <case_id>       # manual：prepare + 暂停 + assert
+python3 dev/run_golden.py run-all             # 全部用例（manual）；--no-wait 跳过暂停，断言当前状态
 ```
 
 ## Golden case 定义
