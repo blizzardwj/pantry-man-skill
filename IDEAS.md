@@ -47,6 +47,7 @@
 | [IDEA-005](#idea-005) | 研究问题：画像收敛（RQ-A / RQ-C） |
 | [IDEA-013](#idea-013) | 时间戳时区格式一致性：+08:00 vs +0800 |
 | [IDEA-019](#idea-019) | 语音输入条件下的范围收敛与核心流程改进 |
+| [IDEA-020](#idea-020) | 用户输入进入反馈的边界：业务操作与可复用反馈分离 |
 
 已完成／历史事项：
 
@@ -454,10 +455,10 @@
 - 编号：IDEA-018
 - 状态：implemented
 - 创建：2026-09-28
-- 更新：2026-09-28
+- 更新：2026-09-29
 - 问题与预期结果：applied 同时表示落点完成与待补货候选；需分开事实变更与选品参考，避免普通不买／删清单被过度解读。
 - 范围／完成标准：运行契约覆盖多落点、逐食材耗尽与补货、跨日选择性参考、普通删清单不改变耗尽事实、补货逐项 decay；确认建议删 ≥3 项时先执行删改、本次补问一次，按真实回答处理，未回答不猜测、不追问。字段、各入口步骤与同轮已问识别落入 SKILL.md 及 references；开发版旧反馈不迁移，仅定义归档重建行为，不执行真实数据清理。
-- 关联：[耗尽记录说明](RESEARCH.md#rq-5-depletion-simplified)、[补问说明与验收场景](RESEARCH.md#rq-5-clarification-once)、[早期比较](RESEARCH.md#rq-5-depletion-proposal)；前序 [IDEA-009](#idea-009)、[IDEA-011](#idea-011)；新行为决策 [DEC-017](DECISIONS.md#dec-017)、[DEC-018](DECISIONS.md#dec-018)，字段决策 [DEC-019](DECISIONS.md#dec-019)，相关旧决策 [DEC-007](DECISIONS.md#dec-007)、[DEC-009](DECISIONS.md#dec-009)。
+- 关联：[耗尽记录说明](RESEARCH.md#rq-5-depletion-simplified)、[补问说明与验收场景](RESEARCH.md#rq-5-clarification-once)、[早期比较](RESEARCH.md#rq-5-depletion-proposal)；前序 [IDEA-009](#idea-009)、[IDEA-011](#idea-011)，后续边界研究 [IDEA-020](#idea-020)；新行为决策 [DEC-017](DECISIONS.md#dec-017)、[DEC-018](DECISIONS.md#dec-018)，字段决策 [DEC-019](DECISIONS.md#dec-019)，相关旧决策 [DEC-007](DECISIONS.md#dec-007)、[DEC-009](DECISIONS.md#dec-009)。
 - 实施：当前工作区／尚未提交；已完成 [SKILL.md](SKILL.md)、[feedback_flow.md](references/feedback_flow.md)、[schema.md](references/schema.md) 的运行契约重构，并同步 README、开发样例和用例。字段选择见 DEC-019；未执行真实用户数据清理。
 - 验证与效果：[本次验证记录](dev/feedback-refactor-review-2026-09-28.md)：仓库静态检查、作者执行的两个 golden 用例及部分回购／中断／补问数据检查通过；skill-creator 验证器缺 PyYAML 未运行。独立 agent 行为回归与长期效果尚未验证。
 
@@ -468,6 +469,7 @@
 - 2026-09-28（第二部分确认）：按用户要求将补问解答记入 RQ-5 和 DEC-018，保留旧“下次补问”的历史。明确本次只问一次、分别处理真实回答、未回答不猜测也不追问；记录后续验收场景，保持 idea，尚未实施运行行为或执行业务测试。
 - 2026-09-28（开始实施）：用户已提交设计文档并明确要求重构三个运行文件；转为 implementing，按已接受的两项决策落实字段、入口和验证，不执行真实用户数据清理。
 - 2026-09-28（完成本轮范围）：运行契约与开发样例已更新，转为 implemented；静态检查和作者执行的关键场景结果见[验证记录](dev/feedback-refactor-review-2026-09-28.md)。提交待用户安排；独立 agent 回归与长期效果仍待观察，不将文字规则完成等同于所有宿主已验证。
+- 2026-09-29：用户进一步质疑把普通购买写为反馈的消费价值；新的输入边界研究由 [IDEA-020](#idea-020) 承接，本项已完成范围及其历史结果不变。
 
 <a id="idea-019"></a>
 ## 语音输入条件下的范围收敛与核心流程改进
@@ -485,3 +487,20 @@
 ### 关键进展
 
 - 2026-09-28：用户要求形成高信息密度的收敛与改进文档，并明确语音已降低输入负担；据此将近期重点放在已有输入的可靠应用和核心使用路径，暂缓新 Capture 渠道及高级机制扩张建议，未更改运行契约。
+
+<a id="idea-020"></a>
+## 用户输入进入反馈的边界：业务操作与可复用反馈分离
+
+- 编号：IDEA-020
+- 状态：idea
+- 创建：2026-09-29
+- 更新：2026-09-29
+- 问题与预期结果：普通购买、已有库存、耗尽及一次性清单操作当前也进入 `feedback.json`；其业务结果已由库存、清单或购买历史承载，却又参与反馈整理。研究每类输入何时构成反馈，以及操作恢复和耗尽选品线索移出反馈后由谁承接，避免丢失正确性。
+- 范围／完成标准：尚未决定实施；候选边界、数据去向、取舍与待验证场景见 [RQ-7](RESEARCH.md#rq-7)。决定实施前补具体范围与验收标准。
+- 关联：[RQ-7](RESEARCH.md#rq-7)；前序 [IDEA-018](#idea-018)；现行设计 [DEC-017](DECISIONS.md#dec-017)、[DEC-019](DECISIONS.md#dec-019)。尚无新设计决策。
+- 实施：运行行为未实施；本条仅记录研究与想法，未修改 SKILL.md 或数据 schema。
+- 验证与效果：尚未验证候选流程；现有运行规则仍以 [SKILL.md](SKILL.md) 和 [feedback_flow.md](references/feedback_flow.md) 为准。
+
+### 关键进展
+
+- 2026-09-29：用户指出“买了什么”是普通入库事实，不表达偏好变化或对既有记忆的纠正；要求研究用户输入进入 feedback 的边界。启动 [RQ-7](RESEARCH.md#rq-7)，不把讨论当成实施批准。
