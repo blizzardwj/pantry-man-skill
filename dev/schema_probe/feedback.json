@@ -1,63 +1,39 @@
 {
   "meta": {
-    "lastUpdated": "2026-08-13T00:00:00+08:00",
+    "lastUpdated": "2026-09-30T12:00:00-07:00",
     "version": "2.0"
   },
   "records": [
     {
       "id": "fb_probe0",
       "type": "stock-change",
-      "capturedAt": "2026-09-27T12:00:00+08:00",
+      "capturedAt": "2026-09-29T12:00:00-07:00",
       "source": "苹果吃完了",
       "importance": 3,
-      "content": "苹果已耗尽",
+      "content": "苹果已吃完，可供下次采购选择性参考",
       "itemKey": "food_apple",
       "stockEvent": "depleted",
-      "effectiveAt": "2026-09-27T12:00:00+08:00",
-      "landings": [
-        {
-          "target": "pantry.json",
-          "path": "zones.cold.items",
-          "itemId": "item_apple",
-          "before": {
-            "id": "item_apple",
-            "itemKey": "food_apple",
-            "name": "苹果",
-            "quantity": null
-          },
-          "after": null,
-          "applied": false,
-          "supersededBy": "fb_probe1"
-        }
-      ],
+      "effectiveAt": "2026-09-29T12:00:00-07:00",
       "status": "decayed"
     },
     {
       "id": "fb_probe1",
-      "type": "stock-change",
-      "capturedAt": "2026-09-28T12:00:00+08:00",
-      "source": "苹果家里有了",
-      "importance": 3,
-      "content": "当前有苹果，数量未知",
+      "type": "preference-correction",
+      "capturedAt": "2026-09-30T12:00:00-07:00",
+      "source": "以后早餐多安排苹果",
+      "importance": 4,
+      "content": "以后早餐多安排苹果",
       "itemKey": "food_apple",
-      "stockEvent": "available",
-      "effectiveAt": "2026-09-28T12:00:00+08:00",
-      "landings": [],
       "status": "active"
     },
     {
       "id": "fb_probe2",
-      "type": "stock-change",
-      "capturedAt": "2026-09-28T12:01:00+08:00",
-      "source": "对，苹果家里有了",
+      "type": "pairing-feedback",
+      "capturedAt": "2026-09-30T12:01:00-07:00",
+      "source": "这个搭配太油",
       "importance": 3,
-      "content": "确认同一事实",
-      "itemKey": "food_apple",
-      "stockEvent": "available",
-      "effectiveAt": "2026-09-28T12:00:00+08:00",
-      "landings": [],
-      "status": "active",
-      "mergedInto": "fb_probe1"
+      "content": "本次搭配太油",
+      "status": "active"
     }
   ]
 }

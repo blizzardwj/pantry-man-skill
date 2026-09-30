@@ -16,7 +16,7 @@ All data files are under each agent's home directory at [AGENT_HOME]/pantry/data
 | `pantry.json` | Inventory (cold/frozen/ambient/daily zones) |
 | `shopping.json` | Shopping list (food/daily categories) |
 | `history/YYYY-MM.json` | Purchase records by month |
-| `feedback.json` | User feedback log (corrections, new facts, stock changes, pairing feedback — see [feedback_flow.md](references/feedback_flow.md)) |
+| `feedback.json` | Personalization signals: consumed/depleted foods, stated preferences, and feedback on plans or pairings — see [feedback_flow.md](references/feedback_flow.md) |
 
 ## First-Run Setup
 
@@ -26,7 +26,7 @@ Before executing ANY user request, check whether the pantry data directory exist
 2. Check if `[AGENT_HOME]/pantry/data/pantry.json` exists. If not, create it with the empty seed structure from [schema.md](references/schema.md).
 3. Check if `[AGENT_HOME]/pantry/data/shopping.json` exists. If not, create it with the empty seed structure.
 4. Check if `[AGENT_HOME]/pantry/data/history/` exists. If not, create it.
-5. Check if `[AGENT_HOME]/pantry/data/feedback.json` exists. If not, create its version 2 seed from [schema.md](references/schema.md). Legacy feedback is not migrated or interpreted; follow the legacy-data rule in [feedback_flow.md](references/feedback_flow.md).
+5. Check if `[AGENT_HOME]/pantry/data/feedback.json` exists. If not, create its version 2 seed from [schema.md](references/schema.md). Follow the existing-data rule in [feedback_flow.md](references/feedback_flow.md) for older records.
 
 After creating any missing files, confirm briefly to the user, e.g.:
 
@@ -36,7 +36,7 @@ If all files already exist, skip silently — no need to announce.
 
 ## Core Operations
 
-Before mutations, read the relevant structures in [schema.md](references/schema.md) and the write/recovery steps in [feedback_flow.md](references/feedback_flow.md). Reuse `itemKey` across inventory, shopping and feedback; item IDs identify individual entries. Explicit user operations take effect regardless of feedback importance; agent-generated purchase suggestions require confirmation. A later explicit edit cancels conflicting pending writes, so recovery cannot re-add an item the user removed.
+Before mutations, read the relevant structures in [schema.md](references/schema.md). Read the feedback boundary and any applicable purchase/depletion steps in [feedback_flow.md](references/feedback_flow.md). Reuse `itemKey` across inventory, shopping and feedback; item IDs identify individual entries. Apply explicit user edits directly to the business files and update their metadata; agent-generated purchase suggestions require confirmation. A pantry or shopping edit alone is not personalization feedback.
 
 ### Inventory
 
@@ -50,20 +50,20 @@ If the inventory has NO long-cycle items recorded (empty, or only short-cycle fr
 
 **Add item:**
 ```
-Read pantry.json + feedback.json → identify itemKey and existing stock
-→ record the reported stock fact and apply its landings per feedback_flow.md
-→ update the relevant zone without duplicating stock; decay only superseded
-  depletion records for that item. "Already have" does not prove a purchase.
+Read pantry.json → identify itemKey and existing stock → add or update the
+relevant zone in pantry.json without duplicating stock. If this is a current
+restock, read feedback.json and decay that item's older active depletion
+signals. Do not create a new feedback record for an ordinary stock update.
+"Already have" does not prove a purchase.
 ```
 
 **Remove item:**
 ```
 Read pantry.json → Remove from zones.{zone}.items by id → Write back
-Use feedback_flow.md to record the actual removal and supersede conflicting
-unfinished writes; do not create a depletion fact without a depletion report.
-If the user explicitly reports depletion, capture one depleted record per food
-and remove only the stock covered by that statement. A plain removal request
-does not prove the item was consumed; expiry alone is not a depletion report.
+If the user explicitly reports that they consumed the item until it was gone,
+capture one depletion signal per food in feedback.json via feedback_flow.md
+and remove only the stock covered by that statement. A plain removal request,
+spoilage or expiry does not prove consumption and creates no depletion signal.
 ```
 
 **Check expiry:**
@@ -82,18 +82,22 @@ Read shopping.json → Format items from categories.food/daily
 ```
 Read shopping.json → match itemKey among unchecked items → add/update only the
 requested item in categories.{category}.items → Write back
-Record the authorized update via landings in feedback_flow.md.
-Adding to the list does not replenish inventory or decay depletion feedback.
+Adding to the list creates no feedback record and does not replenish inventory
+or decay depletion feedback.
 ```
 
-**Remove item:** remove the requested shopping entry through the write/recovery steps in feedback_flow.md, superseding any unfinished addition of that entry. Do not infer purchase, stock, or lasting dislike; leave depletion feedback unchanged. Later plans may selectively recommend it again. Do not automatically re-add it during the same adjustment.
+**Remove item:** remove the requested entry from `shopping.json`. Do not infer purchase, stock, or lasting dislike; leave depletion feedback unchanged. Later plans may selectively recommend it again. Do not automatically re-add it during the same adjustment.
 
 **Mark as bought:**
 ```
 Read shopping.json + pantry.json + feedback.json → run the purchase steps in
-feedback_flow.md: update actual stock, set the purchased entry checked = true,
-record supported purchase details, and decay only that item's older depletion.
-Reuse the same feedback event and target IDs on retry; do not add stock twice.
+feedback_flow.md: update actual stock and, when the user says an item was bought,
+mark its matching unchecked shopping entry checked = true by default. Do not
+require the actual amount to match the planned amount. If the user says they
+bought only part or still need more, keep the entry unchecked and update the
+remaining need only when known. Record supported purchase details and decay
+only that item's older depletion.
+An ordinary purchase does not create a new feedback record.
 ```
 
 ### Purchase History
@@ -101,13 +105,12 @@ Reuse the same feedback event and target IDs on retry; do not add stock twice.
 **Record a purchase:**
 ```
 1. Run the purchase steps in feedback_flow.md, including inventory, matching
-   shopping items, and depletion feedback; this is the same event as "bought".
-2. Use the reported purchase date to choose history/YYYY-MM.json. Do not infer
-   purchase date from capture time. If date is unknown, retain the purchase
-   fact in feedback.json; defer the monthly record until the date is known.
-3. Reuse the record ID on retry, recompute stats from records, validate and save.
-   A historical purchase does not establish current stock; apply only known
-   current stock effects. Never invent quantities, dates, prices or totals.
+   shopping items, and older depletion signals; this is the same event as "bought".
+2. For a current purchase without a different date, use today's local date for
+   history/YYYY-MM.json. For a historical purchase with an unknown date, ask
+   for the date if a history entry is needed; do not record it under today.
+3. Recompute stats from records, validate and save. A historical purchase does
+   not establish current stock. Never invent quantities, prices or totals.
 ```
 
 **View history:**
@@ -122,15 +125,15 @@ Read history/YYYY-MM.json → Return stats.totalSpent and stats.recordCount
 
 ## Feedback Capture & Reuse（反馈沉淀与复用）
 
-User corrections, new facts, and preferences are the highest-value signal for profile convergence — capture them when they happen, so plans improve without the user re-entering data. **Raw log**: `feedback.json`.
+Capture signals that can improve future plans: explicit preferences and evaluations, plus foods the user reports consuming until they are gone. A routine purchase, stock count change, or shopping-list edit is a business operation, not a preference. **Signal log**: `feedback.json`.
 
-**反馈处理是本 skill 的运行重点——完整状态机独立维护在 [feedback_flow.md](references/feedback_flow.md)，涉及反馈捕获、落点、整理、消费时必读。** 核心结构摘要：
+**反馈边界、捕获、整理和计划时复用见 [feedback_flow.md](references/feedback_flow.md)。** 核心结构摘要：
 
 - **三层 hooks（术语）**：agent 无常驻进程，反馈处理挂在宿主流程的自然执行点上——`capture hook`（对话中即时捕获）→ `threshold hook`（同日阈值静默整理）→ `review hook`（生成计划/搭配前兜底消费）。写侧（capture/threshold）与读侧（review）双向触发，同一状态机首尾相接。
-- **落点**：个性化输出（偏好/模板/用户级流程规则）始终沉淀到用户数据（`profile.json` / `pantry.json` / `shopping.json`）——**never edit SKILL.md for a user's rules**；SKILL.md 保持跨用户通用框架。
-- **事实与操作分开**：feedback 每种食材单独记录 `itemKey`、`stockEvent`；`landings[]` 分别记录已授权的数据更新，`applied` 只表示该更新是否完成。库存已清零、耗尽事实仍为 active，可以同时成立；不买、删清单、加入待购均不使它 decayed。
-- **读取与补问**：每次生成计划前核对有效耗尽事实和未完成操作，不限当天；候选结合画像、库存、已有清单和本次目标选择。采购确认中删 ≥3 项时当场补问一次，使用 `shopping.json.confirmation` 防止重复；未回答不猜测、不跨计划追问。
-- 📖 **完整流程（信号表 / 冲突避免 / 落点判定 / 三层 hooks / 支持规则 / 闭环图）见 [feedback_flow.md](references/feedback_flow.md)——生成搭配与采购计划前、捕获反馈落点时必读。**
+- **落点**：个性化偏好、范例和用户级流程规则沉淀到 `profile.json`；库存、清单和购买历史分别写入自己的业务文件。**Never edit SKILL.md for a user's rules.**
+- **消耗信号**：“苹果吃完了”更新库存，也在 feedback 中留下苹果的逐食材 `depleted` 信号，供以后选择性建议补购。买回或明确已有苹果后只让苹果的旧信号 `decayed`；加购、删清单或本次不买不使它失效。消耗不自动证明长期喜爱。
+- **读取与补问**：每次生成计划前读取有效消耗信号，结合画像、库存、清单和本次目标选择。采购确认中删 ≥3 项时当场补问一次；未回答不猜测、不跨计划追问。
+- 📖 **完整输入边界及消费规则见 [feedback_flow.md](references/feedback_flow.md)——捕获反馈和生成计划前必读。**
 
 SKILL.md 只承载通用框架——任何用户的个性化规则、模板、偏好都沉淀在用户数据中。
 
@@ -194,7 +197,7 @@ Trigger: user wants to buy ingredients / "列个采购清单" / "帮我看看这
 Flow:
 ```
 1. Run Review in feedback_flow.md before reading the planning inputs (every
-   plan, even with no new feedback today); reconcile authorized pending writes.
+   plan, even with no new feedback today).
    Read profile.json (create if missing, see User Profile above) → note prefer/avoid
    rules and `rules` (user-level flow rules — follow them; never SKILL.md edits)
 2. Read shopping.json → note unchecked items (already needed — avoid duplicates)
@@ -233,7 +236,7 @@ Within a category, prefer the higher-fiber-density variety when the profile call
 ```
 6. **SELECTIVE DEPLETION REUSE:**
    Read active, unmerged stockEvent = depleted records from feedback.json,
-   regardless of capture date or landings[].applied. Match by itemKey against
+   regardless of capture date. Match by itemKey against
    current pantry and unchecked shopping items. Select only useful candidates
    for this profile, meal goal and quantity needs; not every depleted food must
    appear. Label selected ones "上次已吃完，可补". Do not add shopping entries yet.
@@ -257,7 +260,7 @@ Within a category, prefer the higher-fiber-density variety when the profile call
    are not shopping items and cannot enter the Daily Pairings pool.
    Apply explicit edits immediately. Run the confirmation steps in
    feedback_flow.md: ≥3 distinct deletions with unknown reasons → ask once
-   now, after edits; persist clarificationAskedAt before sending the question.
+   now, after edits; ask at most once in the current confirmation conversation.
    No reply does not block the edits or an already confirmed purchase list.
    Only on confirmation, merge adjusted items into categories.food.items
    without duplicates and mark confirmation.status = confirmed. Then tell the

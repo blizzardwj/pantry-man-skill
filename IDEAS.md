@@ -47,7 +47,6 @@
 | [IDEA-005](#idea-005) | 研究问题：画像收敛（RQ-A / RQ-C） |
 | [IDEA-013](#idea-013) | 时间戳时区格式一致性：+08:00 vs +0800 |
 | [IDEA-019](#idea-019) | 语音输入条件下的范围收敛与核心流程改进 |
-| [IDEA-020](#idea-020) | 用户输入进入反馈的边界：业务操作与可复用反馈分离 |
 
 已完成／历史事项：
 
@@ -68,6 +67,8 @@
 | [IDEA-016](#idea-016) | 采购计划参考 exemplar：正向反馈的保供（replenish）消费 |
 | [IDEA-017](#idea-017) | 开发演进文档的职责、结构与追溯整理 |
 | [IDEA-018](#idea-018) | 反馈事实落点与耗尽候选生命周期分离 |
+| [IDEA-020](#idea-020) | 用户输入进入反馈的边界：业务操作与可复用反馈分离 |
+| [IDEA-021](#idea-021) | 日常购买报告默认完成对应购物项 |
 
 <a id="idea-001"></a>
 ## First-Run 初始化
@@ -307,7 +308,7 @@
 - 范围／完成标准：提取 feedback flow，并在反馈处理和计划生成入口建立引用。
 - 关联：[RQ-5](RESEARCH.md#rq-5)；[DEC-008](DECISIONS.md#dec-008)、[DEC-009](DECISIONS.md#dec-009)；前序 [IDEA-009](IDEAS.md#idea-009)
 - 实施：[60e34ae](https://github.com/blizzardwj/pantry-man-skill/commit/60e34ae)
-- 验证与效果：历史结果未独立复验，效果待观察；[证据核对](dev/documentation-review-2026-09-13.md#historical-evidence)。 相关[用例定义](dev/golden_cases/landing_onion_yogurt.json)，不代表已有通过结果。
+- 验证与效果：历史结果未独立复验，效果待观察；[证据核对](dev/documentation-review-2026-09-13.md#historical-evidence)。 相关[历史用例定义](dev/historical_cases/landing_onion_yogurt.json)已归档，代表当时规则，不是当前 golden 用例或已有通过结果。
 
 ### 历史背景与讨论
 
@@ -458,7 +459,7 @@
 - 更新：2026-09-29
 - 问题与预期结果：applied 同时表示落点完成与待补货候选；需分开事实变更与选品参考，避免普通不买／删清单被过度解读。
 - 范围／完成标准：运行契约覆盖多落点、逐食材耗尽与补货、跨日选择性参考、普通删清单不改变耗尽事实、补货逐项 decay；确认建议删 ≥3 项时先执行删改、本次补问一次，按真实回答处理，未回答不猜测、不追问。字段、各入口步骤与同轮已问识别落入 SKILL.md 及 references；开发版旧反馈不迁移，仅定义归档重建行为，不执行真实数据清理。
-- 关联：[耗尽记录说明](RESEARCH.md#rq-5-depletion-simplified)、[补问说明与验收场景](RESEARCH.md#rq-5-clarification-once)、[早期比较](RESEARCH.md#rq-5-depletion-proposal)；前序 [IDEA-009](#idea-009)、[IDEA-011](#idea-011)，后续边界研究 [IDEA-020](#idea-020)；新行为决策 [DEC-017](DECISIONS.md#dec-017)、[DEC-018](DECISIONS.md#dec-018)，字段决策 [DEC-019](DECISIONS.md#dec-019)，相关旧决策 [DEC-007](DECISIONS.md#dec-007)、[DEC-009](DECISIONS.md#dec-009)。
+- 关联：[耗尽记录说明](RESEARCH.md#rq-5-depletion-simplified)、[补问说明与验收场景](RESEARCH.md#rq-5-clarification-once)、[早期比较](RESEARCH.md#rq-5-depletion-proposal)；前序 [IDEA-009](#idea-009)、[IDEA-011](#idea-011)，后续边界研究 [IDEA-020](#idea-020) 与购买语义调整 [IDEA-021](#idea-021)；新行为决策 [DEC-017](DECISIONS.md#dec-017)、[DEC-018](DECISIONS.md#dec-018)，字段决策 [DEC-019](DECISIONS.md#dec-019)，相关旧决策 [DEC-007](DECISIONS.md#dec-007)、[DEC-009](DECISIONS.md#dec-009)。
 - 实施：当前工作区／尚未提交；已完成 [SKILL.md](SKILL.md)、[feedback_flow.md](references/feedback_flow.md)、[schema.md](references/schema.md) 的运行契约重构，并同步 README、开发样例和用例。字段选择见 DEC-019；未执行真实用户数据清理。
 - 验证与效果：[本次验证记录](dev/feedback-refactor-review-2026-09-28.md)：仓库静态检查、作者执行的两个 golden 用例及部分回购／中断／补问数据检查通过；skill-creator 验证器缺 PyYAML 未运行。独立 agent 行为回归与长期效果尚未验证。
 
@@ -470,6 +471,7 @@
 - 2026-09-28（开始实施）：用户已提交设计文档并明确要求重构三个运行文件；转为 implementing，按已接受的两项决策落实字段、入口和验证，不执行真实用户数据清理。
 - 2026-09-28（完成本轮范围）：运行契约与开发样例已更新，转为 implemented；静态检查和作者执行的关键场景结果见[验证记录](dev/feedback-refactor-review-2026-09-28.md)。提交待用户安排；独立 agent 回归与长期效果仍待观察，不将文字规则完成等同于所有宿主已验证。
 - 2026-09-29：用户进一步质疑把普通购买写为反馈的消费价值；新的输入边界研究由 [IDEA-020](#idea-020) 承接，本项已完成范围及其历史结果不变。
+- 2026-09-29：用户指出普通“买了苹果”应按个人购物清单的日常语义勾选；该独立调整由 [IDEA-021](#idea-021) 承接，不更改本项的历史完成范围。
 
 <a id="idea-019"></a>
 ## 语音输入条件下的范围收敛与核心流程改进
@@ -492,15 +494,36 @@
 ## 用户输入进入反馈的边界：业务操作与可复用反馈分离
 
 - 编号：IDEA-020
-- 状态：idea
+- 状态：implemented
 - 创建：2026-09-29
-- 更新：2026-09-29
-- 问题与预期结果：普通购买、已有库存、耗尽及一次性清单操作当前也进入 `feedback.json`；其业务结果已由库存、清单或购买历史承载，却又参与反馈整理。研究每类输入何时构成反馈，以及操作恢复和耗尽选品线索移出反馈后由谁承接，避免丢失正确性。
-- 范围／完成标准：尚未决定实施；候选边界、数据去向、取舍与待验证场景见 [RQ-7](RESEARCH.md#rq-7)。决定实施前补具体范围与验收标准。
-- 关联：[RQ-7](RESEARCH.md#rq-7)；前序 [IDEA-018](#idea-018)；现行设计 [DEC-017](DECISIONS.md#dec-017)、[DEC-019](DECISIONS.md#dec-019)。尚无新设计决策。
-- 实施：运行行为未实施；本条仅记录研究与想法，未修改 SKILL.md 或数据 schema。
-- 验证与效果：尚未验证候选流程；现有运行规则仍以 [SKILL.md](SKILL.md) 和 [feedback_flow.md](references/feedback_flow.md) 为准。
+- 更新：2026-09-30
+- 问题与预期结果：普通购买、已有库存及一次性清单操作曾与可复用个性化信号混写在 `feedback.json`，且每次操作都承担中断恢复记录。按用户本轮说明，普通 CRUD 直接更新业务文件；明确消费至耗尽则同时留下选择性补购信号。
+- 范围／完成标准：Capture 用表格明确普通购买、已有、消费完、丢弃、清单操作、偏好和搭配评价的分界；当前购买更新 pantry/shopping/history 而不新建反馈，旧耗尽信号逐项结束；删除运行契约中的 `landings[]` 写前和恢复流程，CRUD 直接落业务文件；schema、README、开发样例同步；保留现有 v2 历史数据但不执行旧操作字段。采购计划仍选择性复用消耗信号，不据吃完自动判定长期喜爱。
+- 关联：[RQ-7](RESEARCH.md#rq-7)；前序 [IDEA-018](#idea-018)；新决策 [DEC-021](DECISIONS.md#dec-021)，部分替代 [DEC-019](DECISIONS.md#dec-019) 的恢复机制，保留 [DEC-017](DECISIONS.md#dec-017) 的选择性耗尽复用。
+- 实施：当前工作区／尚未提交；[SKILL.md](SKILL.md)、[feedback_flow.md](references/feedback_flow.md)、[schema.md](references/schema.md)、[README.md](README.md) 和开发样例／用例已同步。未改动真实用户数据。
+- 验证与效果：2026-09-30 `dev/validate_static.py` 通过（0 FAIL，1 项既有 `cron add` 占位警告），16 份开发 JSON（含归档用例）解析通过，本地链接／显式锚点检查与 `git diff --check` 通过；定向用例定义覆盖购买不新增反馈、明确偏好入反馈、耗尽及补货后旧信号结束。用例定义不等于独立 agent 执行；实际行为和长期效果待观察。
 
 ### 关键进展
 
 - 2026-09-29：用户指出“买了什么”是普通入库事实，不表达偏好变化或对既有记忆的纠正；要求研究用户输入进入 feedback 的边界。启动 [RQ-7](RESEARCH.md#rq-7)，不把讨论当成实施批准。
+- 2026-09-30：用户明确要求用表格定反馈边界，保留“吃完了”的消费与可能复购信号，移除数据更新／中断恢复机制，先收敛基本 CRUD 与反馈逻辑；据此转为 implementing。
+- 2026-09-30：运行契约、schema、用户文档和开发用例已按 [DEC-021](DECISIONS.md#dec-021) 更新；静态与 JSON 检查通过，转为 implemented。保留已有 v2 记录，不把旧写入进度作为任务执行；独立 agent 行为回归尚未完成。
+
+<a id="idea-021"></a>
+## 日常购买报告默认完成对应购物项
+
+- 编号：IDEA-021
+- 状态：implemented
+- 创建：2026-09-29
+- 更新：2026-09-29
+- 问题与预期结果：现行购买步骤要求先确认是否买足，导致“买了苹果”仍可能留在个人待购清单中；按日常使用习惯默认完成对应项，保留明确部分购买或补记旧账的例外。
+- 范围／完成标准：SKILL.md 与 feedback_flow.md 一致规定当前“买了某物”默认勾选匹配待购项，不要求报数量；schema 说明 checked 的含义；明确部分购买、仍需再买及历史补记不误勾选。保留实际数量、日期、价格未知时不编造的规则；本项不改变 [IDEA-020](#idea-020) 正在研究的反馈准入边界。
+- 关联：前序 [IDEA-018](#idea-018)；[DEC-020](DECISIONS.md#dec-020)；反馈准入另见 [IDEA-020](#idea-020)。无需新增研究条目。
+- 实施：本次工作区／尚未提交；涉及 [SKILL.md](SKILL.md)、[feedback_flow.md](references/feedback_flow.md)、[schema.md](references/schema.md) 和 README。
+- 验证与效果：2026-09-29 运行 `dev/validate_static.py`，0 FAIL、1 项既有 `cron add` 占位警告；`git diff --check` 通过。定向核对“买了苹果”默认勾选、明确部分购买保留待购、历史补记不勾选三种文本规则，以及新锚点链接。尚未执行独立 agent 行为回归，实际使用效果待观察。
+
+### 关键进展
+
+- 2026-09-29：用户明确个人助手无需按商业库存盘点方式核对购买量，要求遵循“买了苹果”即完成对应清单项的日常语义；开始实施，保留明确部分购买的例外。
+- 2026-09-29：运行契约、schema 与 README 已同步，转为 implemented；验证覆盖静态结构和规则一致性，未将文档检查视为实际 agent 行为验证。
+- 2026-09-30：[DEC-021](DECISIONS.md#dec-021) 保留本项的勾选语义，并另行规定购买不产生新反馈及当前购买日期的默认处理；本项原有完成范围和验证记录保留。

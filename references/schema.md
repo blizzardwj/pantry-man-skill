@@ -95,12 +95,14 @@ Shopping list organized by category.
 | `quantity` | object / null | Requested/proposed amount; null for an unspecified direct request | `{"value": 3, "unit": "pcs"}` |
 | `priority` | string | low / normal / high | `normal` |
 | `added` | string | Date added to list | `2026-04-01` |
-| `checked` | boolean | Marked as bought | `false` |
+| `checked` | boolean | Current shopping need marked as fulfilled by a reported purchase; does not assert that the planned quantity was bought | `false` |
 | `tags` | array | Categories for filtering | `["vegetable"]` |
+
+For a current report such as “买了苹果”, set a matching unchecked item to `checked=true` by default, even when the actual purchased amount is unknown. An explicit partial purchase or remaining need keeps it unchecked; change its requested quantity only when the remainder is known. A clearly historical purchase does not fulfill the current list by itself. See [purchase steps](feedback_flow.md#purchase-steps).
 
 ### confirmation (optional object)
 
-Current or most recent shopping proposal context. Missing means no resumable proposal. It is separate from `categories.*.items`: draft ingredients never enter the Daily Pairings pool. Retain it after confirmation so resuming the same conversation does not reset the question flag; replace it only for a genuinely new plan.
+Current or most recent shopping proposal context. Missing means no saved proposal. It is separate from `categories.*.items`: draft ingredients never enter the Daily Pairings pool. Retain it after confirmation for the current planning context; replace it for a genuinely new plan.
 
 | Field | Type | Meaning |
 |-------|------|---------|
@@ -108,9 +110,8 @@ Current or most recent shopping proposal context. Missing means no resumable pro
 | `status` | string | `open` / `confirmed` / `cancelled` |
 | `proposedItems` | array | Not-yet-confirmed proposed items using the shopping item structure, with IDs assigned before writing; `checked=false` |
 | `removedItemKeys` | array of strings | Distinct food keys removed from this proposal; excludes quantity changes and substitutions. Used to count deletions and prevent same-plan automatic re-addition; not a lasting preference |
-| `clarificationAskedAt` | string / null | ISO 8601 with tz, saved immediately before sending the one question; null means no question attempted. Not an answer or reason |
 
-Edits update the open proposal immediately. On partial confirmation, merge only approved items into `categories.food.items` and remove those from proposedItems; keep the rest open. On full confirmation, merge remaining approved items, empty proposedItems and set confirmed. Record the authorized subset/IDs and confirmation update in feedback landings before changing files, so a retry never treats unconfirmed entries as approved. For the same confirmation.id, a non-null clarificationAskedAt must never be reset by an older snapshot or later edit; reconcile it before completing a pending confirmation update. A factual one-time list adjustment may be recorded as importance 2, with no invented preference. Deletion reasons already supplied are processed from the user's actual reply; there is no unanswered-question queue. See [confirmation flow](feedback_flow.md#confirmation-flow).
+Edits update the open proposal immediately. On partial confirmation, merge only approved items into `categories.food.items` and remove those from proposedItems; keep the rest open. On full confirmation, merge remaining approved items, empty proposedItems and set confirmed. An ordinary one-time list adjustment creates no feedback record. Ask the ≥3-deletion clarification at most once in the current confirmation conversation; a supplied reason is processed according to its actual content. Existing `clarificationAskedAt` values may remain in older files but are not required for new proposals. See [confirmation flow](feedback_flow.md#confirmation-flow).
 
 ---
 
@@ -149,7 +150,7 @@ Purchase records organized by month.
 | `quantity` | object | Actual purchased amount (optional if unknown) | `{"value": 1, "unit": "L"}` |
 | `price` | number | Price of this item (optional if unknown) | `15.0` |
 
-`date` must be the actual known purchase date; choose the month file from that date, not today's date. When the date is unknown, retain the known purchase facts in feedback.content and defer the history landing; do not block current stock updates. On every history write, recompute `stats.recordCount` as records.length and `stats.totalSpent` as the sum of known record totals. If any totals are missing, label the displayed sum as known spending, not complete monthly spending. Reuse a purchase record ID when completing missing details or retrying; a dated historical purchase alone does not establish today's inventory.
+For an ordinary current purchase with no other date supplied, use today's local date. An explicitly historical purchase uses its stated date; if that date is unknown, ask when a history entry is needed and never record it under today. Do not store date-less purchase facts as feedback. On every history write, recompute `stats.recordCount` as records.length and `stats.totalSpent` as the sum of known record totals. If any totals are missing, label the displayed sum as known spending, not complete monthly spending. A dated historical purchase alone does not establish today's inventory.
 
 ---
 
@@ -259,7 +260,7 @@ User dietary profile — drives weekly meal planning recommendations. **Optional
 
 ## feedback.json
 
-Raw user facts and the trail of actual data updates; profile holds converged preferences. `status` concerns the fact, `landings[].applied` concerns one authorized update. No replenishment pending/dismissed state. See [feedback_flow.md](feedback_flow.md) for execution.
+Personalization signals, not a log of ordinary inventory, shopping, or purchase operations. Depletion after consumption can guide later replenishment; explicit preferences and evaluations guide future plans. Converged preferences live in `profile.json`. See the [Capture boundary](feedback_flow.md) before writing a record.
 
 ```json
 {
@@ -271,46 +272,27 @@ Raw user facts and the trail of actual data updates; profile holds converged pre
 }
 ```
 
-Version 2 replaces the development-only singular `landing` format. Do not infer meaning from old applied values. Archive the old feedback file and initialize this seed per the [legacy-data rule](feedback_flow.md#legacy-feedback); no migration, no changes to other user data. Normal v2 log consolidation retains records.
+Keep existing v2 files and records. Older records may contain operational fields such as `landings[]` or `ingredient-fact` entries; preserve but do not execute the operational fields or add them to new records. Do not treat old `available` / `purchased` stock entries, simple `ingredient-fact` stock additions, or one-time list edits as preferences. For files older than v2, follow the [existing-data rule](feedback_flow.md#legacy-feedback). Normal log consolidation retains records.
 
 ### Record Structure
 
 | Field | Type | Description | Example |
 |-------|------|-------------|---------|
-| `id` | string | Unique event/fact ID; reused on retry | `fb_apple_empty` |
-| `type` | string | `ingredient-fact` / `preference-correction` / `stock-change` / `pairing-feedback` | `stock-change` |
+| `id` | string | Unique signal ID | `fb_apple_empty` |
+| `type` | string | New records: `stock-change` (consumption depletion only) / `preference-correction` / `pairing-feedback` | `stock-change` |
 | `capturedAt` | string | Capture datetime (ISO 8601 with tz) | `2026-09-28T13:30:00+08:00` |
 | `source` | string | Actual user utterance/summary; can be shared by atomic records | `苹果和黄瓜都吃完了` |
-| `importance` | integer | 1–5; never an authorization flag | `3` |
+| `importance` | integer | 1–5; used only for feedback consolidation, never as a CRUD gate | `3` |
 | `content` | string | This record's fact, scope and known details; preserve unresolved details here | `苹果已全部吃完` |
-| `itemKey` | string | Required for a food/product-specific fact; one key per stock record | `food_apple` |
-| `stockEvent` | string | Required for stock-change: `depleted` / `available` / `purchased`; omit for other types | `depleted` |
-| `effectiveAt` | string / null | Required for stock-change: known stock-fact date or ISO datetime with tz; null if historical timing unknown. Current-state assertion uses capture time; never a fabricated purchase date | `2026-09-28T13:30:00+08:00` |
-| `landings` | array | Actual authorized updates, each independently applied; empty if none | See below |
-| `status` | string | `active` (not superseded) / `decayed` (superseded fact) / `evicted` (no longer used); not purchase intent | `active` |
+| `itemKey` | string | Required for a food-specific consumption signal; one food per record | `food_apple` |
+| `stockEvent` | string | For new `stock-change` records, always `depleted`; omit for other types | `depleted` |
+| `effectiveAt` | string / null | Required for depletion: current observation date/time with tz, or null when historical timing is unknown | `2026-09-28T13:30:00+08:00` |
+| `status` | string | `active` (still useful) / `decayed` (superseded) / `evicted` (no longer used) | `active` |
 | `mergedInto` | string | Optional duplicate fact's surviving record ID; same entity/event only, no cycles | `fb_existing` |
 
-One stock record cannot contain both apples and cucumbers as its actionable fact: split them and keep the same source. Multiple batches of one food may share itemKey; individual landings use itemId. Effective times with date-only precision or conflicting evidence may not establish ordering; do not overwrite current stock or decay a later depletion without sufficient evidence.
+One new depletion record cannot contain both apples and cucumbers: split them and keep the same source. A later current restock ends only the affected food's older active depletion signal. Date-only precision or conflicting evidence may not establish ordering; do not decay a later depletion without evidence.
 
-### landings[] Structure
-
-Each element represents one actual write, not a candidate, question or request for permission.
-
-| Field | Type | Description |
-|-------|------|-------------|
-| `target` | string | Exact data filename: `pantry.json`, `shopping.json`, `profile.json`, or `history/YYYY-MM.json` with the actual month; no arbitrary external path |
-| `path` | string | Dot-separated object path to a scalar/object or an item array, e.g. `zones.cold.items`, `categories.food.items`, `preferences.avoid`, `confirmation`, `records` |
-| `itemId` | string | Required when selecting an entry from an array of objects with IDs; e.g. item, shopping, purchase, exemplar/template ID. Never an array index. Omit when updating the field itself |
-| `before` | JSON value | Value of the selected entry/field before this update; null means absent |
-| `after` | JSON value | Complete final entry/field value; null means remove. Assigned ID must match itemId. Absolute final quantity, never a relative increment |
-| `applied` | boolean | True only after verifying this update succeeded or target already equals after; false does not mean “recommend” or “unconfirmed” |
-| `supersededBy` | string | Optional ID of a newer feedback fact that makes this update obsolete; excludes it from retry, does not falsify its historical applied value |
-
-Compare only the selected entry/field, not a whole file. Preserve unrelated entries. For arrays of strings (e.g. preferences.avoid), before/after hold the field array; a concurrent mismatch must be reconciled, not overwritten. Metadata timestamps and derived history stats are updated along with the target file, outside these snapshots. Build any newly needed optional profile structure before selecting its field.
-
-On recovery, first check newer facts. If current target equals after, mark applied; if it equals before and the operation still applies, write after; otherwise do not overwrite without resolving the conflict. Empty landings means no actual write was necessary or justified, not a pending shopping suggestion. An obsolete false landing retains false plus supersededBy; it must never delete replenished stock on retry.
-
-**Example — inventory updated, depletion still available for selective reuse:**
+**Example — consumed apples available for selective replenishment:**
 
 ```json
 {
@@ -319,20 +301,10 @@ On recovery, first check newer facts. If current target equals after, mark appli
   "capturedAt": "2026-09-28T13:30:00+08:00",
   "source": "苹果和黄瓜都吃完了",
   "importance": 3,
-  "content": "苹果已全部吃完；黄瓜另记一条",
+  "content": "苹果已全部吃完；黄瓜另记一条，可供以后选择性补购",
   "itemKey": "food_apple",
   "stockEvent": "depleted",
   "effectiveAt": "2026-09-28T13:30:00+08:00",
-  "landings": [
-    {
-      "target": "pantry.json",
-      "path": "zones.cold.items",
-      "itemId": "item_apple",
-      "before": {"id": "item_apple", "itemKey": "food_apple", "name": "苹果", "quantity": {"value": 2, "unit": "pcs"}},
-      "after": null,
-      "applied": true
-    }
-  ],
   "status": "active"
 }
 ```
@@ -341,18 +313,17 @@ On recovery, first check newer facts. If current target equals after, mark appli
 
 | Type | Classification criteria | Typical targets |
 |------|---------|----------|
-| `ingredient-fact` | Facts about a new ingredient or entity | pantry.json |
-| `preference-correction` | Corrections to preferences or the current operation; a one-time substitution is not a lasting preference | profile.json / shopping.json |
-| `stock-change` | Depletion, current stock or purchases; recorded per food | pantry.json / shopping.json / history |
-| `pairing-feedback` | Actual user feedback on pairings, plans or workflows | profile.json / shopping.json |
+| `stock-change` | Explicitly consumed/depleted food; a selective replenishment signal, not an automatic lasting preference | later Shopping Plans |
+| `preference-correction` | Explicit lasting food/cooking preference or correction to such a preference | profile.json and future plans |
+| `pairing-feedback` | User evaluation of a pairing, plan or workflow; lasting rule only when stated or confirmed | current output and future plans |
 
-Importance: 5 = profile/workflow-level changes; 4 = lasting habits; 3 = state facts; 2 = one-time adjustments; 1 = noise or observations awaiting further evidence (no consolidation). A low score must not delay an explicit operation. Asking a question or receiving no answer is not user feedback; a large number of deletions does not automatically warrant importance 4.
+Importance: 5 = confirmed profile/workflow rule; 4 = lasting preference; 3 = consumption signal or concrete evaluation; 2 = narrow feedback on one plan; 1 = tentative observation. Ordinary stock/clean-up operations get no score because they create no feedback record. Importance does not delay CRUD. Asking a question or receiving no answer is not user feedback.
 
 ### Consolidation
 
-- **merge**: merge only duplicate records of the same fact/event; other records point to the retained record via mergedInto. Do not merge across foods or replenishment cycles, or replay actual data updates.
+- **merge**: merge only duplicate records of the same signal; other records point to the retained record via mergedInto. Do not merge across foods or replenishment cycles.
 - **decay**: explicit subsequent stock/replenishment facts mark only the superseded depletion records for the affected food as decayed. Buying apples affects only apples, not cucumbers. Confirming a shopping addition, skipping a purchase this time, deleting a list item or the passage of time does not trigger decay on its own.
-- **eviction**: decayed records with no reference value and no landings still requiring execution may be marked evicted; retain the log rather than deleting it.
+- **eviction**: decayed records with no reference value may be marked evicted; retain the log rather than deleting it.
 - **salience floor**: records with importance ≥4 must not be evicted solely because time has passed; explicit new facts may still supersede them.
 
 ---

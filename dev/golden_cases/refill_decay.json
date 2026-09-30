@@ -8,8 +8,7 @@
     ],
     "feedback.json": [
       { "path": "records", "record_exists": { "id": "fb_okra01", "status": "decayed" } },
-      { "path": "records", "record_exists": { "itemKey": "food_okra", "status": "active" } },
-      { "path": "records", "count_gte": 2 }
+      { "path": "records", "count_equals": 1 }
     ]
   }
 }

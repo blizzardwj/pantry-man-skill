@@ -14,6 +14,7 @@ pantry-man-skill 的**设计文档与开发期验证层**，与可选运行时�
 - `lib/assert_engine.py` — 断言引擎（纯函数，零 LLM）
 - `fixtures/` — 初始数据快照（每个 fixture 一个目录，含 pantry.json 等）
 - `golden_cases/` — 用例定义（`{id, prompt, fixture, assert}`，agent 无关）
+- `historical_cases/` — 已被新运行规则替代的旧用例定义，只供追溯，不参与 `run-all`
 - `schema_probe/` — schema 黄金样例（写满全部字段，供 L1 字段覆盖检查，CI 可用）
 
 ## 用法
@@ -37,19 +38,12 @@ python3 dev/run_golden.py run-all             # 全部用例（manual）；--no-
 
 ```json
 {
-  "id": "add_inventory",
-  "prompt": "把 2L 牛奶加到冰箱，7 天后过期",
+  "id": "explicit_breakfast_preference",
+  "prompt": "我喜欢早餐吃洋葱和自制酸奶，以后搭配早餐时可以多考虑它们",
   "fixture": "empty",
   "assert": {
-    "pantry.json": [
-      {"path": "zones.cold.items", "contains": ["牛奶"]},
-      {"path": "zones.cold.items", "count_equals": 1}
-    ],
     "feedback.json": [
-      {"path": "records", "record_exists": {"type": "ingredient-fact"}}
-    ],
-    "response.txt": [
-      {"not_contains": ["鸡蛋"]}
+      {"path": "records", "record_exists": {"type": "preference-correction"}}
     ]
   }
 }

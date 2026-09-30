@@ -1,0 +1,16 @@
+{
+  "id": "purchase_without_feedback",
+  "prompt": "2026-09-30 买了 2 个苹果，现在还在家里，放在冰箱，帮我记录一下",
+  "fixture": "empty",
+  "assert": {
+    "pantry.json": [
+      { "path": "zones.cold.items", "contains": ["苹果"] }
+    ],
+    "history/2026-09.json": [
+      { "path": "records", "record_exists": { "date": "2026-09-30" } }
+    ],
+    "feedback.json": [
+      { "path": "records", "count_equals": 0 }
+    ]
+  }
+}
