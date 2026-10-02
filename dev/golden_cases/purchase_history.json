@@ -19,6 +19,9 @@
         "path": "stats.totalSpent",
         "field_equals": 27
       }
+    ],
+    "feedback.json": [
+      { "path": "records", "count_equals": 0 }
     ]
   }
 }

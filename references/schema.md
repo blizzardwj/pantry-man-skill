@@ -260,7 +260,7 @@ User dietary profile — drives weekly meal planning recommendations. **Optional
 
 ## feedback.json
 
-Personalization signals, not a log of ordinary inventory, shopping, or purchase operations. Depletion after consumption can guide later replenishment; explicit preferences and evaluations guide future plans. Converged preferences live in `profile.json`. See the [Capture boundary](feedback_flow.md) before writing a record.
+Personalization signals, not a log of ordinary inventory, shopping, or purchase operations. Depletion after consumption can guide later replenishment; explicit preferences and evaluations guide future plans. Converged preferences live in `profile.json`. See the [Capture boundary](feedback_flow.md#capture-boundary) before writing a record.
 
 ```json
 {

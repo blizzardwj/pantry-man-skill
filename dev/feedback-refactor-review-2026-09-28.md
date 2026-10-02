@@ -1,6 +1,8 @@
 # 反馈运行规则重构验证 — 2026-09-28
 
-范围：[IDEA-018](../IDEAS.md#idea-018)，落实 [DEC-017](../DECISIONS.md#dec-017)、[DEC-018](../DECISIONS.md#dec-018)，字段选择见 [DEC-019](../DECISIONS.md#dec-019)。实现位于当前工作区／尚未提交；设计提交基线为 `3a1628b`。本报告不表示已验证长期用户效果。
+> 历史验证记录。2026-09-30 的 [DEC-021](../DECISIONS.md#dec-021) 已移除新操作的 `landings[]` 写前／恢复流程，并收窄反馈准入；下文描述的是 2026-09-28 的实现和检查，不是当前运行指令。当前行为见 [SKILL.md](../SKILL.md) 与 [feedback_flow.md](../references/feedback_flow.md)。
+
+范围：[IDEA-018](../IDEAS.md#idea-018)，落实 [DEC-017](../DECISIONS.md#dec-017)、[DEC-018](../DECISIONS.md#dec-018)，字段选择见 [DEC-019](../DECISIONS.md#dec-019)。撰写时实现位于工作区，后提交为 [3e6d1bd](https://github.com/blizzardwj/pantry-man-skill/commit/3e6d1bd)；设计提交基线为 `3a1628b`。本报告不表示已验证长期用户效果。
 
 ## 运行契约变化
 

@@ -1,6 +1,6 @@
 {
   "id": "profile_convergence",
-  "prompt": "根茎类都算非精制碳水，南瓜、土豆、山药可以当主食",
+  "prompt": "以后我更喜欢用南瓜、土豆、山药这类根茎当主食，请记住这个饮食偏好",
   "fixture": "empty",
   "assert": {
     "profile.json": [

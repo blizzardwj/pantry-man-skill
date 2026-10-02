@@ -10,25 +10,10 @@
       "capturedAt": "2026-08-28T09:05:00+08:00",
       "source": "用户告知：秋葵已经吃完（2026-08-28）",
       "importance": 3,
-      "content": "秋葵 300g 已全部消耗完毕；作为耗尽事实保留，供后续采购计划与搭配参考",
+      "content": "秋葵 300g 已全部消耗完毕；供后续采购计划选择性参考",
       "itemKey": "food_okra",
       "stockEvent": "depleted",
       "effectiveAt": "2026-08-28",
-      "landings": [
-        {
-          "target": "pantry.json",
-          "path": "zones.cold.items",
-          "itemId": "item_okr001",
-          "before": {
-            "id": "item_okr001",
-            "itemKey": "food_okra",
-            "name": "秋葵",
-            "quantity": { "value": 300, "unit": "g" }
-          },
-          "after": null,
-          "applied": true
-        }
-      ],
       "status": "active"
     }
   ]
