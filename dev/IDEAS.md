@@ -2,7 +2,7 @@
 
 > 本文件回答“为什么做、准备做什么、实施到哪一步、结果如何”，是**实施进展的唯一维护位置**。
 > 研究证据与候选设计见 [RESEARCH.md](RESEARCH.md)；决策及其有效性见 [DECISIONS.md](DECISIONS.md)。
-> 当前运行行为以 [SKILL.md](SKILL.md) 及其引用的 references 为准；本文件中的历史讨论不构成运行指令。
+> 当前运行行为以 [SKILL.md](../SKILL.md) 及其引用的 references 为准；本文件中的历史讨论不构成运行指令。
 
 ### 记录约定
 
@@ -69,6 +69,7 @@
 | [IDEA-018](#idea-018) | 反馈事实落点与耗尽候选生命周期分离 |
 | [IDEA-020](#idea-020) | 用户输入进入反馈的边界：业务操作与可复用反馈分离 |
 | [IDEA-021](#idea-021) | 日常购买报告默认完成对应购物项 |
+| [IDEA-022](#idea-022) | 开发演进记录移入 dev/：与 skill 运行文件分开 |
 
 <a id="idea-001"></a>
 ## First-Run 初始化
@@ -80,7 +81,7 @@
 - 范围／完成标准：初始化缺失的数据目录与种子文件，重复运行不覆盖已有数据。
 - 关联：[DEC-001](DECISIONS.md#dec-001)
 - 实施：[32c8c0f](https://github.com/blizzardwj/pantry-man-skill/commit/32c8c0f)
-- 验证与效果：历史结果未独立复验，效果待观察；[证据核对](dev/documentation-review-2026-09-13.md#historical-evidence)。 相关[用例定义](dev/golden_cases/add_inventory.json)，不代表已有通过结果。
+- 验证与效果：历史结果未独立复验，效果待观察；[证据核对](documentation-review-2026-09-13.md#historical-evidence)。 相关[用例定义](golden_cases/add_inventory.json)，不代表已有通过结果。
 
 ### 历史背景与讨论
 
@@ -102,7 +103,7 @@
 - 范围／完成标准：建立画像驱动的周规划；后续拆分由 IDEA-008 承接。
 - 关联：[DEC-002](DECISIONS.md#dec-002)；后续 [IDEA-008](IDEAS.md#idea-008)
 - 实施：[6d00a33](https://github.com/blizzardwj/pantry-man-skill/commit/6d00a33)
-- 验证与效果：历史结果未独立复验，效果待观察；[证据核对](dev/documentation-review-2026-09-13.md#historical-evidence)。 相关[用例定义](dev/golden_cases/pool_hard_constraint.json)，不代表已有通过结果。
+- 验证与效果：历史结果未独立复验，效果待观察；[证据核对](documentation-review-2026-09-13.md#historical-evidence)。 相关[用例定义](golden_cases/pool_hard_constraint.json)，不代表已有通过结果。
 
 ### 历史背景与讨论
 
@@ -127,7 +128,7 @@
 - 范围／完成标准：减少首次画像修正轮次；具体方案与验收指标尚未决定。
 - 关联：[IDEA-005](IDEAS.md#idea-005)；[RQ-A](RESEARCH.md#rq-a)、[RQ-C](RESEARCH.md#rq-c)
 - 实施：未实施
-- 验证与效果：未实施；历史观察见下文，相关研究或修复效果尚未验证。[证据核对](dev/documentation-review-2026-09-13.md#historical-evidence)。
+- 验证与效果：未实施；历史观察见下文，相关研究或修复效果尚未验证。[证据核对](documentation-review-2026-09-13.md#historical-evidence)。
 
 ### 历史背景与讨论
 
@@ -149,7 +150,7 @@
 - 范围／完成标准：通过日常行为和轻量探测积累库存，避免首次全量盘点。
 - 关联：[IDEA-007](IDEAS.md#idea-007)；[DEC-003](DECISIONS.md#dec-003)
 - 实施：[70f628b](https://github.com/blizzardwj/pantry-man-skill/commit/70f628b)
-- 验证与效果：历史结果未独立复验，效果待观察；[证据核对](dev/documentation-review-2026-09-13.md#historical-evidence)。
+- 验证与效果：历史结果未独立复验，效果待观察；[证据核对](documentation-review-2026-09-13.md#historical-evidence)。
 
 ### 历史背景与讨论
 
@@ -178,7 +179,7 @@
 - 范围／完成标准：比较画像澄清与收敛策略；研究结论不直接代表实施批准。
 - 关联：[IDEA-003](IDEAS.md#idea-003)；[RQ-A](RESEARCH.md#rq-a)、[RQ-C](RESEARCH.md#rq-c)
 - 实施：未实施
-- 验证与效果：未实施；历史观察见下文，相关研究或修复效果尚未验证。[证据核对](dev/documentation-review-2026-09-13.md#historical-evidence)。
+- 验证与效果：未实施；历史观察见下文，相关研究或修复效果尚未验证。[证据核对](documentation-review-2026-09-13.md#historical-evidence)。
 
 ### 历史背景与讨论
 
@@ -199,7 +200,7 @@
 - 范围／完成标准：每日搭配输出食材、价值、简便做法；后续做法原则见 DEC-010。
 - 关联：[DEC-010](DECISIONS.md#dec-010)；[IDEA-012](IDEAS.md#idea-012)
 - 实施：[2194b19](https://github.com/blizzardwj/pantry-man-skill/commit/2194b19)、[2143bf0](https://github.com/blizzardwj/pantry-man-skill/commit/2143bf0)
-- 验证与效果：历史结果未独立复验，效果待观察；[证据核对](dev/documentation-review-2026-09-13.md#historical-evidence)。 相关[用例定义](dev/golden_cases/pairing_minimal_methods.json)，不代表已有通过结果。
+- 验证与效果：历史结果未独立复验，效果待观察；[证据核对](documentation-review-2026-09-13.md#historical-evidence)。 相关[用例定义](golden_cases/pairing_minimal_methods.json)，不代表已有通过结果。
 
 ### 历史背景与讨论
 
@@ -221,7 +222,7 @@
 - 范围／完成标准：任意库存读取可触发一次冷启动探测，用户应答后才设置标记。
 - 关联：[DEC-003](DECISIONS.md#dec-003)；前序 [IDEA-004](IDEAS.md#idea-004)
 - 实施：[0ad1af2](https://github.com/blizzardwj/pantry-man-skill/commit/0ad1af2)
-- 验证与效果：历史结果未独立复验，效果待观察；[证据核对](dev/documentation-review-2026-09-13.md#historical-evidence)。
+- 验证与效果：历史结果未独立复验，效果待观察；[证据核对](documentation-review-2026-09-13.md#historical-evidence)。
 
 ### 历史背景与讨论
 
@@ -243,7 +244,7 @@
 - 范围／完成标准：采购计划、每日搭配独立，周计划按段编排并经确认闸门写入。
 - 关联：[DEC-004](DECISIONS.md#dec-004)；前序 [IDEA-002](IDEAS.md#idea-002)
 - 实施：[aaf3813](https://github.com/blizzardwj/pantry-man-skill/commit/aaf3813)
-- 验证与效果：历史结果未独立复验，效果待观察；[证据核对](dev/documentation-review-2026-09-13.md#historical-evidence)。 相关[用例定义](dev/golden_cases/pool_hard_constraint.json)，不代表已有通过结果。
+- 验证与效果：历史结果未独立复验，效果待观察；[证据核对](documentation-review-2026-09-13.md#historical-evidence)。 相关[用例定义](golden_cases/pool_hard_constraint.json)，不代表已有通过结果。
 
 ### 历史背景与讨论
 
@@ -265,7 +266,7 @@
 - 范围／完成标准：反馈捕获、整理与复用接入数据及计划流程；此次不修复已发现的语义缺口。
 - 关联：[RQ-5](RESEARCH.md#rq-5)；[DEC-007](DECISIONS.md#dec-007)；后续 [IDEA-011](IDEAS.md#idea-011)、[IDEA-015](IDEAS.md#idea-015)
 - 实施：[ba3c75b](https://github.com/blizzardwj/pantry-man-skill/commit/ba3c75b)、[9f3ead5](https://github.com/blizzardwj/pantry-man-skill/commit/9f3ead5)、[2b91c88](https://github.com/blizzardwj/pantry-man-skill/commit/2b91c88)、[76b6399](https://github.com/blizzardwj/pantry-man-skill/commit/76b6399)、[d27171b](https://github.com/blizzardwj/pantry-man-skill/commit/d27171b)、[7cb0318](https://github.com/blizzardwj/pantry-man-skill/commit/7cb0318)、[6b20ccc](https://github.com/blizzardwj/pantry-man-skill/commit/6b20ccc)、[e8b81bb](https://github.com/blizzardwj/pantry-man-skill/commit/e8b81bb)、[6e6da4d](https://github.com/blizzardwj/pantry-man-skill/commit/6e6da4d)
-- 验证与效果：历史结果未独立复验，效果待观察；[证据核对](dev/documentation-review-2026-09-13.md#historical-evidence)。 相关[用例定义](dev/golden_cases/stock_change_deplete.json)，不代表已有通过结果。
+- 验证与效果：历史结果未独立复验，效果待观察；[证据核对](documentation-review-2026-09-13.md#historical-evidence)。 相关[用例定义](golden_cases/stock_change_deplete.json)，不代表已有通过结果。
 
 ### 历史背景与讨论
 
@@ -286,7 +287,7 @@
 - 范围／完成标准：确认闸门前按人数和天数核对建议采购量，提供软提示。
 - 关联：[DEC-005](DECISIONS.md#dec-005)
 - 实施：[c66baab](https://github.com/blizzardwj/pantry-man-skill/commit/c66baab)
-- 验证与效果：历史结果未独立复验，效果待观察；[证据核对](dev/documentation-review-2026-09-13.md#historical-evidence)。
+- 验证与效果：历史结果未独立复验，效果待观察；[证据核对](documentation-review-2026-09-13.md#historical-evidence)。
 
 ### 历史背景与讨论
 
@@ -308,7 +309,7 @@
 - 范围／完成标准：提取 feedback flow，并在反馈处理和计划生成入口建立引用。
 - 关联：[RQ-5](RESEARCH.md#rq-5)；[DEC-008](DECISIONS.md#dec-008)、[DEC-009](DECISIONS.md#dec-009)；前序 [IDEA-009](IDEAS.md#idea-009)
 - 实施：[60e34ae](https://github.com/blizzardwj/pantry-man-skill/commit/60e34ae)
-- 验证与效果：历史结果未独立复验，效果待观察；[证据核对](dev/documentation-review-2026-09-13.md#historical-evidence)。 相关[历史用例定义](dev/historical_cases/landing_onion_yogurt.json)已归档，代表当时规则，不是当前 golden 用例或已有通过结果。
+- 验证与效果：历史结果未独立复验，效果待观察；[证据核对](documentation-review-2026-09-13.md#historical-evidence)。 相关[历史用例定义](historical_cases/landing_onion_yogurt.json)已归档，代表当时规则，不是当前 golden 用例或已有通过结果。
 
 ### 历史背景与讨论
 
@@ -333,7 +334,7 @@
 - 范围／完成标准：搭配输出示例用类别占位符表达格式，减少具体食材锚定。
 - 关联：[IDEA-006](IDEAS.md#idea-006)；无独立决策条目（历史方案选择见下文）
 - 实施：[e47b3c8](https://github.com/blizzardwj/pantry-man-skill/commit/e47b3c8)
-- 验证与效果：历史结果未独立复验，效果待观察；[证据核对](dev/documentation-review-2026-09-13.md#historical-evidence)。 相关[用例定义](dev/golden_cases/dry_good_no_soup.json)，不代表已有通过结果。
+- 验证与效果：历史结果未独立复验，效果待观察；[证据核对](documentation-review-2026-09-13.md#historical-evidence)。 相关[用例定义](golden_cases/dry_good_no_soup.json)，不代表已有通过结果。
 
 ### 历史背景与讨论
 
@@ -353,9 +354,9 @@
 - 创建：2026-08-13
 - 更新：2026-09-13
 - 范围／完成标准：明确时间戳时区格式或增加验证；尚未选择处理方案。
-- 关联：无独立研究或决策；关联 [开发验证](dev/README.md)
+- 关联：无独立研究或决策；关联 [开发验证](README.md)
 - 实施：未实施
-- 验证与效果：未实施；历史观察见下文，相关研究或修复效果尚未验证。[证据核对](dev/documentation-review-2026-09-13.md#historical-evidence)。
+- 验证与效果：未实施；历史观察见下文，相关研究或修复效果尚未验证。[证据核对](documentation-review-2026-09-13.md#historical-evidence)。
 
 ### 历史背景与讨论
 
@@ -377,7 +378,7 @@
 - 范围／完成标准：新增独立食材咨询及通用知识引用，复用用户画像。
 - 关联：[DEC-012](DECISIONS.md#dec-012)
 - 实施：[f8e9455](https://github.com/blizzardwj/pantry-man-skill/commit/f8e9455)、[b1557d4](https://github.com/blizzardwj/pantry-man-skill/commit/b1557d4)
-- 验证与效果：旧 DEC-012 记载 static validation PASS，但未找到该次执行报告；效果待观察。[证据核对](dev/documentation-review-2026-09-13.md#historical-evidence)。
+- 验证与效果：旧 DEC-012 记载 static validation PASS，但未找到该次执行报告；效果待观察。[证据核对](documentation-review-2026-09-13.md#historical-evidence)。
 
 ### 历史背景与讨论
 
@@ -399,7 +400,7 @@
 - 范围／完成标准：实例范例落点、复用、结构泛化及升模板门槛；采购保供另见 IDEA-016。
 - 关联：[RQ-6](RESEARCH.md#rq-6)；[DEC-013](DECISIONS.md#dec-013)；前序 [IDEA-009](IDEAS.md#idea-009)；后续 [IDEA-016](IDEAS.md#idea-016)
 - 实施：[42ab337](https://github.com/blizzardwj/pantry-man-skill/commit/42ab337)、[497a8cc](https://github.com/blizzardwj/pantry-man-skill/commit/497a8cc)、[78e9b02](https://github.com/blizzardwj/pantry-man-skill/commit/78e9b02)、[0097dd8](https://github.com/blizzardwj/pantry-man-skill/commit/0097dd8)、[3990f6c](https://github.com/blizzardwj/pantry-man-skill/commit/3990f6c)、[caa9325](https://github.com/blizzardwj/pantry-man-skill/commit/caa9325)
-- 验证与效果：历史结果未独立复验，效果待观察；[证据核对](dev/documentation-review-2026-09-13.md#historical-evidence)。
+- 验证与效果：历史结果未独立复验，效果待观察；[证据核对](documentation-review-2026-09-13.md#historical-evidence)。
 
 ### 历史背景与讨论
 
@@ -421,7 +422,7 @@
 - 范围／完成标准：采购计划检查范例缺失主料并提出建议，数量与确认闸门继续适用。
 - 关联：[RQ-6](RESEARCH.md#rq-6)；[DEC-014](DECISIONS.md#dec-014)；前序 [IDEA-015](IDEAS.md#idea-015)
 - 实施：[861d1c2](https://github.com/blizzardwj/pantry-man-skill/commit/861d1c2)
-- 验证与效果：历史结果未独立复验，效果待观察；[证据核对](dev/documentation-review-2026-09-13.md#historical-evidence)。
+- 验证与效果：历史结果未独立复验，效果待观察；[证据核对](documentation-review-2026-09-13.md#historical-evidence)。
 
 ### 历史背景与讨论
 
@@ -444,11 +445,12 @@
 - 范围／完成标准：三文档明确边界；现有条目具有稳定编号与链接；状态分工明确；历史转折保留；已完成事项关联实现与验证证据或明确缺口；同步 AGENTS 维护规则。
 - 关联：[DEC-016](DECISIONS.md#dec-016)；本项直接依据用户确认实施，无独立研究条目。
 - 实施：本次工作区中的 IDEAS.md、RESEARCH.md、DECISIONS.md、AGENTS.md 和开发期验证报告；尚未提交，提交时补提交链接。
-- 验证与效果：[本次验证](dev/documentation-review-2026-09-13.md#documentation-checks)；文档检查不代表反馈业务验证，长期维护效果待观察。
+- 验证与效果：[本次验证](documentation-review-2026-09-13.md#documentation-checks)；文档检查不代表反馈业务验证，长期维护效果待观察。
 
 ### 关键进展
 
 - 2026-09-13：用户确认先完成四项文档治理，再处理 feedback/reuse；按此范围完成文档整理，保留原始设计供下一步复核。
+- 2026-10-02：三文件位置由根目录移至 `dev/`，职责分工不变；见后续 [IDEA-022](#idea-022)。本项原完成范围不变。
 
 <a id="idea-018"></a>
 ## 反馈事实落点与耗尽候选生命周期分离
@@ -461,7 +463,7 @@
 - 范围／完成标准：运行契约覆盖多落点、逐食材耗尽与补货、跨日选择性参考、普通删清单不改变耗尽事实、补货逐项 decay；确认建议删 ≥3 项时先执行删改、本次补问一次，按真实回答处理，未回答不猜测、不追问。字段、各入口步骤与同轮已问识别落入 SKILL.md 及 references；开发版旧反馈不迁移，仅定义归档重建行为，不执行真实数据清理。
 - 关联：[耗尽记录说明](RESEARCH.md#rq-5-depletion-simplified)、[补问说明与验收场景](RESEARCH.md#rq-5-clarification-once)、[早期比较](RESEARCH.md#rq-5-depletion-proposal)；前序 [IDEA-009](#idea-009)、[IDEA-011](#idea-011)，后续 [IDEA-020](#idea-020) 的反馈边界与恢复机制替代、[IDEA-021](#idea-021) 的购买语义调整；当时决策 [DEC-017](DECISIONS.md#dec-017)、[DEC-018](DECISIONS.md#dec-018)、[DEC-019](DECISIONS.md#dec-019)，后续替代见 [DEC-021](DECISIONS.md#dec-021)。
 - 实施：[3e6d1bd](https://github.com/blizzardwj/pantry-man-skill/commit/3e6d1bd) 实施当时的 SKILL、feedback_flow、schema、README 和开发样例；未执行真实用户数据清理。其 `landings[]` 写前／恢复部分已由 IDEA-020 替代，耗尽选择性复用继续适用。
-- 验证与效果：[本次验证记录](dev/feedback-refactor-review-2026-09-28.md)：仓库静态检查、作者执行的两个 golden 用例及部分回购／中断／补问数据检查通过；skill-creator 验证器缺 PyYAML 未运行。独立 agent 行为回归与长期效果尚未验证。
+- 验证与效果：[本次验证记录](feedback-refactor-review-2026-09-28.md)：仓库静态检查、作者执行的两个 golden 用例及部分回购／中断／补问数据检查通过；skill-creator 验证器缺 PyYAML 未运行。独立 agent 行为回归与长期效果尚未验证。
 
 ### 关键进展
 
@@ -469,7 +471,7 @@
 - 2026-09-28（后续澄清）：按用户明确的四项选择收敛为“耗尽事实保留、采购时选择性参考、买回逐项 decay、开发版无需兼容旧反馈”；记录 DEC-017。删除早期方案的普通拒购状态与旧格式迁移要求，历史论证留在 RQ-5；尚未开始行为实现或数据清理。
 - 2026-09-28（第二部分确认）：按用户要求将补问解答记入 RQ-5 和 DEC-018，保留旧“下次补问”的历史。明确本次只问一次、分别处理真实回答、未回答不猜测也不追问；记录后续验收场景，保持 idea，尚未实施运行行为或执行业务测试。
 - 2026-09-28（开始实施）：用户已提交设计文档并明确要求重构三个运行文件；转为 implementing，按已接受的两项决策落实字段、入口和验证，不执行真实用户数据清理。
-- 2026-09-28（完成本轮范围）：运行契约与开发样例已更新，转为 implemented；静态检查和作者执行的关键场景结果见[验证记录](dev/feedback-refactor-review-2026-09-28.md)。提交待用户安排；独立 agent 回归与长期效果仍待观察，不将文字规则完成等同于所有宿主已验证。
+- 2026-09-28（完成本轮范围）：运行契约与开发样例已更新，转为 implemented；静态检查和作者执行的关键场景结果见[验证记录](feedback-refactor-review-2026-09-28.md)。提交待用户安排；独立 agent 回归与长期效果仍待观察，不将文字规则完成等同于所有宿主已验证。
 - 2026-09-29：用户进一步质疑把普通购买写为反馈的消费价值；新的输入边界研究由 [IDEA-020](#idea-020) 承接，本项已完成范围及其历史结果不变。
 - 2026-09-29：用户指出普通“买了苹果”应按个人购物清单的日常语义勾选；该独立调整由 [IDEA-021](#idea-021) 承接，不更改本项的历史完成范围。
 - 2026-09-30：[IDEA-020](#idea-020) 和 [DEC-021](DECISIONS.md#dec-021) 移除了本项中的写前／恢复部分，保留逐食材耗尽信号与选择性补购；当时实现和验证仍由上述提交及报告追溯。
@@ -482,7 +484,7 @@
 - 创建：2026-09-28
 - 更新：2026-09-30
 - 问题与预期结果：外部 review 对录入负担的判断未充分考虑宿主语音输入；需要收敛扩张范围，优先修复用户已表达的信息未正确应用、搭配依赖和状态混淆问题。
-- 范围／完成标准：当前仅交付[收敛与改进建议](dev/convergence-review-2026-09-28.md)。候选改动按重要性及相对成本排序，每项列最小范围和验收场景；行为实施须另行确定批次，不能把文档完成视为这些改动完成。
+- 范围／完成标准：当前仅交付[收敛与改进建议](convergence-review-2026-09-28.md)。候选改动按重要性及相对成本排序，每项列最小范围和验收场景；行为实施须另行确定批次，不能把文档完成视为这些改动完成。
 - 关联：前序 [IDEA-008](#idea-008)、[IDEA-004](#idea-004)；反馈生命周期由 [IDEA-018](#idea-018) 跟踪，方案见 [RQ-5](RESEARCH.md#rq-5-depletion-proposal)，不重复维护其进展。本项无新增研究或设计决策。
 - 实施：建议文档已见 [3a1628b](https://github.com/blizzardwj/pantry-man-skill/commit/3a1628b)；本条其他候选行为未因此实施。反馈边界改动另由 [IDEA-020](#idea-020) 跟踪。
 - 验证与效果：建议基于 2026-09-28 当时的运行契约对照，场景均为待验收条件；未执行业务测试或语音效果评测，实际收益待观察。反馈相关候选的后续验证见 [IDEA-020](#idea-020)。
@@ -503,7 +505,7 @@
 - 范围／完成标准：Capture 用表格明确普通购买、已有、消费完、丢弃、清单操作、偏好和搭配评价的分界；当前购买更新 pantry/shopping/history 而不新建反馈，旧耗尽信号逐项结束；删除运行契约中的 `landings[]` 写前和恢复流程，CRUD 直接落业务文件；schema、README、开发样例同步；保留现有 v2 历史数据但不执行旧操作字段。采购计划仍选择性复用消耗信号，不据吃完自动判定长期喜爱。
 - 关联：[RQ-7](RESEARCH.md#rq-7)；前序 [IDEA-018](#idea-018)；新决策 [DEC-021](DECISIONS.md#dec-021)，部分替代 [DEC-019](DECISIONS.md#dec-019) 的恢复机制，保留 [DEC-017](DECISIONS.md#dec-017) 的选择性耗尽复用。
 - 实施：[359b981](https://github.com/blizzardwj/pantry-man-skill/commit/359b981) 同步 SKILL、feedback_flow、schema、README 和开发样例／用例；未改动真实用户数据。Capture 边界列的后续明确化见当前工作区／尚未提交。
-- 验证与效果：[2026-09-30 关联文档复核](dev/feedback-alignment-review-2026-09-30.md)：`dev/validate_static.py` 通过（0 FAIL，1 项既有 `cron add` 占位警告），26 份开发 JSON 解析通过，14 份 Git 跟踪 Markdown 的本地链接／显式锚点检查及 `git diff --check` 通过。定向用例定义覆盖普通入库／购买不新增反馈、明确偏好入反馈、耗尽及补货后旧信号结束。用例定义不等于独立 agent 执行；实际行为和长期效果待观察。
+- 验证与效果：[2026-09-30 关联文档复核](feedback-alignment-review-2026-09-30.md)：`dev/validate_static.py` 通过（0 FAIL，1 项既有 `cron add` 占位警告），26 份开发 JSON 解析通过，14 份 Git 跟踪 Markdown 的本地链接／显式锚点检查及 `git diff --check` 通过。定向用例定义覆盖普通入库／购买不新增反馈、明确偏好入反馈、耗尽及补货后旧信号结束。用例定义不等于独立 agent 执行；实际行为和长期效果待观察。
 
 ### 关键进展
 
@@ -511,7 +513,7 @@
 - 2026-09-30：用户明确要求用表格定反馈边界，保留“吃完了”的消费与可能复购信号，移除数据更新／中断恢复机制，先收敛基本 CRUD 与反馈逻辑；据此转为 implementing。
 - 2026-09-30：运行契约、schema、用户文档和开发用例已按 [DEC-021](DECISIONS.md#dec-021) 更新；静态与 JSON 检查通过，转为 implemented。保留已有 v2 记录，不把旧写入进度作为任务执行；独立 agent 行为回归尚未完成。
 - 2026-09-30（文档对齐）：Capture 表单列标明“是否属于 feedback”及理由，并把消费去向放在独立一列；当前工作区／尚未提交。此次是表达方式澄清，不更改 DEC-021 的边界。
-- 2026-09-30（关联文档复核）：对齐 RQ-5/RQ-7 当前摘要、DEC-017 后续关系、IDEAS 提交链接及开发用例／样例；历史报告注明旧契约范围。检查结果见[复核记录](dev/feedback-alignment-review-2026-09-30.md)，当前工作区／尚未提交。
+- 2026-09-30（关联文档复核）：对齐 RQ-5/RQ-7 当前摘要、DEC-017 后续关系、IDEAS 提交链接及开发用例／样例；历史报告注明旧契约范围。检查结果见[复核记录](feedback-alignment-review-2026-09-30.md)，当前工作区／尚未提交。
 
 <a id="idea-021"></a>
 ## 日常购买报告默认完成对应购物项
@@ -531,3 +533,20 @@
 - 2026-09-29：用户明确个人助手无需按商业库存盘点方式核对购买量，要求遵循“买了苹果”即完成对应清单项的日常语义；开始实施，保留明确部分购买的例外。
 - 2026-09-29：运行契约、schema 与 README 已同步，转为 implemented；验证覆盖静态结构和规则一致性，未将文档检查视为实际 agent 行为验证。
 - 2026-09-30：[DEC-021](DECISIONS.md#dec-021) 保留本项的勾选语义，并另行规定购买不产生新反馈及当前购买日期的默认处理；本项原有完成范围和验证记录保留。
+
+<a id="idea-022"></a>
+## 开发演进记录移入 dev/：与 skill 运行文件分开
+
+- 编号：IDEA-022
+- 状态：implemented
+- 创建：2026-10-02
+- 更新：2026-10-02
+- 问题与预期结果：IDEAS／DECISIONS／RESEARCH 只供开发 agent 维护，却与 SKILL.md 并列在根目录，容易被当作 skill 运行内容。移入 `dev/` 后，根目录只保留 skill 契约、用户文档和开发入口 AGENTS.md。
+- 范围／完成标准：三文件以 `git mv` 移入 `dev/` 保留历史；其中指向根目录文件和 `dev/` 的相对链接、dev 下复核报告指向三文件的链接全部改写并可解析；AGENTS.md 目录结构与工作流路径、dev/README.md 内容清单同步；不改动 SKILL.md、references 及运行行为。不包括调整安装分发范围（见 DEC-022 局限）。
+- 关联：[DEC-022](DECISIONS.md#dec-022)；前序 [IDEA-017](#idea-017)、[DEC-016](DECISIONS.md#dec-016)。无独立研究条目。
+- 实施：当前工作区／尚未提交。
+- 验证与效果：2026-10-02 对所有 Git 跟踪 Markdown 做本地链接与显式锚点检查，0 处失效；`dev/validate_static.py` 通过（0 FAIL，1 项既有 `cron add` 占位警告）；`git diff --check` 通过；Git 将三文件识别为重命名，历史可追溯。GitHub 等外部位置指向旧根目录路径的链接会失效，未做处理。
+
+### 关键进展
+
+- 2026-10-02：用户确认三文件面向开发 agent 而非 Hermes 等运行时 agent，决定移入 `dev/`；转为 implementing，完成移动、链接改写与 AGENTS.md／dev/README.md 同步后转为 implemented。

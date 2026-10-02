@@ -1,7 +1,7 @@
 # DECISIONS — 决策与有效性记录
 
 > 本文件回答“最终选择什么、为什么、接受什么后果、后来是否被替代”，是**决策有效性的唯一维护位置**。
-> 问题和实施进展见 [IDEAS.md](IDEAS.md)，研究过程见 [RESEARCH.md](RESEARCH.md)。本文件保留当时选择，不复制当前执行规范；当前行为见 [SKILL.md](SKILL.md) 及 references。
+> 问题和实施进展见 [IDEAS.md](IDEAS.md)，研究过程见 [RESEARCH.md](RESEARCH.md)。本文件保留当时选择，不复制当前执行规范；当前行为见 [SKILL.md](../SKILL.md) 及 references。
 
 ### 记录约定
 
@@ -41,6 +41,7 @@
 
 | 编号 | 主题 |
 |------|------|
+| [DEC-022](#dec-022) | [2026-10-02] 开发演进记录三文件移入 dev/ |
 | [DEC-021](#dec-021) | [2026-09-30] 反馈只收个性化信号，普通 CRUD 直接落业务文件 |
 | [DEC-020](#dec-020) | [2026-09-29] 普通购买报告默认完成对应待购项 |
 | [DEC-019](#dec-019) | [2026-09-28] 反馈 v2 的逐食材记录、独立更新结果与采购确认上下文 |
@@ -62,6 +63,28 @@
 | [DEC-003](#dec-003) | [2026-08-05] 库存冷启动探测提升为通用规则（任意库存读取触发 + 一次性标记） |
 | [DEC-002](#dec-002) | [2026-08-04] 新增 Weekly Plan 能力模块（按周采购规划 + 每日搭配） |
 | [DEC-001](#dec-001) | [2026-07-31] 优先修复首次初始化（First-Run Setup） |
+
+<a id="dec-022"></a>
+## [2026-10-02] 开发演进记录三文件移入 dev/
+
+- 编号：DEC-022
+- 决策状态：accepted
+- 更新：2026-10-02
+- 关联：[IDEA-022](IDEAS.md#idea-022)；直接依据是用户指出三文件面向开发 agent、而非 Hermes 等运行时 agent。
+- 适用范围／后续关系：补充 [DEC-016](#dec-016)，只改变三文件的位置，不改变其职责分工、编号与记录约定。
+- 背景：IDEAS、DECISIONS、RESEARCH 与 SKILL.md 并列在根目录，而 AGENTS.md 已将 `dev/` 定义为开发专用、不属于 skill 运行内容；位置与用途不一致，开发者和 agent 都可能把历史设计误当作 skill 的一部分。
+- 决策：三文件移至 `dev/`，与复核报告、验证脚本和用例同处；根目录保留 SKILL.md、references/、README.md、LICENSE 及开发入口 AGENTS.md。AGENTS.md 留在根目录，以便各类开发 agent 按惯例自动加载。
+- 理由：目录位置直接表达"运行契约"与"开发资料"的边界，与 AGENTS.md 中 dev/ 的既有定义一致；dev 下报告与三文件同层后互链更短。
+- 被否决的选项：
+  - 保留在根目录，仅在文件开头声明"开发用"：位置与 dev/ 定义继续冲突，依赖读者先读到声明。
+  - 另建 `docs/` 目录：会新增一个职责与 dev/ 重叠的目录。
+  - 同时把 skill 移入独立子目录以收窄安装内容：涉及安装方式与所有运行路径，超出本次文档整理范围，留待另行决定。
+- 后果：根目录更清楚，运行时 agent 与开发 agent 的阅读范围分开；需一次性改写相对链接，GitHub 等外部位置指向旧根目录路径的链接失效。局限：这只是仓库内的组织调整，若安装工具复制整个仓库，dev/ 仍会随 skill 安装，未经核实。
+- 实施与验证入口：[IDEA-022](IDEAS.md#idea-022)。
+
+### 演进记录
+
+- 2026-10-02：用户确认移动方案并要求执行；按上述范围接受。
 
 <a id="dec-021"></a>
 ## [2026-09-30] 反馈只收个性化信号，普通 CRUD 直接落业务文件
@@ -125,7 +148,7 @@
   - 提问时间仅放在对话记忆中：恢复同一份建议时容易重复问；另建未回答任务则违背不追问的选择。
   - 将旧 applied 批量迁移：用户已决定不兼容开发版旧反馈。运行时只归档旧 feedback 并建空 v2，不清理其他业务数据。
 - 后果：记录略长，需维护稳定身份及每次真实更新的结果；数组按 ID 核对，不能按下标回放。未知数量允许 null，未知价格等省略；购买日期未知时事实先留 feedback，不造月度账目。提问标记先保存再发送，保证最多一次尝试，不能保证中断时消息必达。before/after 冲突仍需核对，不承诺自动解决所有并发修改。
-- 实施与验证入口：[IDEA-018](IDEAS.md#idea-018)、[本次验证记录](dev/feedback-refactor-review-2026-09-28.md)。
+- 实施与验证入口：[IDEA-018](IDEAS.md#idea-018)、[本次验证记录](feedback-refactor-review-2026-09-28.md)。
 
 ### 演进记录
 
@@ -211,11 +234,12 @@
   - 重写历史结论使其符合当前实现：会抹掉为什么变化及旧方案为何不足的依据。
   - 此次同时修复 feedback/reuse：超出本轮先整理文档、再处理行为问题的顺序。
 - 后果：能从问题追溯到研究、选择、实现与证据；维护者需在重要转折时更新链接和历史记录。旧资料缺少执行结果的部分只能明确待验证，不能由文档整理补成 PASS。
-- 实施与验证入口：[IDEA-017](IDEAS.md#idea-017)；[本次验证](dev/documentation-review-2026-09-13.md#documentation-checks)。
+- 实施与验证入口：[IDEA-017](IDEAS.md#idea-017)；[本次验证](documentation-review-2026-09-13.md#documentation-checks)。
 
 ### 演进记录
 
 - 2026-09-13：用户确认四项整理工作及文档职责边界，本次据此实施；未改动 feedback/reuse 的运行契约。
+- 2026-10-02：[DEC-022](#dec-022) 将三文件移入 `dev/`，属位置补充，本决策的职责分工仍有效。
 
 <a id="dec-015"></a>
 ## [2026-09-12] 纤维知识沉淀：跨类别「膳食纤维速查」+ 强制口径标注
@@ -226,7 +250,7 @@
 - 关联：历史无独立想法条目；直接依据见下方历史正文与提交
 - 适用范围／后续关系：无整项替代关系。
 - 后果（本次回顾归纳）：跨类别比较有统一入口；数值来源与鲜干口径仍需维护。
-- 实施与验证入口：[e10abeb](https://github.com/blizzardwj/pantry-man-skill/commit/e10abeb)、[5358548](https://github.com/blizzardwj/pantry-man-skill/commit/5358548)；[证据核对](dev/documentation-review-2026-09-13.md#historical-evidence)
+- 实施与验证入口：[e10abeb](https://github.com/blizzardwj/pantry-man-skill/commit/e10abeb)、[5358548](https://github.com/blizzardwj/pantry-man-skill/commit/5358548)；[证据核对](documentation-review-2026-09-13.md#historical-evidence)
 
 ### 历史决策正文
 
@@ -325,7 +349,7 @@
 - 关联：历史无独立想法条目；直接依据见下方历史正文与提交
 - 适用范围／后续关系：部分替代 [DEC-005](DECISIONS.md#dec-005)、[DEC-007](DECISIONS.md#dec-007) 引用的“禁止一切脚本”约束；核心仍零代码可用，可选脚本未因此变为运行依赖。
 - 后果（本次回顾归纳）：允许确定性增强；必须同时维护零代码可用路径。
-- 实施与验证入口：[5ae4b3d](https://github.com/blizzardwj/pantry-man-skill/commit/5ae4b3d)；[证据核对](dev/documentation-review-2026-09-13.md#historical-evidence)
+- 实施与验证入口：[5ae4b3d](https://github.com/blizzardwj/pantry-man-skill/commit/5ae4b3d)；[证据核对](documentation-review-2026-09-13.md#historical-evidence)
 
 ### 历史决策正文
 
@@ -455,7 +479,7 @@
 - 关联：历史无独立想法条目；直接依据见下方历史正文与提交
 - 适用范围／后续关系：无整项替代关系。
 - 后果（本次回顾归纳）：保留提醒能力示意；各宿主仍需自行映射定时机制。
-- 实施与验证入口：[f5ee45e](https://github.com/blizzardwj/pantry-man-skill/commit/f5ee45e)；[证据核对](dev/documentation-review-2026-09-13.md#historical-evidence)
+- 实施与验证入口：[f5ee45e](https://github.com/blizzardwj/pantry-man-skill/commit/f5ee45e)；[证据核对](documentation-review-2026-09-13.md#historical-evidence)
 
 ### 历史决策正文
 
