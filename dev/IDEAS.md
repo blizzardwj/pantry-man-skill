@@ -544,7 +544,7 @@
 - 问题与预期结果：IDEAS／DECISIONS／RESEARCH 只供开发 agent 维护，却与 SKILL.md 并列在根目录，容易被当作 skill 运行内容。移入 `dev/` 后，根目录只保留 skill 契约、用户文档和开发入口 AGENTS.md。
 - 范围／完成标准：三文件以 `git mv` 移入 `dev/` 保留历史；其中指向根目录文件和 `dev/` 的相对链接、dev 下复核报告指向三文件的链接全部改写并可解析；AGENTS.md 目录结构与工作流路径、dev/README.md 内容清单同步；不改动 SKILL.md、references 及运行行为。不包括调整安装分发范围（见 DEC-022 局限）。
 - 关联：[DEC-022](DECISIONS.md#dec-022)；前序 [IDEA-017](#idea-017)、[DEC-016](DECISIONS.md#dec-016)。无独立研究条目。
-- 实施：当前工作区／尚未提交。
+- 实施：[383c318](https://github.com/blizzardwj/pantry-man-skill/commit/383c318)
 - 验证与效果：2026-10-02 对所有 Git 跟踪 Markdown 做本地链接与显式锚点检查，0 处失效；`dev/validate_static.py` 通过（0 FAIL，1 项既有 `cron add` 占位警告）；`git diff --check` 通过；Git 将三文件识别为重命名，历史可追溯。GitHub 等外部位置指向旧根目录路径的链接会失效，未做处理。
 
 ### 关键进展
