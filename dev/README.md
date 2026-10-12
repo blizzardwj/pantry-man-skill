@@ -11,6 +11,7 @@ pantry-man-skill 的**设计文档与开发期验证层**，与可选运行时�
 
 - `IDEAS.md` / `DECISIONS.md` / `RESEARCH.md` — 开发演进记录：问题与实施进展／决策与有效性／研究进展（职责分工见根目录 AGENTS.md）
 - `*-review-YYYY-MM-DD.md` — 各次复核与验证报告，由 IDEAS 条目链接
+- `improvement-todo-YYYY-MM-DD.md` — 待办清单（范围与验收），完成状态由对应 IDEAS 条目维护
 - `validate_static.py` — L1 静态校验（零 LLM），自动化 AGENTS.md Verification Checklist
 - `run_golden.py` — L2 runner：setup fixture → executor 跑 prompt → 断言数据状态
 - `lib/assert_engine.py` — 断言引擎（纯函数，零 LLM）
