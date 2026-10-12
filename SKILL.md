@@ -1,6 +1,6 @@
 ---
 name: pantry-man
-description: Manage home pantry inventory, shopping lists, and purchase history. Use when the user asks about (1) adding/viewing/searching inventory by zone (cold/frozen/ambient/daily), (2) managing shopping lists for food and daily items, (3) recording purchases and viewing purchase history, (4) checking expiry dates or items running low, (5) meal planning — shopping plans (采购计划), daily food pairings (每日搭配), and ingredient consultation (食材咨询) as independent features, plus the weekly plan (周计划) orchestrator that chains them per the user's shopping rhythm, all based on the user's dietary profile and current stock.
+description: Track the user's own household food stock, shopping list and purchases, and plan what to buy and eat from them. Use when the user (1) adds, removes, views or searches items at home by zone (cold/frozen/ambient/daily), or asks what is expiring or running low; (2) edits the shopping list, reports buying something, or views purchase history; (3) reports eating something up or states food preferences for future plans; (4) asks for a shopping plan (采购计划), what to eat from what they have (每日搭配, e.g. 今晚吃什么), or a weekly plan (周计划); (5) asks how to eat or pair a food in light of their own stock or dietary profile (食材咨询). Not for general recipe or cooking questions unrelated to the user's own stock or profile.
 ---
 
 # Pantry Management
@@ -20,7 +20,10 @@ All data files are under each agent's home directory at [AGENT_HOME]/pantry/data
 
 ## First-Run Setup
 
-Before executing ANY user request, check whether the pantry data directory exists. If it doesn't, initialize it silently — the user should never see a "file not found" error.
+Create data only when there is something to write — the user should never see a "file not found" error either way.
+
+- **Read-only requests** (viewing inventory, the shopping list or history, checking expiry, 食材咨询): if a file or the directory is missing, answer as if it held the empty seed from [schema.md](references/schema.md) (e.g. an empty inventory). Do not create anything.
+- **Before the first write** (adding, removing or updating items, recording a purchase, capturing feedback, saving a plan or profile): run the steps below, then perform the write.
 
 1. Check if `[AGENT_HOME]/pantry/data/` exists. If not, create the directory tree.
 2. Check if `[AGENT_HOME]/pantry/data/pantry.json` exists. If not, create it with the empty seed structure from [schema.md](references/schema.md).
@@ -28,11 +31,11 @@ Before executing ANY user request, check whether the pantry data directory exist
 4. Check if `[AGENT_HOME]/pantry/data/history/` exists. If not, create it.
 5. Check if `[AGENT_HOME]/pantry/data/feedback.json` exists. If not, create its version 2 seed from [schema.md](references/schema.md). Follow the existing-data rule in [feedback_flow.md](references/feedback_flow.md) for older records.
 
-After creating any missing files, confirm briefly to the user, e.g.:
+After creating any missing files, mention it briefly together with the result of the write, e.g.:
 
-"🧺 Your pantry is ready. Four zones set up (refrigerator, freezer, ambient, daily) — all empty for now. Try 'add milk to my fridge' to get started."
+"🧺 Your pantry is set up (refrigerator, freezer, ambient, daily). Milk is now in the fridge."
 
-If all files already exist, skip silently — no need to announce.
+If all files already exist, skip silently — no need to announce. When showing an empty inventory to a user with no data yet, you may suggest a first step, e.g. "Try 'add milk to my fridge'".
 
 ## Core Operations
 
@@ -374,7 +377,8 @@ Flow:
      ALSO read the 「膳食纤维速查（跨类别）」section — cross-category ranking lives
      there, not in the per-category tables. Check 口径 first (鲜重/干重、
      不溶性/总纤维): numbers with different baselines are NOT comparable.
-2. Read profile.json → apply prefer/avoid/cookingStyle/health as the personalization
+2. Read profile.json if it exists (never create it here; without it, give the
+   general answer) → apply prefer/avoid/cookingStyle/health as the personalization
    layer (e.g. 肝功能不佳 → 控钠建议生效；avoid refined-carbs → 不用糖提味).
 3. Output the combined answer — grounded in the knowledge file, personalized by profile:
    ① 特性（简要带出为什么这么吃）② 提味/做法方向（提味原理 × cookingStyle）

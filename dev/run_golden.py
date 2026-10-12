@@ -37,10 +37,13 @@ def load_case(case_id):
 
 
 def setup_fixture(fixture_name, agent_home):
+    data_dir = agent_home / DATA_SUBDIR
+    if fixture_name is None:
+        # no data yet: leave the data directory absent (first-run cases)
+        return data_dir
     src = FIXTURES_DIR / fixture_name
     if not src.is_dir():
         raise SystemExit(f"fixture not found: {src}")
-    data_dir = agent_home / DATA_SUBDIR
     data_dir.mkdir(parents=True, exist_ok=True)
     for f in src.glob("*"):
         shutil.copy2(f, data_dir / f.name)
@@ -82,10 +85,20 @@ def run_assertions(case, agent_home):
     results = []
     for target, assertions in case["assert"].items():
         f = target_path(agent_home, data_dir, target)
+        content_checks = []
+        for a in assertions:
+            if "exists" in a:
+                want = a["exists"]
+                results.append((target, f.exists() == want,
+                                f"file exists == {want} (actual: {f.exists()})"))
+            else:
+                content_checks.append(a)
+        if not content_checks:
+            continue
         if not f.exists():
             results.append((target, False, f"target file MISSING: {f}"))
             continue
-        for ok_flag, msg in evaluate_file(f, assertions):
+        for ok_flag, msg in evaluate_file(f, content_checks):
             results.append((target, ok_flag, msg))
     return results
 

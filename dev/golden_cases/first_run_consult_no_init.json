@@ -1,0 +1,11 @@
+{
+  "id": "first_run_consult_no_init",
+  "prompt": "海带怎么炖好吃",
+  "fixture": null,
+  "assert": {
+    "pantry.json": [{"exists": false}],
+    "shopping.json": [{"exists": false}],
+    "feedback.json": [{"exists": false}],
+    "profile.json": [{"exists": false}]
+  }
+}

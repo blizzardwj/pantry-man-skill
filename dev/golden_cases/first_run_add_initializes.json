@@ -1,0 +1,14 @@
+{
+  "id": "first_run_add_initializes",
+  "prompt": "把 1L 牛奶放进冰箱",
+  "fixture": null,
+  "assert": {
+    "pantry.json": [
+      {"path": "zones.cold.items", "contains": ["牛奶"]}
+    ],
+    "shopping.json": [{"exists": true}],
+    "feedback.json": [
+      {"path": "records", "count_equals": 0}
+    ]
+  }
+}

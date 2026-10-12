@@ -52,10 +52,13 @@ python3 dev/run_golden.py run-all             # 全部用例（manual）；--no-
 }
 ```
 
-- `fixture`：`dev/fixtures/<name>/` 里的初始数据，被复制到临时 agent home 的 `pantry/data/`
+- `fixture`：`dev/fixtures/<name>/` 里的初始数据，被复制到临时 agent home 的 `pantry/data/`；`null` 表示尚无数据，不创建 `pantry/data/`（用于首次使用场景）
 - `assert` 目标文件：`*.json`（结构化断言）或 `response.txt`（agent 回复文本，manual 模式下手动放置）
 
 ### 断言谓词
+
+文件级（任意目标文件）：
+- `exists` — `true`／`false`，断言文件存在或不存在（如只读请求不应创建数据文件）
 
 结构化（`*.json`，作用于点号路径 `path`）：
 - `contains` / `not_contains` — 数组内匹配（dict 数组按 `name` 字段；字符串数组直接匹配）

@@ -75,6 +75,7 @@
 | [IDEA-025](#idea-025) | 过期条目保留并询问处置（待办 F-02） |
 | [IDEA-026](#idea-026) | 定时提醒宿主无关化（待办 F-03） |
 | [IDEA-027](#idea-027) | 运行文档内矛盾清理（待办 F-04） |
+| [IDEA-028](#idea-028) | 首次写入前才初始化、收窄触发描述（待办 F-05） |
 
 <a id="idea-001"></a>
 ## First-Run 初始化
@@ -82,7 +83,7 @@
 - 编号：IDEA-001
 - 状态：implemented
 - 创建：2026-07-31
-- 更新：2026-09-13
+- 更新：2026-10-11
 - 范围／完成标准：初始化缺失的数据目录与种子文件，重复运行不覆盖已有数据。
 - 关联：[DEC-001](DECISIONS.md#dec-001)
 - 实施：[32c8c0f](https://github.com/blizzardwj/pantry-man-skill/commit/32c8c0f)
@@ -97,6 +98,7 @@
 ### 关键进展
 
 - 2026-09-13：补录编号与追溯入口；原实施状态表述为“**implemented** (commit 32c8c0f)”。状态摘要现由本条独占维护，历史讨论不作为当前契约。
+- 2026-10-11：初始化时机由 [IDEA-028](#idea-028) 改为“首次写入前”（[DEC-026](DECISIONS.md#dec-026)）；本条原完成记录保留。
 
 <a id="idea-002"></a>
 ## Weekly Plan：按周采购规划 + 每日食材搭配
@@ -569,7 +571,7 @@
 - 问题与预期结果：2026-10-11 技术评估认为，运行契约在事实与推断区分上质量较高，但存在已知未修矛盾（搭配食材池、过期删除、宿主专属调度、品类归类）、缺失状态（规划时段、itemKey 一致性、派生 status）、单次操作指令量过大，以及价值削弱因素（数据绑定单一 agent、带作者个人画像、宿主定位不符、缺少执行与对比证据）。需要一份按投入产出排序的待办，作为后续批次实施的范围依据。
 - 范围／完成标准：当前仅交付[待办清单](improvement-todo-2026-10-11.md)：修复（F-01～F-08）、价值提升（V-01～V-07）、扩大使用（A-01～A-06），每项含最小范围、验收场景、相对投入和依赖，并给出建议批次。行为实施须由用户另行确定批次后转 planned；清单完成不代表任何条目已实施。
 - 关联：F-01、F-02 即 [IDEA-019](#idea-019) 候选 1、2；F-01、F-02 已分别拆为 [IDEA-024](#idea-024)、[IDEA-025](#idea-025)；V-07 承接[收敛建议 §4](convergence-review-2026-09-28.md)。V-02 实施前需新增 DEC，V-03 需新增 RQ。前序 [IDEA-020](#idea-020)、[IDEA-021](#idea-021)。
-- 实施：待办清单见 [cb61d54](https://github.com/blizzardwj/pantry-man-skill/commit/cb61d54)；各条目实施由相应 IDEA 跟踪（F-01 见 [IDEA-024](#idea-024)，F-02 见 [IDEA-025](#idea-025)，F-03 见 [IDEA-026](#idea-026)，F-04 见 [IDEA-027](#idea-027)）。
+- 实施：待办清单见 [cb61d54](https://github.com/blizzardwj/pantry-man-skill/commit/cb61d54)；各条目实施由相应 IDEA 跟踪（F-01 见 [IDEA-024](#idea-024)，F-02 见 [IDEA-025](#idea-025)，F-03 见 [IDEA-026](#idea-026)，F-04 见 [IDEA-027](#idea-027)，F-05 见 [IDEA-028](#idea-028)）。
 - 验证与效果：清单依据为契约对照与行号核对，未执行 agent 行为测试；本次环境无可用 Python，`dev/validate_static.py` 未运行。各项收益为项目判断，待对应验收与 A-03、V-06 证据确认。
 
 ### 关键进展
@@ -637,9 +639,26 @@
 - 问题与预期结果：运行文档之间存在归类与引用矛盾：SKILL.md 采购计划示例表把青椒、黄瓜列在“水果”，而 quantity_benchmark.md 归“蔬菜”；SKILL.md 的“蛋白质”“主食”展示类别与基准的“鱼禽肉蛋／豆制品”“谷类主食／薯类”未说明对应关系；示例中的香菇、海带及 ingredient_knowledge.md 中的鲜豆类、莲藕在基准归类规则中缺失；schema.md 免责声明指向不存在的“Weekly Plan section”，画像确认时机写成“首个周计划后”，与 SKILL.md“首个生成的计划后”不一致。预期同一食材在各文件中归类一致，交叉引用可解析。
 - 范围／完成标准：按 [待办 F-04](improvement-todo-2026-10-11.md#f-04)。SKILL.md 示例表品类以 quantity_benchmark 为准并说明展示类别与基准类别的对应，数量校验步骤写明按基准归类、无日参考范围的类别（油脂、坚果）不校验；quantity_benchmark.md 补鲜豆类、菌藻（干鲜口径分开）、莲藕的归类；schema.md 修正两处引用与表述。不新增营养基准数值（如油脂、坚果日参考量）。
 - 关联：沿用 [DEC-005](DECISIONS.md#dec-005)（数量校验）与 [DEC-015](DECISIONS.md#dec-015)（纤维口径）的既有规则，本项为一致性修正，无新增决策或研究条目；[IDEA-023](#idea-023)。
-- 实施：本次工作区／尚未提交。改动：SKILL.md（采购计划示例表及说明、第 7 步数量校验）、references/quantity_benchmark.md（Category Assignment Rules）、references/schema.md（profile 说明、免责声明引用）。
+- 实施：[f1338fb](https://github.com/blizzardwj/pantry-man-skill/commit/f1338fb)。改动：SKILL.md（采购计划示例表及说明、第 7 步数量校验）、references/quantity_benchmark.md（Category Assignment Rules）、references/schema.md（profile 说明、免责声明引用）。
 - 验证与效果：2026-10-11 人工核对 SKILL.md、quantity_benchmark.md、ingredient_knowledge.md 中青椒、黄瓜、鲜豆类、菌藻、莲藕的归类一致，SKILL.md 各级标题与 references 中对 SKILL.md 小节的引用（Expired items、Inventory Awareness、User Profile、⚠️ Health Disclaimer）均存在。本次环境无可用 Python，`dev/validate_static.py` 未运行；数量校验输出未经 agent 执行验证，未新增 golden case（校验报告为自由文本，现有断言难以精确判断归类）。干品菌藻“不按干重计入蔬菜目标”是依据 DEC-015 口径规则作出的项目推断。
 
 ### 关键进展
 
 - 2026-10-11：用户要求修复待办 F-04；按上述范围实施并转为 implemented（验证缺口见上）。核对中另发现 schema.md 画像确认时机与 SKILL.md 不一致，一并修正。
+
+<a id="idea-028"></a>
+## 首次写入前才初始化、收窄触发描述（待办 F-05）
+
+- 编号：IDEA-028
+- 状态：implemented
+- 创建：2026-10-11
+- 更新：2026-10-11
+- 问题与预期结果：description 覆盖一般烹饪提问，First-Run Setup 要求任何请求前先建数据目录，误触发或只读请求都会在 agent home 留下数据文件。预期与用户库存无关的提问不触发或不留数据，首次写入仍能无感初始化。
+- 范围／完成标准：按 [待办 F-05](improvement-todo-2026-10-11.md#f-05)。SKILL.md description 以用户自有库存／清单／购买／画像为中心并排除一般菜谱问题；First-Run Setup 区分只读（缺失按空种子回答、不创建）与首次写入前初始化，回执与写入结果合并；食材咨询仅在 profile.json 存在时读取。开发侧 runner 支持无数据目录的首次场景（`"fixture": null`）与文件级 `exists` 断言，新增三个首次使用用例。
+- 关联：[DEC-026](DECISIONS.md#dec-026)（部分替代 [DEC-001](DECISIONS.md#dec-001)）；前序 [IDEA-001](#idea-001)、[IDEA-023](#idea-023)；无新增研究条目。
+- 实施：本次工作区／尚未提交。改动：SKILL.md（frontmatter description、First-Run Setup、食材咨询第 2 步）；dev/run_golden.py（`setup_fixture` 支持 null、`run_assertions` 支持 `exists`）、dev/README.md；golden case `first_run_consult_no_init`、`first_run_view_no_init`、`first_run_add_initializes`。
+- 验证与效果：2026-10-11 Node 解析新增用例 JSON 通过；description 710 字符（规范上限 1024），frontmatter 仍为单行 `name`／`description`。本次环境无可用 Python，`dev/validate_static.py` 与修改后的 `run_golden.py` 均未运行；新用例未交给独立 agent 执行。宿主是否按新 description 减少误触发未测试；用例中的执行者被直接要求使用本 skill，只能验证触发后的只读无副作用，不能验证触发判断。
+
+### 关键进展
+
+- 2026-10-11：用户要求修复待办 F-05；按 [DEC-026](DECISIONS.md#dec-026) 实施，约定范围完成后转为 implemented（验证缺口见上）。

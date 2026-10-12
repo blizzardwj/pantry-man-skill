@@ -1,0 +1,10 @@
+{
+  "id": "first_run_view_no_init",
+  "prompt": "冰箱里有什么",
+  "fixture": null,
+  "assert": {
+    "pantry.json": [{"exists": false}],
+    "shopping.json": [{"exists": false}],
+    "feedback.json": [{"exists": false}]
+  }
+}
