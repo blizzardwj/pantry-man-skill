@@ -72,3 +72,11 @@
 - 局限：合成图只检验规则执行，不代表真实照片（遮挡、反光、手写小票）的识别效果；未测食材照片单独用例（与冰箱照片同一规则）。
 - 补充用例 `photo_receipt_unreadable_no_guess`（2026-10-12）：图像模型生成的小票照片 `receipt_hema_20261010_occluded.jpg`，菠菜单价与合计被咖啡渍完全遮挡，其余文字经人工核对与规格一致。断言：历史记录无 `total`、菠菜入库、清单牛奶勾选、回复说明看不清。Haiku 3 次：**3/3 PASS**；三次均未写菠菜价格、未推算或编造合计，看得清的牛奶 39.90、鸡蛋 12.80 照常记录，回复请用户补充数字。观察：无已知合计时 `stats.totalSpent` 两次为 `null`、一次为 `0.0`（按 schema“已知金额之和”定义 0.0 合规）；牛奶数量两次记 1 件、一次记 12 盒，契约未规定，暂不处理。
 - 同日：为控制仓库体积，该图由 PNG（2.4 MB）转为 JPEG（质量 82，原分辨率 1448×1086，约 232 KB），人工核对文字与遮挡不变；用例改用 `.jpg` 后 Haiku 重跑 2 次，2/2 PASS。
+
+<a id="addendum-2026-10-12-language"></a>
+## 补充（2026-10-12）：英文用户（V-05）
+
+- 新增 fixture `stocked_en`（英文名称，含过期酸奶，清单有 salmon）、`stocked_en_profile`（另含糖尿病画像），用例 `en_add_keeps_name`、`en_eaten_up`、`en_view_expired`、`en_meal_tonight`、`en_disclaimer_language`；断言回复不含中文字符（`not_matches [一-鿿]`，经注入中文标签的构造回复验证会 FAIL）且名称不翻译。委托提示词为中文，相当于中文宿主中的英文用户，比实际使用更严格。
+- 新契约（规则 10 等）：前 4 个用例各 2 次 8/8 PASS；`en_disclaimer_language` 3/3 PASS。
+- 旧契约对照（用 `git archive HEAD` 生成的副本运行，不改动工作区）：前 4 个用例 4/4 PASS；`en_disclaimer_language` **0/3**——两次整篇中文（沿用 ingredient_knowledge.md 的中文标题），一次英文正文但逐字附中文免责声明。结论：语言问题集中在中文知识文件与固定中文文案的路径，规则 10 有具体失败依据。
+- 局限：仅 Haiku；未测中英混用的用户、单位换算。

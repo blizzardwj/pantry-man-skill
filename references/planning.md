@@ -1,6 +1,6 @@
 # Planning — shopping plan, meal pairings, ingredient advice
 
-Read together with [SKILL.md](../SKILL.md); its ground rules still apply. Every plan starts from fresh reads of `profile.json` (if it exists), `pantry.json` and `shopping.json`. Follow the profile's `rules`; its health constraints override everything else here.
+Read together with [SKILL.md](../SKILL.md); its ground rules still apply, including replying in the user's language — the Chinese labels below (食材, 价值, 做法, 早／午／晚, （待买）) are examples of meaning. Every plan starts from fresh reads of `profile.json` (if it exists), `pantry.json` and `shopping.json`. Follow the profile's `rules`; its health constraints override everything else here.
 
 ## 🛒 Shopping plan
 

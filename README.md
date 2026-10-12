@@ -1,15 +1,23 @@
 # pantry-man-skill 🧺
 
-A skill for AI agents to manage home pantry inventory, shopping lists, and purchase history.
+Plan what to buy and what to cook from what you already have at home. Your AI agent keeps track of your pantry, shopping list and purchases as you talk — or send a photo — so plans are based on your real stock, your diet and your shopping rhythm.
+
+根据家里现有的食材，规划买什么、怎么吃。
 
 ## Features
 
-- 📦 **Inventory Management** - Track food items by storage zone (cold/frozen/ambient/daily)
-- 🛒 **Shopping List** - Manage shopping items with priorities and categories
-- 📊 **Purchase History** - Record and view purchase history with monthly stats
-- ⏰ **Expiry Tracking** - Check items expiring soon; expired items stay listed until you say they were eaten, thrown away, or are still fine
-- 🔄 **Learns as you go** - Remembers the preferences and signature dishes you state. Foods you report eating up stay in the pantry at zero and may be suggested in the next shopping plan; restocking clears them.
-- 🗓️ **Meal Planning** - 🛒 Shopping Plan (stock-aware list for your next shopping trip, with a dietary-guideline quantity check, written only after you confirm), 🍽 Daily Pairings (meals for today from current stock; plans for later days can also use your shopping list), and 🥗 Ingredient Advice — all driven by a lightweight dietary profile
+**Plan from what you have**
+
+- 🛒 **Shopping Plan** - A list for your next shopping trip that skips what you already have, suggests restocking foods you finished, and checks quantities against dietary guidelines. Nothing is added to your list until you confirm.
+- 🍽 **Daily Pairings** - "What's for dinner?" answered from what is at home right now; plans for later days can also use your shopping list.
+- 🥗 **Ingredient Advice** - How to cook, season and pair a food, adjusted to your dietary profile.
+
+**Kept up to date as you go**
+
+- 📦 **Pantry** - What you have, by storage zone (fridge / freezer / ambient / daily items). Finished foods stay at zero as a restock hint.
+- ⏰ **Expiry Tracking** - Expiring items are flagged; expired items stay listed until you say they were eaten, thrown away, or are still fine.
+- 🧾 **Shopping List & Purchase History** - Mark items bought, keep monthly purchase records and spending.
+- 🔄 **Learns as you go** - Remembers the preferences, signature dishes and rules you state. No questionnaire.
 
 ## Installation
 
@@ -19,20 +27,21 @@ npx skills add blizzardwj/pantry-man-skill
 
 ## Usage
 
-Once installed, your AI agent can help you with:
+Once installed, just talk to your agent — in Chinese or English; it replies in your language and keeps item names as you say them:
 
-- "Show me what's in my refrigerator"
-- "Add 2L milk to my pantry, expires in 7 days"
-- "Add tomatoes to my shopping list"
-- "苹果买了" (updates inventory and purchase history, and marks apples on the shopping list as bought)
-- "Record a purchase: milk 15 yuan, bread 12 yuan"
-- "What items are expiring this week?"
+**Planning**
+
+- "列个采购清单" / "这周买什么" — a shopping plan for your next trip, then meal pairings for those days
+- "今晚吃什么" / "What should I cook tonight?" — a meal from what you already have
+- "我在控糖，海带怎么吃比较好" — ingredient advice adjusted to your profile
+
+**Keeping track**
+
+- "买了两盒牛奶" / "I bought 2L of milk" — stocks the pantry, checks it off the list, records the purchase
+- "苹果吃完了" / "I finished the apples" — keeps apples at zero so the next shopping plan can suggest them
+- "冰箱里有什么" / "What's expiring this week?" — your stock with expiry flags
+- "以后早餐多安排苹果" — remembers a preference for future plans
 - "Show my purchase history for last month"
-- "苹果吃完了" (keeps apples in the pantry at zero so the next shopping plan can suggest them)
-- "以后早餐多安排苹果" (records a stated preference for future pairings)
-- "列个采购清单" (Shopping Plan — stock-aware list with quantity check + confirmation step)
-- "今晚吃什么" (Daily Pairings — tonight's meal from what you already have; plans for later days can also use your confirmed shopping list)
-- "这周买什么" (Shopping Plan for your next trip, then meal pairings for those days)
 
 ### Say it or show it (voice and photos)
 

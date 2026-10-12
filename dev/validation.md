@@ -109,6 +109,7 @@ python dev/run_golden.py run-all [--no-wait]           # 全部用例；--no-wai
 | `voice_multi_op` | 一句话多项操作：买了、吃完、扔了 |
 | `photo_receipt_records_purchase` | 小票照片直接记为购买：入库、勾选清单、按小票日期与金额记历史 |
 | `photo_receipt_unreadable_no_guess` | 小票部分被遮挡：看不清的单价与合计不写、不推算，看得清的照常记录，并告知用户 |
+| `en_disclaimer_language` | 英文用户：回复与免责声明为英文，即使读取的是中文知识文件（其余 `en_*` 用例覆盖英文的入库、吃完、过期查看、当天搭配） |
 | `photo_fridge_confirm_first` | 冰箱照片先列识别结果并请求确认，确认前不写入；看不到的条目不删除、不置 0 |
 
 全部用例见 [golden_cases/](golden_cases/)；已被新规则替代的旧用例在 [historical_cases/](historical_cases/)，只供追溯，不参与运行。

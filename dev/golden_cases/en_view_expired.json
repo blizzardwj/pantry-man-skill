@@ -1,0 +1,14 @@
+{
+  "id": "en_view_expired",
+  "prompt": "What's in my fridge?",
+  "fixture": "stocked_en",
+  "assert": {
+    "pantry.json": [
+      {"path": "zones.cold.items", "contains": ["yogurt", "apples", "eggs"]}
+    ],
+    "response.txt": [
+      {"contains_any": ["expired", "Expired"]},
+      {"not_matches": "[\\u4e00-\\u9fff]"}
+    ]
+  }
+}

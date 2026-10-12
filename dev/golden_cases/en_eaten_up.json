@@ -1,0 +1,14 @@
+{
+  "id": "en_eaten_up",
+  "prompt": "I finished the apples",
+  "fixture": "stocked_en",
+  "assert": {
+    "pantry.json": [
+      {"path": "zones.cold.items", "record_exists": {"name": "apples", "quantity.value": 0}},
+      {"path": "zones.cold.items", "record_exists": {"name": "eggs", "quantity.value": 6}}
+    ],
+    "response.txt": [
+      {"not_matches": "[\\u4e00-\\u9fff]"}
+    ]
+  }
+}

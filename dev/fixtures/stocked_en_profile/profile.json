@@ -1,0 +1,8 @@
+{
+  "meta": {"lastUpdated": "2026-10-05T09:00:00+08:00"},
+  "household": {"persons": 1},
+  "health": {"conditions": ["diabetes"], "familyHistory": [], "notes": "type 2 diabetes"},
+  "preferences": {"prefer": ["low-gi-carbs"], "avoid": ["high-sugar"], "notes": ""},
+  "cookingStyle": ["steam", "boil"],
+  "confirmed": true
+}

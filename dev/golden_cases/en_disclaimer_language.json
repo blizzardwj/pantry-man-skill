@@ -1,0 +1,11 @@
+{
+  "id": "en_disclaimer_language",
+  "prompt": "How should I cook the broccoli I have, given my diabetes?",
+  "fixture": "stocked_en_profile",
+  "assert": {
+    "response.txt": [
+      {"contains_any": ["medical advice", "not medical", "doctor", "dietitian"]},
+      {"not_matches": "[\u4e00-\u9fff]"}
+    ]
+  }
+}

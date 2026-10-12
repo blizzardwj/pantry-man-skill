@@ -26,7 +26,7 @@ A `feedback.json` left by older versions is no longer used; leave it untouched.
 
 These override habit; each exists because the obvious behavior is wrong here.
 
-1. **Change data only from what the user said.** A receipt photo counts as saying it; other photos do not (see Photos). Keep item names in the user's own words ("牛奶" stays 牛奶, not milk). Never invent quantities, dates, prices or totals. Unknown is `null` or omitted — never 0.
+1. **Change data only from what the user said.** A receipt photo counts as saying it; other photos do not (see Photos). Keep item names in the user's own words — never translate them ("牛奶" stays 牛奶; "milk" stays milk). Never invent quantities, dates, prices or totals. Unknown is `null` or omitted — never 0.
 2. **Keep facts apart.** "家里有" is not a purchase; "买了" is not a preference; adding to the list is not buying; removing something once is not a dislike.
 3. **Expired is not gone; thrown away is not eaten.**
 4. **Eaten up → quantity 0, not deleted.** It is a hint for later shopping plans; a restock replaces it.
@@ -34,7 +34,8 @@ These override habit; each exists because the obvious behavior is wrong here.
 6. **Your suggestions need confirmation; the user's edits do not.** Write a generated shopping plan only after the user confirms it; apply explicit edits directly.
 7. **One food, one `itemKey`**, reused across pantry, list and history. Keep different forms apart (fresh vs dried mushrooms).
 8. **The user's rules go to profile.json**, never into this skill.
-9. **Health disclaimer:** when advice involves a chronic condition in the profile, add "以上为一般性饮食建议，不构成医疗建议。如有重大健康问题，请咨询医生或注册营养师。"
+9. **Health disclaimer:** when advice involves a chronic condition in the profile, add (in the user's language) "以上为一般性饮食建议，不构成医疗建议。如有重大健康问题，请咨询医生或注册营养师。"
+10. **Reply in the user's language.** The Chinese phrases in this skill and its references — questions, labels such as 已吃完, 待买, 上次吃完，可补, 早／午／晚 — show the meaning, not fixed wording; say them in the user's language.
 
 ## Operations
 
@@ -86,7 +87,7 @@ Read [planning.md](references/planning.md) before any of these:
 
 If the host agent can run scheduled or periodic tasks, offer these reminders and create them with the host's own scheduling mechanism, in the user's local timezone, only after the user agrees. If the host has no such mechanism, skip this section; every check can also run on request (e.g. "看看有什么快过期").
 
-Each reminder only reads data and sends a message — it never modifies files. Any update happens later, from the user's reply, through the operations above.
+Each reminder only reads data and sends a message in the user's language — it never modifies files. Any update happens later, from the user's reply, through the operations above.
 
 | Reminder | Suggested schedule | Check | Message |
 |----------|--------------------|-------|---------|

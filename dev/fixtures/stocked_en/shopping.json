@@ -1,0 +1,22 @@
+{
+  "meta": {"lastUpdated": "2026-10-05T09:00:00+08:00"},
+  "categories": {
+    "food": {
+      "name": "Food",
+      "icon": "🥬",
+      "items": [
+        {
+          "id": "shop_sm1",
+          "name": "salmon",
+          "itemKey": "food_salmon",
+          "quantity": {"value": 2, "unit": "fillets"},
+          "priority": "normal",
+          "added": "2026-10-05",
+          "checked": false,
+          "tags": ["seafood"]
+        }
+      ]
+    },
+    "daily": {"name": "Daily Items", "icon": "🧴", "items": []}
+  }
+}

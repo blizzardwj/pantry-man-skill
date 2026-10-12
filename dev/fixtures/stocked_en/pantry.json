@@ -1,0 +1,63 @@
+{
+  "meta": {
+    "lastUpdated": "2026-10-05T09:00:00+08:00",
+    "version": "1.0",
+    "longCycleProbed": true
+  },
+  "zones": {
+    "cold": {
+      "name": "Refrigerator",
+      "icon": "🧊",
+      "items": [
+        {
+          "id": "item_ap1",
+          "name": "apples",
+          "itemKey": "food_apple",
+          "quantity": {"value": 3, "unit": "pcs"},
+          "bought": "2026-10-04",
+          "tags": ["fruit"]
+        },
+        {
+          "id": "item_eg2",
+          "name": "eggs",
+          "itemKey": "food_egg",
+          "quantity": {"value": 6, "unit": "pcs"},
+          "bought": "2026-10-04",
+          "tags": ["protein"]
+        },
+        {
+          "id": "item_br3",
+          "name": "broccoli",
+          "itemKey": "food_broccoli",
+          "quantity": {"value": 1, "unit": "head"},
+          "bought": "2026-10-04",
+          "tags": ["vegetable"]
+        },
+        {
+          "id": "item_yg4",
+          "name": "yogurt",
+          "itemKey": "food_yogurt",
+          "quantity": {"value": 1, "unit": "cup"},
+          "bought": "2026-09-24",
+          "expires": "2026-10-01",
+          "tags": ["dairy"]
+        }
+      ]
+    },
+    "frozen": {"name": "Freezer", "icon": "❄️", "items": []},
+    "ambient": {
+      "name": "Ambient Storage",
+      "icon": "📦",
+      "items": [
+        {
+          "id": "item_rc5",
+          "name": "brown rice",
+          "itemKey": "food_brown_rice",
+          "quantity": null,
+          "tags": ["grain"]
+        }
+      ]
+    },
+    "daily": {"name": "Daily Items", "icon": "🧴", "items": []}
+  }
+}

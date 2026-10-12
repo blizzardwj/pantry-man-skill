@@ -1,0 +1,13 @@
+{
+  "id": "en_add_keeps_name",
+  "prompt": "Add 2 liters of milk to my fridge",
+  "fixture": null,
+  "assert": {
+    "pantry.json": [
+      {"path": "zones.cold.items", "contains": ["milk"]}
+    ],
+    "response.txt": [
+      {"not_matches": "[\\u4e00-\\u9fff]"}
+    ]
+  }
+}

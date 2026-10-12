@@ -1,0 +1,14 @@
+{
+  "id": "en_meal_tonight",
+  "prompt": "What should I cook for dinner tonight?",
+  "fixture": "stocked_en",
+  "assert": {
+    "response.txt": [
+      {"contains_any": ["eggs", "broccoli", "brown rice", "apples"]},
+      {"not_matches": "[\\u4e00-\\u9fff]"}
+    ],
+    "shopping.json": [
+      {"path": "categories.food.items", "record_exists": {"name": "salmon", "checked": false}}
+    ]
+  }
+}
