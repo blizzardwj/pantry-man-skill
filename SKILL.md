@@ -433,47 +433,15 @@ Use format: `{type}_{random_6_chars}` (e.g., `item_a1b2c3`, `shop_x9y8z7`, `rec_
   daily intake baselines used by the Shopping Plan quantity check.
 - See [ingredient_knowledge.md](references/ingredient_knowledge.md) for per-category food knowledge (特性/提味原理/安全建议) used by 食材咨询, plus the cross-category 「膳食纤维速查」 used by 食材咨询 and 采购计划 selection.
 
-## Scheduled Reminders (Recommended)
+## Scheduled Reminders (Optional)
 
-Use cron jobs for time-specific reminders. These align with user's daily routine.
+If the host agent can run scheduled or periodic tasks, offer these reminders and create them with the host's own scheduling mechanism, in the user's local timezone, only after the user agrees. If the host has no such mechanism, skip this section; every check below can also run on request (e.g. "看看有什么快过期").
 
-### Shopping List Reminder
+Each reminder only reads data and sends a message — it never modifies files. Any update happens later, from the user's reply, through the operations above.
 
-Remind user to check shopping list during lunch break and after work:
-
-```bash
-# Add cron jobs (Asia/Shanghai timezone)
-cron add "0 12 * * *" "Check pantry/data/shopping.json for unchecked items. If count > 0, remind: 🛒 Shopping List Reminder: You have {count} items to purchase"
-cron add "30 17 * * *" "Check pantry/data/shopping.json for unchecked items. If count > 0, remind: 🛒 Shopping List Reminder: You have {count} items to purchase"
-```
-
-### Expiry Alert
-
-Remind user in the morning about items expiring soon:
-
-```bash
-cron add "0 8 * * *" "Check pantry/data/pantry.json for items expiring within 3 days. If found, alert: ⚠️ {count} item(s) expiring soon: {item names}"
-```
-
-### Low Stock Alert (Optional)
-
-Check if essential items are running low:
-
-```bash
-cron add "0 9 * * 1" "Check pantry/data/pantry.json for low stock items. Suggest adding to shopping list if needed."
-```
-
-## Heartbeat Tasks (Alternative)
-
-For periodic checks without specific time requirements, use `HEARTBEAT.md`:
-
-### Expired Items Review
-
-Periodically remind the user about expired items — do not delete them:
-
-```
-1. Read pantry/data/pantry.json
-2. Find items whose expires date has passed
-3. If found, remind: ⚠️ {item names} 已过期——吃完了、扔了，还是还在？
-4. Do not modify the file; update it only from the user's answer (see Expired items)
-```
+| Reminder | Suggested schedule | Check | Message |
+|----------|--------------------|-------|---------|
+| Shopping list | Daily 12:00 and 17:30 | Read `[AGENT_HOME]/pantry/data/shopping.json`; count unchecked items | Only if count > 0: 🛒 Shopping List Reminder: You have {count} items to purchase |
+| Expiring soon | Daily 08:00 | Read `[AGENT_HOME]/pantry/data/pantry.json`; items whose `expires` is within 3 days | ⚠️ {count} item(s) expiring soon: {item names} |
+| Expired items | Daily or periodic | Same file; items past `expires` | ⚠️ {item names} 已过期——吃完了、扔了，还是还在？ (handle the answer per Expired items) |
+| Low stock (optional) | Weekly, Monday 09:00 | Same file; items whose known quantity is running low | Suggest adding them to the shopping list; add only after the user agrees |

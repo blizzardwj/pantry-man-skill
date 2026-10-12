@@ -32,7 +32,7 @@
 <a id="f-03"></a>
 ### F-03 去掉宿主专属调度写法
 
-- 投入：低｜关联：AGENTS.md 硬规则 #1
+- 投入：低｜关联：AGENTS.md 硬规则 #1；实施见 [IDEA-026](IDEAS.md#idea-026)
 - 问题：[SKILL.md:409-451](../SKILL.md) 使用 `cron add`、`HEARTBEAT.md`，路径缺 `[AGENT_HOME]`；静态校验长期保留 1 项 WARN。
 - 范围：改为宿主无关表述（“若宿主支持定时任务，可安排以下检查”），只描述检查内容与提示文案；路径统一带 `[AGENT_HOME]`。
 - 验收：`validate_static.py` 0 FAIL、0 WARN；全文无单一宿主命令。

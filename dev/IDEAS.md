@@ -73,6 +73,7 @@
 | [IDEA-022](#idea-022) | 开发演进记录移入 dev/：与 skill 运行文件分开 |
 | [IDEA-024](#idea-024) | 每日搭配食材池按用餐时点区分（待办 F-01） |
 | [IDEA-025](#idea-025) | 过期条目保留并询问处置（待办 F-02） |
+| [IDEA-026](#idea-026) | 定时提醒宿主无关化（待办 F-03） |
 
 <a id="idea-001"></a>
 ## First-Run 初始化
@@ -567,7 +568,7 @@
 - 问题与预期结果：2026-10-11 技术评估认为，运行契约在事实与推断区分上质量较高，但存在已知未修矛盾（搭配食材池、过期删除、宿主专属调度、品类归类）、缺失状态（规划时段、itemKey 一致性、派生 status）、单次操作指令量过大，以及价值削弱因素（数据绑定单一 agent、带作者个人画像、宿主定位不符、缺少执行与对比证据）。需要一份按投入产出排序的待办，作为后续批次实施的范围依据。
 - 范围／完成标准：当前仅交付[待办清单](improvement-todo-2026-10-11.md)：修复（F-01～F-08）、价值提升（V-01～V-07）、扩大使用（A-01～A-06），每项含最小范围、验收场景、相对投入和依赖，并给出建议批次。行为实施须由用户另行确定批次后转 planned；清单完成不代表任何条目已实施。
 - 关联：F-01、F-02 即 [IDEA-019](#idea-019) 候选 1、2；F-01、F-02 已分别拆为 [IDEA-024](#idea-024)、[IDEA-025](#idea-025)；V-07 承接[收敛建议 §4](convergence-review-2026-09-28.md)。V-02 实施前需新增 DEC，V-03 需新增 RQ。前序 [IDEA-020](#idea-020)、[IDEA-021](#idea-021)。
-- 实施：待办清单见 [cb61d54](https://github.com/blizzardwj/pantry-man-skill/commit/cb61d54)；各条目实施由相应 IDEA 跟踪（F-01 见 [IDEA-024](#idea-024)，F-02 见 [IDEA-025](#idea-025)）。
+- 实施：待办清单见 [cb61d54](https://github.com/blizzardwj/pantry-man-skill/commit/cb61d54)；各条目实施由相应 IDEA 跟踪（F-01 见 [IDEA-024](#idea-024)，F-02 见 [IDEA-025](#idea-025)，F-03 见 [IDEA-026](#idea-026)）。
 - 验证与效果：清单依据为契约对照与行号核对，未执行 agent 行为测试；本次环境无可用 Python，`dev/validate_static.py` 未运行。各项收益为项目判断，待对应验收与 A-03、V-06 证据确认。
 
 ### 关键进展
@@ -601,9 +602,26 @@
 - 问题与预期结果：SKILL.md 定期清理任务按过期日期直接删除库存条目，与“过期不证明消耗”矛盾。预期过期条目仍可查到并标为已过期、不进入搭配食材池，只在用户说明吃完、扔了或还在后更新。
 - 范围／完成标准：按 [待办 F-02](improvement-todo-2026-10-11.md#f-02)。SKILL.md 查看库存与过期检查标出已过期，新增 Expired items 处置规则，库存感知中的过期提醒与之对齐，Heartbeat 清理任务改为提醒并询问、不写文件；feedback_flow.md Capture 表增加“已过期但未说明处置”一行；schema.md `expires` 说明与 README 同步；新增覆盖“查看时保留”和“扔了后移除且无反馈”的 golden case。不含 `status` 字段存储方式（F-06）与定时任务宿主无关化（F-03）。
 - 关联：[DEC-024](DECISIONS.md#dec-024)；前序 [IDEA-019](#idea-019) 候选 2、[IDEA-023](#idea-023)；与 [IDEA-024](#idea-024) 的“过期不进食材池”一致；无新增研究条目。
-- 实施：本次工作区／尚未提交。改动：SKILL.md（View by zone、Check expiry、新增 Expired items、Stock grows 中的过期提醒、Heartbeat 改为 Expired Items Review）、references/feedback_flow.md（Capture 表）、references/schema.md（`expires` 说明）、README.md（Expiry Tracking）；开发侧新增 fixture `expired_milk`，golden case `expired_kept_on_view`、`expired_discarded`。
+- 实施：[d61cfa8](https://github.com/blizzardwj/pantry-man-skill/commit/d61cfa8)。改动：SKILL.md（View by zone、Check expiry、新增 Expired items、Stock grows 中的过期提醒、Heartbeat 改为 Expired Items Review）、references/feedback_flow.md（Capture 表）、references/schema.md（`expires` 说明）、README.md（Expiry Tracking）；开发侧新增 fixture `expired_milk`，golden case `expired_kept_on_view`、`expired_discarded`。
 - 验证与效果：2026-10-11 用 Node 解析新增 fixture 与 golden case JSON 通过；人工核对 SKILL.md、feedback_flow.md、schema.md 中删除／过期相关表述不再包含按日期删除的规则。本次环境无可用 Python，`dev/validate_static.py` 与 `run_golden.py` 未运行；新 golden case 未交给独立 agent 执行，“询问一次”的执行情况与实际效果待观察。过期条目不进食材池的场景未单独建用例（回复中可能合理提及“牛奶已过期”，文本断言难以区分）。
 
 ### 关键进展
 
 - 2026-10-11：用户要求修复待办 F-02；从 IDEA-019 候选 2 拆出，按 [DEC-024](DECISIONS.md#dec-024) 实施，约定范围完成后转为 implemented（验证缺口见上）。
+
+<a id="idea-026"></a>
+## 定时提醒宿主无关化（待办 F-03）
+
+- 编号：IDEA-026
+- 状态：implemented
+- 创建：2026-10-11
+- 更新：2026-10-11
+- 问题与预期结果：SKILL.md 提醒章节使用 `cron add` 与 `HEARTBEAT.md`，数据路径缺 `[AGENT_HOME]`，违反硬规则 #1；静态校验长期保留 1 项 WARN。预期提醒能力保留，任何宿主都能按语义执行，且校验能阻止此类写法再次出现。
+- 范围／完成标准：按 [待办 F-03](improvement-todo-2026-10-11.md#f-03)。SKILL.md 的 Scheduled Reminders 与 Heartbeat Tasks 合并为宿主无关的提醒表（含过期条目提醒、只读约束、创建前征得同意、按用户本地时区），路径统一带 `[AGENT_HOME]`；`dev/validate_static.py` 对宿主专属调度写法和未锚定的数据路径报 FAIL。不改变提醒文案语言（属 V-05）。
+- 关联：[DEC-025](DECISIONS.md#dec-025)（整项替代 [DEC-006](DECISIONS.md#dec-006)）；[IDEA-025](#idea-025) 的过期提醒语义保留；[IDEA-023](#idea-023)；无新增研究条目。
+- 实施：本次工作区／尚未提交。改动：SKILL.md（Scheduled Reminders 重写、删除 Heartbeat Tasks 小节）、dev/validate_static.py（检查 [4] 规则）。
+- 验证与效果：2026-10-11 用 `grep -P` 以与新校验等价的正则预检 SKILL.md 与 references/*.md：无 `cron add`／`HEARTBEAT.md`，无缺 `[AGENT_HOME]` 的 `pantry/data` 路径。本次环境无可用 Python，`dev/validate_static.py` 未运行，待办 F-03 的“0 FAIL、0 WARN”验收尚无执行证据。宿主实际创建定时任务的行为未验证。
+
+### 关键进展
+
+- 2026-10-11：用户要求修复待办 F-03；按 [DEC-025](DECISIONS.md#dec-025) 实施，约定范围完成后转为 implemented（验证缺口见上）。

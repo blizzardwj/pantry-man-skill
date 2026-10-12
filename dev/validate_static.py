@@ -95,14 +95,21 @@ def check_agent_specific():
     if not found:
         ok("no hardcoded agent paths")
 
-    cron = re.compile(r"\bcron add\b")
+    # Host-specific scheduling syntax (DEC-025 superseded the DEC-006 exception)
+    host_cmd = re.compile(r"\bcron add\b|HEARTBEAT\.md")
+    # Data paths must be anchored at [AGENT_HOME]
+    bare_path = re.compile(r"(?<!\[AGENT_HOME\]/)pantry/data")
+    found = False
     for f in files:
-        hits = len(cron.findall(read(f)))
-        if hits:
-            warn(
-                f"{f.relative_to(REPO)}: {hits}x `cron add` "
-                "(known exception - placeholder, see DECISIONS 2026-08-05)"
-            )
+        for i, line in enumerate(read(f).splitlines(), 1):
+            if host_cmd.search(line):
+                found = True
+                fail(f"{f.relative_to(REPO)}:{i}: host-specific command -> {line.strip()}")
+            if bare_path.search(line):
+                found = True
+                fail(f"{f.relative_to(REPO)}:{i}: data path without [AGENT_HOME] -> {line.strip()}")
+    if not found:
+        ok("no host-specific commands or unanchored data paths")
 
 
 def _collect_keys(data):
