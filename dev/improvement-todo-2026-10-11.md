@@ -56,7 +56,7 @@
 <a id="f-06"></a>
 ### F-06 `status` 改为读取时计算
 
-- 投入：低至中｜涉及 schema
+- 投入：低至中｜涉及 schema｜实施见 [IDEA-029](IDEAS.md#idea-029)
 - 问题：[schema.md:58](../references/schema.md) 存储 `fresh/expiring_soon/expired`，可由 `expires` 推出，存储后必然过时。
 - 范围：新写入不再存 `status`，展示与检查时按 `expires` 和当天日期计算；旧字段兼容读取但不作依据。
 - 验收：一条 3 天前写入、今天到期的条目，在查看时显示为即将过期／已过期，无需人工更新。

@@ -55,7 +55,7 @@ Food inventory organized by storage zone.
 | `bought` | string | Purchase date (optional; omit if unknown or not a purchase) | `2026-04-01` |
 | `expires` | string | Expiry date (optional; omit if unknown). Passing it does not remove the item — see SKILL.md Expired items | `2026-04-07` |
 | `tags` | array | Categories for filtering | `["dairy", "breakfast"]` |
-| `status` | string | fresh / expiring_soon / expired | `fresh` |
+| `status` | string | **Legacy — do not write.** Older files may contain fresh / expiring_soon / expired; ignore it. Expiry state is computed from `expires` and today's date (see SKILL.md Expiry state) | — |
 
 ---
 

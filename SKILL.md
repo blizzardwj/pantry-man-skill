@@ -46,7 +46,7 @@ Before mutations, read the relevant structures in [schema.md](references/schema.
 **View by zone:**
 ```
 Read pantry.json → Format items from zones.cold/frozen/ambient/daily
-→ mark items past `expires` as 已过期 (see Expired items)
+→ show each item's expiry state (see Expiry state; 已过期 items per Expired items)
 ```
 
 **Cold-start probe on view (see Inventory Awareness below):**
@@ -72,8 +72,18 @@ spoilage or expiry does not prove consumption and creates no depletion signal.
 
 **Check expiry:**
 ```
-Read pantry.json → list items whose expires date is within N days, and list
-items already past expires separately as 已过期 (see Expired items)
+Read pantry.json → list items whose expires date is within N days (default 3),
+and list items already past expires separately as 已过期 (see Expired items)
+```
+
+**Expiry state (computed, never stored):**
+```
+Derive it from `expires` and today's local date every time it is shown or used:
+- 已过期 expired: expires is before today
+- 即将过期 expiring soon: expires is today or within the next N days (default 3)
+- otherwise no flag; an item without expires has no expiry state
+Never write a status field for inventory items. Older files may still contain
+`status` (fresh / expiring_soon / expired); ignore it and do not update it.
 ```
 
 **Expired items:**

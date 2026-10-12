@@ -76,6 +76,7 @@
 | [IDEA-026](#idea-026) | 定时提醒宿主无关化（待办 F-03） |
 | [IDEA-027](#idea-027) | 运行文档内矛盾清理（待办 F-04） |
 | [IDEA-028](#idea-028) | 首次写入前才初始化、收窄触发描述（待办 F-05） |
+| [IDEA-029](#idea-029) | 库存过期状态读取时计算（待办 F-06） |
 
 <a id="idea-001"></a>
 ## First-Run 初始化
@@ -571,7 +572,7 @@
 - 问题与预期结果：2026-10-11 技术评估认为，运行契约在事实与推断区分上质量较高，但存在已知未修矛盾（搭配食材池、过期删除、宿主专属调度、品类归类）、缺失状态（规划时段、itemKey 一致性、派生 status）、单次操作指令量过大，以及价值削弱因素（数据绑定单一 agent、带作者个人画像、宿主定位不符、缺少执行与对比证据）。需要一份按投入产出排序的待办，作为后续批次实施的范围依据。
 - 范围／完成标准：当前仅交付[待办清单](improvement-todo-2026-10-11.md)：修复（F-01～F-08）、价值提升（V-01～V-07）、扩大使用（A-01～A-06），每项含最小范围、验收场景、相对投入和依赖，并给出建议批次。行为实施须由用户另行确定批次后转 planned；清单完成不代表任何条目已实施。
 - 关联：F-01、F-02 即 [IDEA-019](#idea-019) 候选 1、2；F-01、F-02 已分别拆为 [IDEA-024](#idea-024)、[IDEA-025](#idea-025)；V-07 承接[收敛建议 §4](convergence-review-2026-09-28.md)。V-02 实施前需新增 DEC，V-03 需新增 RQ。前序 [IDEA-020](#idea-020)、[IDEA-021](#idea-021)。
-- 实施：待办清单见 [cb61d54](https://github.com/blizzardwj/pantry-man-skill/commit/cb61d54)；各条目实施由相应 IDEA 跟踪（F-01 见 [IDEA-024](#idea-024)，F-02 见 [IDEA-025](#idea-025)，F-03 见 [IDEA-026](#idea-026)，F-04 见 [IDEA-027](#idea-027)，F-05 见 [IDEA-028](#idea-028)）。
+- 实施：待办清单见 [cb61d54](https://github.com/blizzardwj/pantry-man-skill/commit/cb61d54)；各条目实施由相应 IDEA 跟踪（F-01 见 [IDEA-024](#idea-024)，F-02 见 [IDEA-025](#idea-025)，F-03 见 [IDEA-026](#idea-026)，F-04 见 [IDEA-027](#idea-027)，F-05 见 [IDEA-028](#idea-028)，F-06 见 [IDEA-029](#idea-029)）。
 - 验证与效果：清单依据为契约对照与行号核对，未执行 agent 行为测试；本次环境无可用 Python，`dev/validate_static.py` 未运行。各项收益为项目判断，待对应验收与 A-03、V-06 证据确认。
 
 ### 关键进展
@@ -656,9 +657,26 @@
 - 问题与预期结果：description 覆盖一般烹饪提问，First-Run Setup 要求任何请求前先建数据目录，误触发或只读请求都会在 agent home 留下数据文件。预期与用户库存无关的提问不触发或不留数据，首次写入仍能无感初始化。
 - 范围／完成标准：按 [待办 F-05](improvement-todo-2026-10-11.md#f-05)。SKILL.md description 以用户自有库存／清单／购买／画像为中心并排除一般菜谱问题；First-Run Setup 区分只读（缺失按空种子回答、不创建）与首次写入前初始化，回执与写入结果合并；食材咨询仅在 profile.json 存在时读取。开发侧 runner 支持无数据目录的首次场景（`"fixture": null`）与文件级 `exists` 断言，新增三个首次使用用例。
 - 关联：[DEC-026](DECISIONS.md#dec-026)（部分替代 [DEC-001](DECISIONS.md#dec-001)）；前序 [IDEA-001](#idea-001)、[IDEA-023](#idea-023)；无新增研究条目。
-- 实施：本次工作区／尚未提交。改动：SKILL.md（frontmatter description、First-Run Setup、食材咨询第 2 步）；dev/run_golden.py（`setup_fixture` 支持 null、`run_assertions` 支持 `exists`）、dev/README.md；golden case `first_run_consult_no_init`、`first_run_view_no_init`、`first_run_add_initializes`。
+- 实施：[e084baf](https://github.com/blizzardwj/pantry-man-skill/commit/e084baf)。改动：SKILL.md（frontmatter description、First-Run Setup、食材咨询第 2 步）；dev/run_golden.py（`setup_fixture` 支持 null、`run_assertions` 支持 `exists`）、dev/README.md；golden case `first_run_consult_no_init`、`first_run_view_no_init`、`first_run_add_initializes`。
 - 验证与效果：2026-10-11 Node 解析新增用例 JSON 通过；description 710 字符（规范上限 1024），frontmatter 仍为单行 `name`／`description`。本次环境无可用 Python，`dev/validate_static.py` 与修改后的 `run_golden.py` 均未运行；新用例未交给独立 agent 执行。宿主是否按新 description 减少误触发未测试；用例中的执行者被直接要求使用本 skill，只能验证触发后的只读无副作用，不能验证触发判断。
 
 ### 关键进展
 
 - 2026-10-11：用户要求修复待办 F-05；按 [DEC-026](DECISIONS.md#dec-026) 实施，约定范围完成后转为 implemented（验证缺口见上）。
+
+<a id="idea-029"></a>
+## 库存过期状态读取时计算（待办 F-06）
+
+- 编号：IDEA-029
+- 状态：implemented
+- 创建：2026-10-11
+- 更新：2026-10-11
+- 问题与预期结果：库存条目存储 `status`（fresh / expiring_soon / expired），没有流程随日期更新，存储值会过时并与 `expires` 矛盾。预期过期状态始终按日期正确显示，无需人工或定时更新。
+- 范围／完成标准：按 [待办 F-06](improvement-todo-2026-10-11.md#f-06)。SKILL.md 新增 Expiry state 计算规则（已过期／即将过期，默认 3 天），查看库存与过期检查引用它，禁止为库存条目写 `status`、旧值忽略不回写；schema.md 将 `status` 标为 legacy；schema 黄金样例按当前写入约定更新；新增“旧 status 与日期矛盾”用例。不迁移或清理用户旧数据。
+- 关联：[DEC-027](DECISIONS.md#dec-027)；与 [IDEA-025](#idea-025)（过期保留并询问）配合；[IDEA-023](#idea-023)；无新增研究条目。
+- 实施：本次工作区／尚未提交。改动：SKILL.md（View by zone、Check expiry、新增 Expiry state）、references/schema.md（pantry 条目 `status` 行）；dev/schema_probe/pantry.json（去掉 `status`，补上必填的 `itemKey`）；新增 fixture `stale_status`（牛奶 `expires` 2026-10-01 但 `status` 为 fresh）与 golden case `stale_status_ignored`。现有 fixture 中的 `status` 作为旧数据保留，用于兼容读取。
+- 验证与效果：2026-10-11 Node 解析修改后的 schema 样例、新 fixture 与用例 JSON 通过；人工核对运行文档中库存 `status` 仅剩 schema legacy 说明与 SKILL.md 忽略规则。本次环境无可用 Python，`dev/validate_static.py`（含 schema 字段覆盖检查）未运行；新用例未交给独立 agent 执行。待办 F-06 的“3 天前写入、今天到期”验收依赖运行当天日期，静态 fixture 无法固定，改用已过期日期与过时 `status` 矛盾的场景代替。
+
+### 关键进展
+
+- 2026-10-11：用户要求修复待办 F-06；按 [DEC-027](DECISIONS.md#dec-027) 实施，约定范围完成后转为 implemented（验证缺口见上）。核对中发现 schema 黄金样例的库存条目缺少必填 `itemKey`，一并补上。

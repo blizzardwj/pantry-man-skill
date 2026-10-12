@@ -1,0 +1,13 @@
+{
+  "id": "stale_status_ignored",
+  "prompt": "看看冰箱里的东西有没有过期",
+  "fixture": "stale_status",
+  "assert": {
+    "pantry.json": [
+      {"path": "zones.cold.items", "contains": ["牛奶", "鸡蛋"]}
+    ],
+    "response.txt": [
+      {"contains": ["牛奶", "过期"]}
+    ]
+  }
+}
