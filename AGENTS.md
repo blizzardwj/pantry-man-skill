@@ -11,6 +11,7 @@ dev/                     # Development-only: design records, validation, regress
   IDEAS.md               # Problems, implementation progress, and outcome/evidence links
   DECISIONS.md           # Decisions, rationale, consequences, and validity/supersession
   RESEARCH.md            # Research progress, evidence, candidate designs, and limitations
+  validation.md          # Validation plan: static checks, agent-run golden cases, interactive testing
 AGENTS.md                # Contributor instructions for coding agents
 README.md                # User-facing docs (installation, usage)
 LICENSE                  # MIT
@@ -76,6 +77,7 @@ Keep the subject concise; add a body explaining the **why** when it's not obviou
 
 ## Verification Checklist (before declaring a change done)
 
+- [ ] Validation run per [dev/validation.md](dev/validation.md#when): `dev/validate_static.py` passes (0 FAIL); behavior changes also run the affected and core golden cases
 - [ ] SKILL.md frontmatter intact (`name: pantry-man`, `description` accurate)
 - [ ] All file paths referenced in SKILL.md match actual files (e.g., `references/schema.md`)
 - [ ] Schema changes are reflected in both SKILL.md and `references/schema.md`

@@ -1,0 +1,57 @@
+{
+  "meta": {
+    "lastUpdated": "2026-10-01T09:00:00+08:00",
+    "version": "1.0",
+    "longCycleProbed": true
+  },
+  "zones": {
+    "cold": {
+      "name": "Refrigerator",
+      "icon": "🧊",
+      "items": [
+        {
+          "id": "item_eg1",
+          "name": "鸡蛋",
+          "itemKey": "food_egg",
+          "quantity": {
+            "value": 6,
+            "unit": "个"
+          },
+          "bought": "2026-09-28",
+          "tags": [
+            "protein"
+          ]
+        },
+        {
+          "id": "item_yg2",
+          "name": "酸奶",
+          "itemKey": "food_yogurt",
+          "quantity": {
+            "value": 1,
+            "unit": "盒"
+          },
+          "bought": "2026-09-24",
+          "expires": "2026-10-01",
+          "tags": [
+            "dairy"
+          ]
+        }
+      ]
+    },
+    "frozen": {
+      "name": "Freezer",
+      "icon": "❄️",
+      "items": []
+    },
+    "ambient": {
+      "name": "Ambient Storage",
+      "icon": "📦",
+      "items": []
+    },
+    "daily": {
+      "name": "Daily Items",
+      "icon": "🧴",
+      "items": []
+    }
+  }
+}

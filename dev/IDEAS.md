@@ -593,6 +593,8 @@
 - 2026-10-11：按 DEC-029 收敛后的契约逐项复核待办，见[复核](improvement-todo-2026-10-11.md#review-2026-10-11)：F-01～F-06、V-01、V-02 范围已覆盖，F-07、F-08 失效（F-08 转观察项），V-04 基本已覆盖，A-02、V-05 范围缩小并搁置；以三阶段计划替代初版批次，当前主线为 V-07 实际使用与 A-03 运行核心用例。
 - 2026-10-11：`validate_static.py` 首次在本机运行通过（FAIL 0、WARN 0），runner 新增的 null fixture、`exists`、`contains_any` 及数量路径断言经无 agent 自测符合预期；golden case 仍未经 agent 执行，A-03 剩余部分为把 delegation_prompt 交给 agent 执行。
 - 2026-10-11：A-03 首轮完成：Claude Code + Haiku 执行全部 19 个用例，15/19 通过，失败经 [IDEA-032](#idea-032) 修复后重跑 8/8 通过；执行脚本 `dev/run_cases_claude.ps1`，见 [执行报告](golden-run-2026-10-11.md)。跨宿主执行与多次重复稳定性仍未做。
+- 2026-10-12：A-04 完成：README 以“Recommended Hosts”推荐带语音输入、可从手机／聊天访问、可定时的个人助理型 agent（如 Hermes），编码类 agent 说明为试用与开发测试用；新增“一句话多项操作”语音示例，并用新用例 `voice_multi_op`（买了牛奶菠菜、鸡蛋吃完、过期酸奶扔了）以 Claude Code + Haiku 执行 3 次，3/3 PASS，见[执行报告](golden-run-2026-10-11.md#addendum-2026-10-12)。仅改 README，SKILL.md 保持宿主无关；本次工作区／尚未提交。
+- 2026-10-12：新增交互测试（现为 [验证方案 L3](validation.md#l3)）作为第三种验证方式（用户直接与宿主 agent 对话），覆盖宿主内手动复现用例、触发测试、日常使用观察（快照对比、检查清单、使用记录与四类归因），以及把实际问题转成回归用例的流程；作为 V-07 的执行方法，可在 Hermes + deepseek-flash 等宿主与模型上复用。本次工作区／尚未提交。
 
 <a id="idea-024"></a>
 ## 每日搭配食材池按用餐时点区分（待办 F-01）

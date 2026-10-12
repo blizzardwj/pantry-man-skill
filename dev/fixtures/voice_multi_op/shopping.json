@@ -1,0 +1,33 @@
+{
+  "meta": {
+    "lastUpdated": "2026-10-01T09:00:00+08:00"
+  },
+  "categories": {
+    "food": {
+      "name": "Food",
+      "icon": "🥬",
+      "items": [
+        {
+          "id": "shop_mk1",
+          "name": "牛奶",
+          "itemKey": "food_milk",
+          "quantity": {
+            "value": 2,
+            "unit": "盒"
+          },
+          "priority": "normal",
+          "added": "2026-10-01",
+          "checked": false,
+          "tags": [
+            "dairy"
+          ]
+        }
+      ]
+    },
+    "daily": {
+      "name": "Daily Items",
+      "icon": "🧴",
+      "items": []
+    }
+  }
+}

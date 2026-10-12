@@ -34,6 +34,14 @@ Once installed, your AI agent can help you with:
 - "今晚吃什么" (Daily Pairings — tonight's meal from what you already have; plans for later days can also use your confirmed shopping list)
 - "这周买什么" (Shopping Plan for your next trip, then meal pairings for those days)
 
+### Say it in one go (voice)
+
+With a voice-enabled host you can report several changes in one sentence, right at the store or the fridge:
+
+> "买了两盒牛奶和一把菠菜，鸡蛋吃完了，过期的酸奶扔了"
+
+The agent applies each part separately — milk and spinach go into the fridge and milk is checked off the shopping list, eggs stay at zero as a restock hint, the yogurt is removed — and replies with a short summary of what changed.
+
 ## Data Structure
 
 All data is stored in JSON files under `[AGENT_HOME]/pantry/data/`:
@@ -47,15 +55,15 @@ All data is stored in JSON files under `[AGENT_HOME]/pantry/data/`:
 
 See [references/schema.md](references/schema.md) for complete schema definitions.
 
-## Compatibility
+## Recommended Hosts
 
-Works with AI agents that support the Open Agent Skills specification:
+Pantry updates happen in the kitchen and at the store, not at a desk. The skill works best in a **personal-assistant agent such as Hermes** — one that:
 
-- Claude Code
-- Cursor
-- Cline
-- Codex
-- And more...
+- **accepts voice input**, so one sentence can carry several updates;
+- **is reachable from your phone or a chat app**, so you can say "买了…" right after shopping;
+- **keeps running and can schedule tasks**, so the optional reminders (shopping list, expiring items) arrive on time.
+
+Any agent that supports the Open Agent Skills specification can run it, including coding agents such as Claude Code, Cursor, Cline and Codex. Those are handy for trying the skill out and for development and testing (see `dev/`), but less convenient for day-to-day kitchen use.
 
 ## License
 
