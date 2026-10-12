@@ -1,0 +1,16 @@
+{
+  "id": "expired_kept_on_view",
+  "prompt": "看看冰箱里有什么",
+  "fixture": "expired_milk",
+  "assert": {
+    "pantry.json": [
+      {"path": "zones.cold.items", "contains": ["牛奶", "鸡蛋"]}
+    ],
+    "feedback.json": [
+      {"path": "records", "count_equals": 0}
+    ],
+    "response.txt": [
+      {"contains": ["过期"]}
+    ]
+  }
+}

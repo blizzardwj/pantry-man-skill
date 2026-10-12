@@ -1,0 +1,47 @@
+{
+  "meta": {
+    "lastUpdated": "2026-09-24T09:00:00+08:00",
+    "version": "1.0",
+    "longCycleProbed": true
+  },
+  "zones": {
+    "cold": {
+      "name": "Refrigerator",
+      "icon": "🧊",
+      "items": [
+        {
+          "id": "item_mk1",
+          "name": "牛奶",
+          "itemKey": "food_milk",
+          "quantity": {"value": 1, "unit": "L"},
+          "bought": "2026-09-24",
+          "expires": "2026-10-01",
+          "tags": ["dairy"]
+        },
+        {
+          "id": "item_eg2",
+          "name": "鸡蛋",
+          "itemKey": "food_egg",
+          "quantity": {"value": 6, "unit": "个"},
+          "bought": "2026-09-24",
+          "tags": ["protein"]
+        }
+      ]
+    },
+    "frozen": {
+      "name": "Freezer",
+      "icon": "❄️",
+      "items": []
+    },
+    "ambient": {
+      "name": "Ambient Storage",
+      "icon": "📦",
+      "items": []
+    },
+    "daily": {
+      "name": "Daily Items",
+      "icon": "🧴",
+      "items": []
+    }
+  }
+}

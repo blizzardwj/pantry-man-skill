@@ -7,7 +7,7 @@ A skill for AI agents to manage home pantry inventory, shopping lists, and purch
 - 📦 **Inventory Management** - Track food items by storage zone (cold/frozen/ambient/daily)
 - 🛒 **Shopping List** - Manage shopping items with priorities and categories
 - 📊 **Purchase History** - Record and view purchase history with monthly stats
-- ⏰ **Expiry Tracking** - Check items expiring soon
+- ⏰ **Expiry Tracking** - Check items expiring soon; expired items stay listed until you say they were eaten, thrown away, or are still fine
 - 🔄 **Feedback Loop** - Learns from stated preferences, feedback on meal plans, and foods you report eating until they are gone. Ordinary purchases and stock edits update inventory and purchase history without becoming preference feedback. Depleted foods may be suggested again; replenishing them clears that signal.
 - 🗓️ **Meal Planning** - Three modes: 🛒 Shopping Plan (stock-aware shopping list with a dietary-guideline quantity check and a confirmation step), 🍽 Daily Pairings (meals for today drawn from current stock; breakfast/lunch/dinner plans for later days drawn from stock + your confirmed list), and 📆 Weekly Plan (chains both per your shopping rhythm, segment by segment) — all driven by a lightweight dietary profile
 

@@ -72,6 +72,7 @@
 | [IDEA-021](#idea-021) | 日常购买报告默认完成对应购物项 |
 | [IDEA-022](#idea-022) | 开发演进记录移入 dev/：与 skill 运行文件分开 |
 | [IDEA-024](#idea-024) | 每日搭配食材池按用餐时点区分（待办 F-01） |
+| [IDEA-025](#idea-025) | 过期条目保留并询问处置（待办 F-02） |
 
 <a id="idea-001"></a>
 ## First-Run 初始化
@@ -497,6 +498,7 @@
 - 2026-09-30：建议文档的反馈相关部分已有 [IDEA-020](#idea-020) 后续实现；本条其余候选仍保持 idea，不把历史建议当作当前运行契约。
 - 2026-10-11：候选 1（每日搭配食材池）、候选 2（过期删除）列入 [待办清单](improvement-todo-2026-10-11.md) 的 F-01、F-02，排入第一批；进展仍由本条维护，状态不变。
 - 2026-10-11：用户要求开始修复 F-01；候选 1 拆为 [IDEA-024](#idea-024) 实施并由其维护进展（同 IDEA-020 承接反馈部分的做法）。本条其余候选仍为 idea。
+- 2026-10-11：用户要求修复 F-02；候选 2 拆为 [IDEA-025](#idea-025) 实施并由其维护进展。本条其余候选（3、5、6）仍为 idea。
 
 <a id="idea-020"></a>
 ## 用户输入进入反馈的边界：业务操作与可复用反馈分离
@@ -564,8 +566,8 @@
 - 更新：2026-10-11
 - 问题与预期结果：2026-10-11 技术评估认为，运行契约在事实与推断区分上质量较高，但存在已知未修矛盾（搭配食材池、过期删除、宿主专属调度、品类归类）、缺失状态（规划时段、itemKey 一致性、派生 status）、单次操作指令量过大，以及价值削弱因素（数据绑定单一 agent、带作者个人画像、宿主定位不符、缺少执行与对比证据）。需要一份按投入产出排序的待办，作为后续批次实施的范围依据。
 - 范围／完成标准：当前仅交付[待办清单](improvement-todo-2026-10-11.md)：修复（F-01～F-08）、价值提升（V-01～V-07）、扩大使用（A-01～A-06），每项含最小范围、验收场景、相对投入和依赖，并给出建议批次。行为实施须由用户另行确定批次后转 planned；清单完成不代表任何条目已实施。
-- 关联：F-01、F-02 即 [IDEA-019](#idea-019) 候选 1、2；F-01 已拆为 [IDEA-024](#idea-024)，F-02 进展仍由 IDEA-019 维护；V-07 承接[收敛建议 §4](convergence-review-2026-09-28.md)。V-02 实施前需新增 DEC，V-03 需新增 RQ。前序 [IDEA-020](#idea-020)、[IDEA-021](#idea-021)。
-- 实施：待办清单见 [cb61d54](https://github.com/blizzardwj/pantry-man-skill/commit/cb61d54)；各条目实施由相应 IDEA 跟踪（F-01 见 [IDEA-024](#idea-024)）。
+- 关联：F-01、F-02 即 [IDEA-019](#idea-019) 候选 1、2；F-01、F-02 已分别拆为 [IDEA-024](#idea-024)、[IDEA-025](#idea-025)；V-07 承接[收敛建议 §4](convergence-review-2026-09-28.md)。V-02 实施前需新增 DEC，V-03 需新增 RQ。前序 [IDEA-020](#idea-020)、[IDEA-021](#idea-021)。
+- 实施：待办清单见 [cb61d54](https://github.com/blizzardwj/pantry-man-skill/commit/cb61d54)；各条目实施由相应 IDEA 跟踪（F-01 见 [IDEA-024](#idea-024)，F-02 见 [IDEA-025](#idea-025)）。
 - 验证与效果：清单依据为契约对照与行号核对，未执行 agent 行为测试；本次环境无可用 Python，`dev/validate_static.py` 未运行。各项收益为项目判断，待对应验收与 A-03、V-06 证据确认。
 
 ### 关键进展
@@ -582,9 +584,26 @@
 - 问题与预期结果：原契约把未购清单条目算入每日搭配食材池，且清单为空时拒绝“今晚吃什么”。预期当天用餐只用现有库存且不被采购流程阻塞；提前规划可使用已确认待买项并明确标注。
 - 范围／完成标准：按 [待办 F-01](improvement-todo-2026-10-11.md#f-01)。SKILL.md 每日搭配定义当下用餐／时段规划两种模式及各自食材池、清单为空与库存不足时的处理、待买标记，周计划第 3b 步指定时段规划；feedback_flow.md Review 第 4 条与 README 示例同步；新增覆盖两种模式的 golden case。不含 schema 时段字段（F-07）和过期删除规则修正（F-02）。
 - 关联：[DEC-023](DECISIONS.md#dec-023)（部分替代 [DEC-004](DECISIONS.md#dec-004)）；前序 [IDEA-019](#idea-019) 候选 1、[IDEA-023](#idea-023)；无新增研究条目。
-- 实施：本次工作区／尚未提交。改动：SKILL.md（Meal Planning 概述、每日搭配食材池与流程、周计划 3b）、references/feedback_flow.md（④ Review 第 4 条）、README.md（功能与示例描述）；开发侧新增 fixture `pairing_stock`、`pairing_stock_pending`，golden case `pairing_meal_now_empty_list`、`pairing_meal_now_stock_only`、`pairing_segment_pending_marked`，断言引擎新增文本谓词 `contains_any`。
+- 实施：[3ebf6c2](https://github.com/blizzardwj/pantry-man-skill/commit/3ebf6c2)。改动：SKILL.md（Meal Planning 概述、每日搭配食材池与流程、周计划 3b）、references/feedback_flow.md（④ Review 第 4 条）、README.md（功能与示例描述）；开发侧新增 fixture `pairing_stock`、`pairing_stock_pending`，golden case `pairing_meal_now_empty_list`、`pairing_meal_now_stock_only`、`pairing_segment_pending_marked`，断言引擎新增文本谓词 `contains_any`。
 - 验证与效果：2026-10-11 用 Node 解析新增 fixture 与 golden case JSON 通过；人工核对 SKILL.md、feedback_flow.md、schema.md 中食材池相关表述一致（schema 中“草稿不进入食材池”不变）。本次环境无可用 Python，`dev/validate_static.py` 与 `run_golden.py` 未运行，`contains_any` 改动未经执行；三个新 golden case 未交给独立 agent 执行，模式判断准确率与实际使用效果待观察。
 
 ### 关键进展
 
 - 2026-10-11：用户要求开始修复待办 F-01；从 IDEA-019 候选 1 拆出，按 [DEC-023](DECISIONS.md#dec-023) 实施，约定范围完成后转为 implemented（验证缺口见上）。
+
+<a id="idea-025"></a>
+## 过期条目保留并询问处置（待办 F-02）
+
+- 编号：IDEA-025
+- 状态：implemented
+- 创建：2026-10-11
+- 更新：2026-10-11
+- 问题与预期结果：SKILL.md 定期清理任务按过期日期直接删除库存条目，与“过期不证明消耗”矛盾。预期过期条目仍可查到并标为已过期、不进入搭配食材池，只在用户说明吃完、扔了或还在后更新。
+- 范围／完成标准：按 [待办 F-02](improvement-todo-2026-10-11.md#f-02)。SKILL.md 查看库存与过期检查标出已过期，新增 Expired items 处置规则，库存感知中的过期提醒与之对齐，Heartbeat 清理任务改为提醒并询问、不写文件；feedback_flow.md Capture 表增加“已过期但未说明处置”一行；schema.md `expires` 说明与 README 同步；新增覆盖“查看时保留”和“扔了后移除且无反馈”的 golden case。不含 `status` 字段存储方式（F-06）与定时任务宿主无关化（F-03）。
+- 关联：[DEC-024](DECISIONS.md#dec-024)；前序 [IDEA-019](#idea-019) 候选 2、[IDEA-023](#idea-023)；与 [IDEA-024](#idea-024) 的“过期不进食材池”一致；无新增研究条目。
+- 实施：本次工作区／尚未提交。改动：SKILL.md（View by zone、Check expiry、新增 Expired items、Stock grows 中的过期提醒、Heartbeat 改为 Expired Items Review）、references/feedback_flow.md（Capture 表）、references/schema.md（`expires` 说明）、README.md（Expiry Tracking）；开发侧新增 fixture `expired_milk`，golden case `expired_kept_on_view`、`expired_discarded`。
+- 验证与效果：2026-10-11 用 Node 解析新增 fixture 与 golden case JSON 通过；人工核对 SKILL.md、feedback_flow.md、schema.md 中删除／过期相关表述不再包含按日期删除的规则。本次环境无可用 Python，`dev/validate_static.py` 与 `run_golden.py` 未运行；新 golden case 未交给独立 agent 执行，“询问一次”的执行情况与实际效果待观察。过期条目不进食材池的场景未单独建用例（回复中可能合理提及“牛奶已过期”，文本断言难以区分）。
+
+### 关键进展
+
+- 2026-10-11：用户要求修复待办 F-02；从 IDEA-019 候选 2 拆出，按 [DEC-024](DECISIONS.md#dec-024) 实施，约定范围完成后转为 implemented（验证缺口见上）。

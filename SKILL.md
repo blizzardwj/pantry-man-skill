@@ -43,6 +43,7 @@ Before mutations, read the relevant structures in [schema.md](references/schema.
 **View by zone:**
 ```
 Read pantry.json → Format items from zones.cold/frozen/ambient/daily
+→ mark items past `expires` as 已过期 (see Expired items)
 ```
 
 **Cold-start probe on view (see Inventory Awareness below):**
@@ -68,7 +69,20 @@ spoilage or expiry does not prove consumption and creates no depletion signal.
 
 **Check expiry:**
 ```
-Read pantry.json → Filter items where expires date is within N days
+Read pantry.json → list items whose expires date is within N days, and list
+items already past expires separately as 已过期 (see Expired items)
+```
+
+**Expired items:**
+```
+A passed expires date does not mean the item is gone. Keep it in pantry.json,
+show it as 已过期, and keep it out of the Daily Pairings pool. Never delete or
+edit it because of the date alone. When showing expired items, ask once in
+that reply what happened, and act only on the answer:
+- 扔了 / 坏了 → remove the stock covered; no depletion signal
+- 吃了 / 吃完了 → follow Remove item, including depletion capture
+- 还在 / 还能吃 → keep it; change expires only if the user gives a new date
+- No answer → leave pantry.json unchanged
 ```
 
 ### Shopping List
@@ -187,7 +201,7 @@ When pantry.json has no long-cycle items recorded (empty, or only short-cycle fr
 
 **Stock grows through daily behaviors, not audits:**
 - Current purchase/restock → update pantry.json and affected depletion feedback via feedback_flow.md
-- Expiry alert → ask "吃完了吗？" → only an explicit depletion answer triggers depletion capture
+- Expiry alert → ask "吃完了、扔了，还是还在？" → update per Expired items; only an explicit depletion answer triggers depletion capture
 - Never require a one-time full inventory audit.
 
 ### 🛒 采购计划 Shopping Plan (independent feature)
@@ -453,12 +467,13 @@ cron add "0 9 * * 1" "Check pantry/data/pantry.json for low stock items. Suggest
 
 For periodic checks without specific time requirements, use `HEARTBEAT.md`:
 
-### Inventory Cleanup
+### Expired Items Review
 
-Periodically clean up expired items:
+Periodically remind the user about expired items — do not delete them:
 
 ```
 1. Read pantry/data/pantry.json
-2. Remove items where expires date has passed
-3. Update the file
+2. Find items whose expires date has passed
+3. If found, remind: ⚠️ {item names} 已过期——吃完了、扔了，还是还在？
+4. Do not modify the file; update it only from the user's answer (see Expired items)
 ```

@@ -53,7 +53,7 @@ Food inventory organized by storage zone.
 | `itemKey` | string | Stable identity; required for new/updated entries | `food_milk` |
 | `quantity` | object / null | Known amount with unit, or null when unknown | `{"value": 1, "unit": "L"}` |
 | `bought` | string | Purchase date (optional; omit if unknown or not a purchase) | `2026-04-01` |
-| `expires` | string | Expiry date (optional; omit if unknown) | `2026-04-07` |
+| `expires` | string | Expiry date (optional; omit if unknown). Passing it does not remove the item — see SKILL.md Expired items | `2026-04-07` |
 | `tags` | array | Categories for filtering | `["dairy", "breakfast"]` |
 | `status` | string | fresh / expiring_soon / expired | `fresh` |
 
