@@ -37,8 +37,10 @@ segment target range = daily range × segment days × household persons
 
 - 南瓜 / 冬瓜 / 胡萝卜 / 青椒 / 西兰花 / 菜心 / 生菜 / 秋葵 etc → **蔬菜**
 - 黄瓜 → 蔬果两用; count as **蔬菜** when eaten as a cold dish (凉拌)
+- 毛豆 / 豌豆 / 荷兰豆 等鲜豆类 → **蔬菜** (《中国食物成分表》归「蔬菜—鲜豆类」, see ingredient_knowledge.md)
+- 香菇 / 海带 / 木耳 等菌藻: fresh or rehydrated weight → **蔬菜**; dried goods are not counted by dry weight against the 蔬菜 range (干鲜口径不同) — treat them as shelf-stable dried goods
 - 桃子 / 苹果 / 葡萄 etc → **水果**
-- 土豆 / 红薯 / 山药 → **薯类** (root tubers count as non-refined carbs, may substitute staples)
+- 土豆 / 红薯 / 山药 / 莲藕 → **薯类** (root tubers count as non-refined carbs, may substitute staples; 莲藕淀粉高，按主食替代计)
 - 鸡胸肉 / 鱼 / 虾 / 鸡蛋 → **鱼禽肉蛋**
 - 豆腐 / 豆皮 / 豆浆 → **豆制品** (convert to dried-soybean equivalent)
 

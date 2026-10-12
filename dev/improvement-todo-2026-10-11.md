@@ -40,7 +40,7 @@
 <a id="f-04"></a>
 ### F-04 清理文档内矛盾
 
-- 投入：低
+- 投入：低｜实施见 [IDEA-027](IDEAS.md#idea-027)
 - 问题：[SKILL.md:217](../SKILL.md) 青椒列在“水果”，[quantity_benchmark.md:38](../references/quantity_benchmark.md) 归“蔬菜”；SKILL.md 蛋白质类含豆制品，而基准单列豆制品；[schema.md:257](../references/schema.md) 免责声明指向“Weekly Plan section”，实为独立小节。
 - 范围：示例表品类以 quantity_benchmark 为准；修正交叉引用。
 - 验收：同一食材在 SKILL.md、quantity_benchmark、ingredient_knowledge 中归类一致；引用可解析到实际小节。

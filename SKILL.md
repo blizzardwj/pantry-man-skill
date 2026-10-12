@@ -227,11 +227,13 @@ Flow:
 
 | Category | Chinese examples | Notes |
 |----------|-----------------|-------|
-| 蔬菜 vegetables | 南瓜、冬瓜、香菇、海带、菜心、生菜 | Prioritize per profile.prefer / avoid |
-| 水果 fruit | 桃子、黄瓜（果蔬）、青椒 | Seasonal when applicable |
+| 蔬菜 vegetables | 南瓜、冬瓜、香菇、海带、菜心、生菜、青椒、黄瓜 | Prioritize per profile.prefer / avoid |
+| 水果 fruit | 桃子、苹果、梨、柑橘 | Seasonal when applicable |
 | 蛋白质 protein | 鸡蛋、鸡胸肉、虾皮、鱼、豆制品 | High-quality, low-saturated-fat sources |
 | 油脂 oils/fats | 橄榄油、坚果（南瓜子等）、鱼油类食材 | Heart-healthy unsaturated fats |
 | 主食 staples | 糙米、燕麦、全麦、薯类 | Low-GI per profile (avoid refined carbs) |
+
+These are display categories. The quantity check (step 7) uses the benchmark categories in [quantity_benchmark.md](references/quantity_benchmark.md): 蛋白质 splits into 鱼禽肉蛋 and 豆制品, 主食 into 谷类主食 and 薯类.
 
 Apply the profile: avoid `refined-carbs`/`unhealthy-fats` → choose `low-gi-carbs`/`heart-healthy-fats`/`high-protein`/`soluble-fiber` (适量水溶性膳食纤维). For each item, give a **rough quantity** (e.g., 南瓜 500g, 鸡蛋 10枚, 鸡胸肉 500g) — enough for the segment's meals.
 Within a category, prefer the higher-fiber-density variety when the profile calls for 膳食纤维 (e.g. 鲜豆类／菌藻／高纤蔬菜) — see `references/ingredient_knowledge.md` → 「膳食纤维速查（跨类别）」. Mind the 口径 there: 鲜品与干品数值不可直接比较.
@@ -257,8 +259,10 @@ Within a category, prefer the higher-fiber-density variety when the profile call
    No carryover question about a previous plan's unanswered deletion reason.
 7. **QUANTITY CHECK — benchmark before the gate:**
    Read [quantity_benchmark.md](references/quantity_benchmark.md) (adult daily
-   reference ranges, typical piece weights, category assignment). For each
-   category, compute the segment target range = daily range × segment days ×
+   reference ranges, typical piece weights, category assignment). Assign each
+   item to a benchmark category by its Category Assignment Rules; categories
+   without a daily range there (oils/fats, nuts) are not checked. For each
+   benchmark category, compute the segment target range = daily range × segment days ×
    `household.persons` (default 1), compare with the proposed total, and show
    a compact check report: ✅ within range / ⚠️ slightly over or under / ❌ way
    off — each with a suggested converged quantity.
