@@ -80,3 +80,19 @@
 - 新契约（规则 10 等）：前 4 个用例各 2 次 8/8 PASS；`en_disclaimer_language` 3/3 PASS。
 - 旧契约对照（用 `git archive HEAD` 生成的副本运行，不改动工作区）：前 4 个用例 4/4 PASS；`en_disclaimer_language` **0/3**——两次整篇中文（沿用 ingredient_knowledge.md 的中文标题），一次英文正文但逐字附中文免责声明。结论：语言问题集中在中文知识文件与固定中文文案的路径，规则 10 有具体失败依据。
 - 局限：仅 Haiku；未测中英混用的用户、单位换算。
+
+<a id="addendum-2026-10-12-full"></a>
+## 补充（2026-10-12）：当前契约全量回归
+
+- 基线：提交 `9437f4c`（照片输入、语言规则之后）。Claude Code 2.1.296 + Haiku，全部 28 个用例各 1 次：**27/28 PASS**。
+- 失败：`en_add_keeps_name`——用户说 “milk”，写入 `name: "牛奶"`，回复为 “2 L of 牛奶 (milk)”，与首轮 `milk` 问题方向相反。随后重跑 4 次 4/4 PASS；该用例累计 7/8，属间歇性失败。可能诱因：委托提示词与 skill 示例均为中文，模型偶尔按上下文语言改写名称。处理暂缓，先在真实英文宿主（L3）观察是否复现；若复现，再考虑把规则 1 的命名要求写得更直接（“`name` 用用户原话中的词”）或在 runner 中为英文用例使用英文委托提示词。
+- 其余 27 个用例（核心、照片、英文、首次使用、搭配、购买历史等）均通过；仓库无 agent 写入。
+
+<a id="addendum-2026-10-12-coverage"></a>
+## 补充（2026-10-12）：补齐测试覆盖缺口
+
+- 新增 fixture `plan_base`（北豆腐 300g、秋葵已吃完、糙米；空清单；已确认画像含拿手菜“蒸鲷鱼山药”）、`fresh_only`（只有生鲜，储备询问未回答）。新增用例：`plan_restock_exemplar_check`（采购计划提示补秋葵、拿手菜缺鲷鱼和山药、含数量校验符号，确认前清单不变）、`plan_confirm_writes_list`（确认后才写入清单且不算已买）、`expired_answer_eaten`（过期条目回答喝完 → 数量 0）、`expired_answer_still_fine`（还能喝并给出新日期 → 保留并更新 expires）、`staples_probe_ask`（无储备时询问一次，标记不提前设置）、`staples_probe_answer`（回答后记入常温区并置标记）、`profile_first_plan_summary`（画像有内容时计划后展示摘要并请求确认）。`photo_receipt_unreadable_no_guess` 增加 `stats.totalSpent == null`，`pairing_meal_now_empty_list` 增加“无已知信息时不创建 profile.json”。多轮场景用提示中的括号说明上一轮内容来模拟。
+- 第一轮（Haiku，各 2 次）：14/16。`profile_first_plan_summary`（原提示“今晚吃什么”）0/2：一次只写入 `{"confirmed": false}` 的空画像，一次未创建，均未展示摘要。判断为规则本身不产生价值（无内容可确认），按 [DEC-032](DECISIONS.md#dec-032) 修订为“有内容才创建并确认”，用例改为带用户信息的提示；同时把 totalSpent 定为无已知金额时 null。
+- 第二轮：`profile_first_plan_summary` 3 次中 2 次通过，失败一次实际已展示摘要并请求确认，只是未用“画像／偏好”字样——断言过严，改为要求“确认”，对已有 3 次输出重新判定 3/3；`pairing_meal_now_empty_list` 3/3（未创建 profile.json）。
+- 规则修订后回归：核心 7 个用例与 `purchase_history`、`photo_receipt_records_purchase` 各 1 次，9/9 PASS。仓库均无 agent 写入。
+- 仍未覆盖：定时提醒（依赖宿主调度）、单位换算、包装数量的记法（12 盒装记 1 件或 12 盒）。

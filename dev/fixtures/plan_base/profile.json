@@ -1,0 +1,31 @@
+{
+  "meta": {
+    "lastUpdated": "2026-10-05T09:00:00+08:00"
+  },
+  "household": {
+    "persons": 1
+  },
+  "preferences": {
+    "prefer": [],
+    "avoid": [],
+    "notes": ""
+  },
+  "shoppingRhythm": {
+    "tripsPerWeek": 2,
+    "daysPerTrip": "3-4"
+  },
+  "exemplars": [
+    {
+      "id": "ex_a1b2c3",
+      "name": "蒸鲷鱼山药",
+      "ingredients": [
+        "鲷鱼",
+        "山药"
+      ],
+      "method": "鲷鱼、山药同锅蒸，出锅撒少量海盐",
+      "meal": "any"
+    }
+  ],
+  "rules": [],
+  "confirmed": true
+}

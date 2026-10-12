@@ -4,7 +4,19 @@
   "fixture": "pairing_stock",
   "assert": {
     "response.txt": [
-      {"contains_any": ["鸡蛋", "西兰花", "黄瓜", "糙米"]}
+      {
+        "contains_any": [
+          "鸡蛋",
+          "西兰花",
+          "黄瓜",
+          "糙米"
+        ]
+      }
+    ],
+    "profile.json": [
+      {
+        "exists": false
+      }
     ]
   }
 }

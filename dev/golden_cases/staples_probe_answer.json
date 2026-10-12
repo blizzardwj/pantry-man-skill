@@ -1,0 +1,20 @@
+{
+  "id": "staples_probe_answer",
+  "prompt": "（你刚才问我家里有没有囤干货和油）有的，有一袋大米和一瓶橄榄油",
+  "fixture": "fresh_only",
+  "assert": {
+    "pantry.json": [
+      {
+        "path": "zones.ambient.items",
+        "contains": [
+          "大米",
+          "橄榄油"
+        ]
+      },
+      {
+        "path": "meta.longCycleProbed",
+        "field_equals": true
+      }
+    ]
+  }
+}

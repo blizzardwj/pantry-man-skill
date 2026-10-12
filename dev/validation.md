@@ -13,6 +13,13 @@ pantry-man-skill 的完整验证方案：三种方式、何时运行、如何判
 
 三者互补：L1 查不出 agent 行为（如把“牛奶”写成 `milk`）；L2 可重复、可自动判定，但不测宿主加载 skill、语音转写与真实说法；L3 覆盖这些环节，但难以重复。L3 发现的问题应尽量转成 L2 用例（见[从问题到回归用例](#from-failure-to-case)）。
 
+<a id="terms"></a>
+### 术语：verification 与 validation
+
+- **Verification（是否做对）**：行为是否符合 skill 的规格（SKILL.md 与 references）。L1、L2，以及 L3 的[一、复现用例](#l3-replay)属于此类。
+- **Validation（是否做了对的东西）**：是否真的帮到用户——省事、建议被采纳、愿意继续使用。只有 L3 的[三、日常使用观察](#l3-daily)能回答；[二、触发测试](#l3-trigger)介于两者之间。
+- 测试全部通过只说明 verification 成立；validation 需要真实使用的证据。本文标题“验证方案”涵盖两者。
+
 <a id="when"></a>
 ## 何时运行什么
 

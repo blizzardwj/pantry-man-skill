@@ -57,7 +57,7 @@ These override habit; each exists because the obvious behavior is wrong here.
 ### Purchases — history/YYYY-MM.json
 
 - **Record:** one record per purchase. A current purchase uses today's date. For a past purchase with an unknown date, ask before recording; a past purchase alone does not change current stock or the list.
-- **Stats:** after every write, recompute `stats.recordCount` and `stats.totalSpent` (known totals only — say so when some are missing).
+- **Stats:** after every write, recompute `stats.recordCount` and `stats.totalSpent` (known totals only, `null` when no total is known — say so when some are missing).
 - **View / monthly stats:** read the month's file.
 
 ### Photos
@@ -71,7 +71,7 @@ These override habit; each exists because the obvious behavior is wrong here.
 - Record explicit statements as they come up ("我不吃精制碳水" → `preferences.avoid`). Never run a questionnaire. Your guesses are not preferences until the user confirms them.
 - Signature dishes the user confirms go to `exemplars`; workflow rules ("生成采购计划前先确认人数") go to `rules` and are followed in later plans.
 - Feedback on a plan ("太油了") fixes the current output; save it only when the user means it to last.
-- On the first planning request, create profile.json with whatever is known and plan anyway. After that first plan, show the profile summary once and set `confirmed: true` when the user confirms.
+- No profile is needed to plan. Create or update profile.json only when there is something to record. The first time it has content, show a short summary after the plan and set `confirmed: true` when the user confirms it.
 
 ## Planning
 

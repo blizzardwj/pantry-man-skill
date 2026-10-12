@@ -1,0 +1,29 @@
+{
+  "id": "plan_restock_exemplar_check",
+  "prompt": "帮我列个采购清单",
+  "fixture": "plan_base",
+  "assert": {
+    "response.txt": [
+      {
+        "contains": [
+          "秋葵",
+          "山药",
+          "鲷鱼"
+        ]
+      },
+      {
+        "contains_any": [
+          "✅",
+          "⚠️",
+          "❌"
+        ]
+      }
+    ],
+    "shopping.json": [
+      {
+        "path": "categories.food.items",
+        "count_equals": 0
+      }
+    ]
+  }
+}

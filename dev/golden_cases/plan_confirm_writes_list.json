@@ -1,0 +1,31 @@
+{
+  "id": "plan_confirm_writes_list",
+  "prompt": "（你上一轮给的采购清单：菠菜 500g、鸡蛋 10 枚）就按这个，确认加到清单里",
+  "fixture": "plan_base",
+  "assert": {
+    "shopping.json": [
+      {
+        "path": "categories.food.items",
+        "record_exists": {
+          "name": "菠菜",
+          "checked": false
+        }
+      },
+      {
+        "path": "categories.food.items",
+        "record_exists": {
+          "name": "鸡蛋",
+          "checked": false
+        }
+      }
+    ],
+    "pantry.json": [
+      {
+        "path": "zones.cold.items",
+        "not_contains": [
+          "菠菜"
+        ]
+      }
+    ]
+  }
+}

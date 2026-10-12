@@ -80,7 +80,7 @@ Purchase records organized by month.
 {
   "month": "2026-04",
   "records": [],
-  "stats": { "totalSpent": 0.0, "recordCount": 0 }
+  "stats": { "totalSpent": null, "recordCount": 0 }
 }
 ```
 
@@ -95,7 +95,7 @@ Purchase records organized by month.
 | `store` | string | Store name (optional) | `Xiaoxiang` |
 | `notes` | string | Notes (optional) | `weekend shopping` |
 
-On every write, `stats.recordCount` = number of records and `stats.totalSpent` = sum of known record totals.
+On every write, `stats.recordCount` = number of records and `stats.totalSpent` = sum of known record totals, or `null` when no record has a known total (unknown is not 0).
 
 ## profile.json
 

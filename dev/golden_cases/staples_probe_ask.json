@@ -1,0 +1,26 @@
+{
+  "id": "staples_probe_ask",
+  "prompt": "冰箱里有什么",
+  "fixture": "fresh_only",
+  "assert": {
+    "response.txt": [
+      {
+        "contains_any": [
+          "干货",
+          "食用油",
+          "大米",
+          "米面",
+          "粮油",
+          "囤",
+          "储备"
+        ]
+      }
+    ],
+    "pantry.json": [
+      {
+        "path": "meta.longCycleProbed",
+        "field_equals": false
+      }
+    ]
+  }
+}

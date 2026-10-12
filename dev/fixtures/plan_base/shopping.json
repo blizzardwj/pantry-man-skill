@@ -1,0 +1,17 @@
+{
+  "meta": {
+    "lastUpdated": "2026-10-05T09:00:00+08:00"
+  },
+  "categories": {
+    "food": {
+      "name": "Food",
+      "icon": "🥬",
+      "items": []
+    },
+    "daily": {
+      "name": "Daily Items",
+      "icon": "🧴",
+      "items": []
+    }
+  }
+}

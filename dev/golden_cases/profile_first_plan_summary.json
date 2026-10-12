@@ -1,0 +1,24 @@
+{
+  "id": "profile_first_plan_summary",
+  "prompt": "我一个人住，不吃辣，今晚吃什么",
+  "fixture": "pairing_stock",
+  "assert": {
+    "profile.json": [
+      {
+        "path": "household.persons",
+        "field_equals": 1
+      },
+      {
+        "path": "preferences.avoid",
+        "count_gte": 1
+      }
+    ],
+    "response.txt": [
+      {
+        "contains": [
+          "确认"
+        ]
+      }
+    ]
+  }
+}

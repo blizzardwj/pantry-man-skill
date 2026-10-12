@@ -1,0 +1,17 @@
+{
+  "id": "expired_answer_still_fine",
+  "prompt": "过期那盒牛奶其实还能喝，保质期到 2030-01-15",
+  "fixture": "expired_milk",
+  "assert": {
+    "pantry.json": [
+      {
+        "path": "zones.cold.items",
+        "record_exists": {
+          "name": "牛奶",
+          "expires": "2030-01-15",
+          "quantity.value": 1
+        }
+      }
+    ]
+  }
+}

@@ -46,7 +46,6 @@
 | [IDEA-003](#idea-003) | 画像收敛改进：从对话提取仍需多轮沟通 |
 | [IDEA-005](#idea-005) | 研究问题：画像收敛（RQ-A / RQ-C） |
 | [IDEA-013](#idea-013) | 时间戳时区格式一致性：+08:00 vs +0800 |
-| [IDEA-019](#idea-019) | 语音输入条件下的范围收敛与核心流程改进 |
 | [IDEA-023](#idea-023) | 修复、价值提升与扩大使用待办清单 |
 
 已完成／历史事项：
@@ -68,6 +67,7 @@
 | [IDEA-016](#idea-016) | 采购计划参考 exemplar：正向反馈的保供（replenish）消费 |
 | [IDEA-017](#idea-017) | 开发演进文档的职责、结构与追溯整理 |
 | [IDEA-018](#idea-018) | 反馈事实落点与耗尽候选生命周期分离 |
+| [IDEA-019](#idea-019) | 语音输入条件下的范围收敛与核心流程改进 |
 | [IDEA-020](#idea-020) | 用户输入进入反馈的边界：业务操作与可复用反馈分离 |
 | [IDEA-021](#idea-021) | 日常购买报告默认完成对应购物项 |
 | [IDEA-022](#idea-022) | 开发演进记录移入 dev/：与 skill 运行文件分开 |
@@ -82,6 +82,7 @@
 | [IDEA-032](#idea-032) | 首次 agent 执行暴露的问题修复：名称保留原话、用例断言修正 |
 | [IDEA-033](#idea-033) | 照片输入：小票直接记录、识别类照片先确认（待办 A-04 扩展） |
 | [IDEA-034](#idea-034) | 回复跟随用户语言，支持英文用户（待办 V-05） |
+| [IDEA-035](#idea-035) | 补齐测试覆盖缺口，修订画像创建与月度统计规则 |
 
 <a id="idea-001"></a>
 ## First-Run 初始化
@@ -138,7 +139,7 @@
 - 编号：IDEA-003
 - 状态：idea
 - 创建：2026-08-04
-- 更新：2026-09-13
+- 更新：2026-10-12
 - 范围／完成标准：减少首次画像修正轮次；具体方案与验收指标尚未决定。
 - 关联：[IDEA-005](IDEAS.md#idea-005)；[RQ-A](RESEARCH.md#rq-a)、[RQ-C](RESEARCH.md#rq-c)
 - 实施：未实施
@@ -153,6 +154,7 @@
 ### 关键进展
 
 - 2026-09-13：补录编号与追溯入口；原实施状态表述为“**idea**（升级为研究问题，见下方条目）”。状态摘要现由本条独占维护，历史讨论不作为当前契约。
+- 2026-10-12：首次画像需多轮纠正暂无新的失败证据，状态保持 idea，并入待办 [V-07](improvement-todo-2026-10-11.md#v-07) 的真实使用观察；出现具体问题时再按[从问题到回归用例](validation.md#from-failure-to-case)处理。
 
 <a id="idea-004"></a>
 ## 库存冷启动 UX（Phase 2 重新定义）
@@ -190,7 +192,7 @@
 - 编号：IDEA-005
 - 状态：idea
 - 创建：2026-08-04
-- 更新：2026-09-13
+- 更新：2026-10-12
 - 范围／完成标准：比较画像澄清与收敛策略；研究结论不直接代表实施批准。
 - 关联：[IDEA-003](IDEAS.md#idea-003)；[RQ-A](RESEARCH.md#rq-a)、[RQ-C](RESEARCH.md#rq-c)
 - 实施：未实施
@@ -204,6 +206,7 @@
 ### 关键进展
 
 - 2026-09-13：原状态 `research` 迁到研究条目表达；实施状态归为 `idea`，未据“开展研究”推定已批准实施。原假设迁入 [RQ-A](RESEARCH.md#rq-a)、[RQ-C](RESEARCH.md#rq-c)。
+- 2026-10-12：画像收敛研究（RQ-A／RQ-C 仍为 open）暂无新的失败证据，状态保持 idea，并入待办 [V-07](improvement-todo-2026-10-11.md#v-07) 的真实使用观察；出现具体问题时再按[从问题到回归用例](validation.md#from-failure-to-case)处理。
 
 <a id="idea-006"></a>
 ## 每日搭配输出改进：食材搭配 + 最简便做法，而非菜谱
@@ -370,7 +373,7 @@
 - 编号：IDEA-013
 - 状态：idea
 - 创建：2026-08-13
-- 更新：2026-09-13
+- 更新：2026-10-12
 - 范围／完成标准：明确时间戳时区格式或增加验证；尚未选择处理方案。
 - 关联：无独立研究或决策；关联 [开发验证](README.md)
 - 实施：未实施
@@ -385,6 +388,7 @@
 ### 关键进展
 
 - 2026-09-13：补录编号与追溯入口；原实施状态表述为“idea”。状态摘要现由本条独占维护，历史讨论不作为当前契约。
+- 2026-10-12：时间戳时区格式（`+08:00` 与 `+0800`）暂无新的失败证据，状态保持 idea，并入待办 [V-07](improvement-todo-2026-10-11.md#v-07) 的真实使用观察；出现具体问题时再按[从问题到回归用例](validation.md#from-failure-to-case)处理。
 
 <a id="idea-014"></a>
 ## 食材咨询入口 + 通用食材知识落点
@@ -499,9 +503,9 @@
 ## 语音输入条件下的范围收敛与核心流程改进
 
 - 编号：IDEA-019
-- 状态：idea
+- 状态：implemented
 - 创建：2026-09-28
-- 更新：2026-10-11
+- 更新：2026-10-12
 - 问题与预期结果：外部 review 对录入负担的判断未充分考虑宿主语音输入；需要收敛扩张范围，优先修复用户已表达的信息未正确应用、搭配依赖和状态混淆问题。
 - 范围／完成标准：当前仅交付[收敛与改进建议](convergence-review-2026-09-28.md)。候选改动按重要性及相对成本排序，每项列最小范围和验收场景；行为实施须另行确定批次，不能把文档完成视为这些改动完成。
 - 关联：前序 [IDEA-008](#idea-008)、[IDEA-004](#idea-004)；反馈生命周期由 [IDEA-018](#idea-018) 跟踪，方案见 [RQ-5](RESEARCH.md#rq-5-depletion-proposal)，不重复维护其进展。本项无新增研究或设计决策。
@@ -516,6 +520,7 @@
 - 2026-10-11：用户要求开始修复 F-01；候选 1 拆为 [IDEA-024](#idea-024) 实施并由其维护进展（同 IDEA-020 承接反馈部分的做法）。本条其余候选仍为 idea。
 - 2026-10-11：用户要求修复 F-02；候选 2 拆为 [IDEA-025](#idea-025) 实施并由其维护进展。本条其余候选（3、5、6）仍为 idea。
 - 2026-10-11：候选 3（反馈 importance 与明确操作边界）随 [IDEA-031](#idea-031) 取消反馈机制而不再适用；候选 5、6 仍为 idea。
+- 2026-10-12：收尾复核：本条范围（交付收敛建议文档，见 3a1628b）早已完成，候选均已有去向——1 → [IDEA-024](#idea-024)，2 → [IDEA-025](#idea-025)，3 随反馈机制取消不再适用（[IDEA-031](#idea-031)），4 → [IDEA-020](#idea-020)／[IDEA-031](#idea-031)，5 由基本规则 1 与 schema“未知不为 0、不编造”覆盖（[IDEA-031](#idea-031)），6 → 冷启动简化（[IDEA-031](#idea-031)）与 README 重新定位（[IDEA-023](#idea-023) 的 A-01）。转为 implemented。
 
 <a id="idea-020"></a>
 ## 用户输入进入反馈的边界：业务操作与可复用反馈分离
@@ -579,9 +584,9 @@
 ## 修复、价值提升与扩大使用待办清单
 
 - 编号：IDEA-023
-- 状态：idea
+- 状态：implementing
 - 创建：2026-10-11
-- 更新：2026-10-11
+- 更新：2026-10-12
 - 问题与预期结果：2026-10-11 技术评估认为，运行契约在事实与推断区分上质量较高，但存在已知未修矛盾（搭配食材池、过期删除、宿主专属调度、品类归类）、缺失状态（规划时段、itemKey 一致性、派生 status）、单次操作指令量过大，以及价值削弱因素（数据绑定单一 agent、带作者个人画像、宿主定位不符、缺少执行与对比证据）。需要一份按投入产出排序的待办，作为后续批次实施的范围依据。
 - 范围／完成标准：当前仅交付[待办清单](improvement-todo-2026-10-11.md)：修复（F-01～F-08）、价值提升（V-01～V-07）、扩大使用（A-01～A-06），每项含最小范围、验收场景、相对投入和依赖，并给出建议批次。行为实施须由用户另行确定批次后转 planned；清单完成不代表任何条目已实施。
 - 关联：F-01、F-02 即 [IDEA-019](#idea-019) 候选 1、2；F-01、F-02 已分别拆为 [IDEA-024](#idea-024)、[IDEA-025](#idea-025)；V-07 承接[收敛建议 §4](convergence-review-2026-09-28.md)。V-02 实施前需新增 DEC，V-03 需新增 RQ。前序 [IDEA-020](#idea-020)、[IDEA-021](#idea-021)。
@@ -595,10 +600,13 @@
 - 2026-10-11：按 DEC-029 收敛后的契约逐项复核待办，见[复核](improvement-todo-2026-10-11.md#review-2026-10-11)：F-01～F-06、V-01、V-02 范围已覆盖，F-07、F-08 失效（F-08 转观察项），V-04 基本已覆盖，A-02、V-05 范围缩小并搁置；以三阶段计划替代初版批次，当前主线为 V-07 实际使用与 A-03 运行核心用例。
 - 2026-10-11：`validate_static.py` 首次在本机运行通过（FAIL 0、WARN 0），runner 新增的 null fixture、`exists`、`contains_any` 及数量路径断言经无 agent 自测符合预期；golden case 仍未经 agent 执行，A-03 剩余部分为把 delegation_prompt 交给 agent 执行。
 - 2026-10-11：A-03 首轮完成：Claude Code + Haiku 执行全部 19 个用例，15/19 通过，失败经 [IDEA-032](#idea-032) 修复后重跑 8/8 通过；执行脚本 `dev/run_cases_claude.ps1`，见 [执行报告](golden-run-2026-10-11.md)。跨宿主执行与多次重复稳定性仍未做。
-- 2026-10-12：A-04 完成：README 以“Recommended Hosts”推荐带语音输入、可从手机／聊天访问、可定时的个人助理型 agent（如 Hermes），编码类 agent 说明为试用与开发测试用；新增“一句话多项操作”语音示例，并用新用例 `voice_multi_op`（买了牛奶菠菜、鸡蛋吃完、过期酸奶扔了）以 Claude Code + Haiku 执行 3 次，3/3 PASS，见[执行报告](golden-run-2026-10-11.md#addendum-2026-10-12)。仅改 README，SKILL.md 保持宿主无关；本次工作区／尚未提交。
-- 2026-10-12：新增交互测试（现为 [验证方案 L3](validation.md#l3)）作为第三种验证方式（用户直接与宿主 agent 对话），覆盖宿主内手动复现用例、触发测试、日常使用观察（快照对比、检查清单、使用记录与四类归因），以及把实际问题转成回归用例的流程；作为 V-07 的执行方法，可在 Hermes + deepseek-flash 等宿主与模型上复用。本次工作区／尚未提交。
+- 2026-10-12：A-04 完成：README 以“Recommended Hosts”推荐带语音输入、可从手机／聊天访问、可定时的个人助理型 agent（如 Hermes），编码类 agent 说明为试用与开发测试用；新增“一句话多项操作”语音示例，并用新用例 `voice_multi_op`（买了牛奶菠菜、鸡蛋吃完、过期酸奶扔了）以 Claude Code + Haiku 执行 3 次，3/3 PASS，见[执行报告](golden-run-2026-10-11.md#addendum-2026-10-12)。仅改 README，SKILL.md 保持宿主无关；已提交 [a825a58](https://github.com/blizzardwj/pantry-man-skill/commit/a825a58)。
+- 2026-10-12：新增交互测试（现为 [验证方案 L3](validation.md#l3)）作为第三种验证方式（用户直接与宿主 agent 对话），覆盖宿主内手动复现用例、触发测试、日常使用观察（快照对比、检查清单、使用记录与四类归因），以及把实际问题转成回归用例的流程；作为 V-07 的执行方法，可在 Hermes + deepseek-flash 等宿主与模型上复用。已提交 [a825a58](https://github.com/blizzardwj/pantry-man-skill/commit/a825a58)。
 - 2026-10-12：A-04 扩展为语音与拍照输入，由 [IDEA-033](#idea-033) 实施（[DEC-030](DECISIONS.md#dec-030)）；README 推荐宿主与示例同步。
-- 2026-10-12：A-01 完成：README 开头改为“根据家里现有食材规划买什么、怎么吃”（附中文一句），Features 分为“Plan from what you have”与“Kept up to date as you go”，Usage 按规划／记录分组并给出中英示例；食材咨询示例改为带画像的说法以符合收窄后的触发描述。仅文档改动。V-05 由 [IDEA-034](#idea-034) 实施。本次工作区／尚未提交。
+- 2026-10-12：A-01 完成：README 开头改为“根据家里现有食材规划买什么、怎么吃”（附中文一句），Features 分为“Plan from what you have”与“Kept up to date as you go”，Usage 按规划／记录分组并给出中英示例；食材咨询示例改为带画像的说法以符合收窄后的触发描述。仅文档改动。V-05 由 [IDEA-034](#idea-034) 实施。已提交 [9437f4c](https://github.com/blizzardwj/pantry-man-skill/commit/9437f4c)。
+- 2026-10-12：全面检查：提交 9437f4c 上全量 28 用例 27/28（唯一失败为 en_add_keeps_name 的间歇性名称翻译，累计 7/8）；静态校验与链接检查通过；IDEAS 中 7 处“本次工作区／尚未提交”已补为实际提交链接。剩余待办见待办清单复核与本条后续记录。
+- 2026-10-12：状态由 idea 转为 implementing：待办清单已交付，A-01、A-04、V-01、V-02、V-05、F-01～F-06 等已实施，A-03 部分完成，其余项按复核的阶段计划推进。
+- 2026-10-12：按全面检查结果完成快速整理（IDEA-019 关闭、IDEA-003／005／013 并入 V-07 观察、本条转 implementing、validation.md 增加术语说明），并由 [IDEA-035](#idea-035) 补齐测试覆盖缺口。用例总数 35。
 
 <a id="idea-024"></a>
 ## 每日搭配食材池按用餐时点区分（待办 F-01）
@@ -732,7 +740,7 @@
 - 问题与预期结果：普通增删改须先读 SKILL.md、schema.md、feedback_flow.md 约 6.4 万字符；规则随案例累加，反馈部分是无使用证据的文字状态机，规则越多遵守率越低。预期普通操作只读 SKILL.md，规划细节按需加载，删除没有失败案例支撑的机制，用户可见行为保持。
 - 范围／完成标准：按 [DEC-029](DECISIONS.md#dec-029)。SKILL.md 重写为数据位置、9 条基本规则、各类操作要点、规划入口表、提醒表与格式；新建 references/planning.md 承载采购计划、每日搭配、食材咨询；删除 references/feedback_flow.md；schema.md 去掉 feedback.json 与 `confirmation`，定义数量 0 为“吃完”，画像简化并兼容旧字段；README、AGENTS.md 目录说明、quantity_benchmark.md 引用同步。F-01～F-06 的语义保留（食材池两种模式、过期保留并询问、只读不建文件、过期状态计算、宿主无关提醒、归类一致）。开发侧：fixture 去掉 feedback.json，`depleted_okra` 改为秋葵数量 0；依赖反馈机制的 `refill_decay`、`stock_change_deplete` 移入 historical_cases，新增 `eaten_up_keeps_zero`、`restock_after_eaten_up`；其余用例的 feedback 断言改为“不创建 feedback.json”，偏好用例改为断言 profile；schema 样例同步；历史文档中指向 feedback_flow.md 的 12 处链接改为提交 7460054 的固定链接。
 - 关联：[DEC-029](DECISIONS.md#dec-029)；[待办 V-01、V-02](improvement-todo-2026-10-11.md#v-01)、[IDEA-023](#idea-023)；前序 [IDEA-009](#idea-009)、[IDEA-011](#idea-011)、[IDEA-018](#idea-018)、[IDEA-020](#idea-020)；[RQ-5](RESEARCH.md#rq-5) 暂停。
-- 实施：本次工作区／尚未提交。
+- 实施：[dd69d90](https://github.com/blizzardwj/pantry-man-skill/commit/dd69d90)。
 - 验证与效果：2026-10-11 字符数：SKILL.md 33.6k → 7.8k，planning.md 4.7k，schema.md 19.8k → 6.8k，feedback_flow.md 11.2k → 删除；普通增删改的必读量约 6.4 万 → 7.8k 字符。Node 解析全部 fixture、用例与 schema 样例 JSON 通过；本地 Markdown 链接与锚点检查见本条关键进展。本次环境无可用 Python，`validate_static.py` 与 `run_golden.py` 未运行；简化前后没有执行基线，行为等价性未经验证。效果待用户实际使用观察，重点看：“吃完”后的数量 0 是否被正确写入并在采购计划中提示，过期询问、当天搭配只用库存是否仍被遵守。
 
 ### 关键进展
@@ -751,7 +759,7 @@
 - 问题与预期结果：首次由 agent 执行全部用例（[执行报告](golden-run-2026-10-11.md)），19 个中 4 个失败：用户说“牛奶”却写入 `milk`（2 例，skill 缺陷）；搭配回复正确说明“鲈鱼不计入今晚”却被 `not_contains` 判失败（断言过严）；`dry_good_no_soup` 用食材咨询去测原本发生在每日搭配的失真（用例对象错位）。预期修复后这 4 个用例稳定通过。
 - 范围／完成标准：SKILL.md 基本规则 1 补“名称保留用户原话、不翻译”，schema.md 的 `name` 说明与示例改为中文原话；断言引擎新增正则谓词 `not_matches`；`pairing_meal_now_stock_only` 只检查食材／餐次行；`dry_good_no_soup` 改为搭配请求并断言食材行不含“汤”、做法种类 ≤2；新增 `dev/run_cases_claude.ps1` 作为 `claude -p` 执行脚本，结果目录 `dev/.golden_results/` 加入 .gitignore；dev/README.md 同步。
 - 关联：[IDEA-023](#idea-023)（待办 A-03）、[IDEA-031](#idea-031)；[DEC-010](DECISIONS.md#dec-010)（dry_good_no_soup 的原始回归来源）；[DEC-029](DECISIONS.md#dec-029)（只为具体失败新增规则）。无新增决策或研究条目。
-- 实施：本次工作区／尚未提交。
+- 实施：[129b8ed](https://github.com/blizzardwj/pantry-man-skill/commit/129b8ed)。
 - 验证与效果：2026-10-11 修复后用 Claude Code + Haiku 重跑 4 个用例各 2 次，8/8 PASS；`not_matches` 对真实回复 PASS、对构造的违规回复 FAIL。单一模型与执行者，其余 15 个用例未在修复后重跑；其他模型是否也会翻译名称未测试。
 
 ### 关键进展
@@ -768,7 +776,7 @@
 - 问题与预期结果：用户提出除语音外也可拍照发给 agent。契约原先只按“用户所说”改数据，未定义照片含义；冰箱照片还有把未拍到的条目误删的风险。预期小票拍照即可记账，食材／冰箱照片先确认再写入且不误删。
 - 范围／完成标准：按 [DEC-030](DECISIONS.md#dec-030)。SKILL.md 基本规则 1 与新增 Operations › Photos、description 提及照片；README 推荐宿主与“Say it or show it”示例；runner 支持用例 `attachments`（复制到临时 home 并写入委托提示词）；新增合成图片与两个用例，Haiku 各 3 次通过，并回归核心用例。
 - 关联：[DEC-030](DECISIONS.md#dec-030)；[IDEA-023](#idea-023)（待办 A-04）；[验证方案](validation.md#core-cases)。
-- 实施：本次工作区／尚未提交。改动：SKILL.md、README.md；dev/run_golden.py（`attachments`）、dev/attachments/（合成小票、冰箱示意图）、golden case `photo_receipt_records_purchase`、`photo_fridge_confirm_first`；dev/validation.md、dev/README.md。
+- 实施：[d9d3420](https://github.com/blizzardwj/pantry-man-skill/commit/d9d3420)。改动：SKILL.md、README.md；dev/run_golden.py（`attachments`）、dev/attachments/（合成小票、冰箱示意图）、golden case `photo_receipt_records_purchase`、`photo_fridge_confirm_first`；dev/validation.md、dev/README.md。
 - 验证与效果：2026-10-12 Claude Code + Haiku：首轮小票 2/3、冰箱 0/3；修正规则措辞与用例提示后小票 3/3、冰箱 3/3，核心 7 用例回归 7/7，见[执行报告](golden-run-2026-10-11.md#addendum-2026-10-12-photo)。测试图为合成图，不代表真实照片的识别效果；真实照片待 L3 交互测试。
 
 ### 关键进展
@@ -786,9 +794,27 @@
 - 问题与预期结果：用户决定面向英文用户投入。契约中的问句、标签与免责声明为固定中文，知识文件为中文，英文用户可能收到中文回复或中文免责声明。预期英文用户得到全英文回复，名称不被翻译，中文用户行为不变。
 - 范围／完成标准：按 [待办 V-05](improvement-todo-2026-10-11.md#v-05) 与 [DEC-031](DECISIONS.md#dec-031)。SKILL.md 新增基本规则 10，规则 1 命名示例改为双向，规则 9 与定时提醒文案用用户语言；planning.md 开头注明中文标签为示例；README 说明支持中英文；新增英文 fixture 与 5 个 `en_*` 用例，并与旧契约对照。
 - 关联：[DEC-031](DECISIONS.md#dec-031)；[IDEA-023](#idea-023)；[验证方案](validation.md#core-cases)。
-- 实施：本次工作区／尚未提交。改动：SKILL.md、references/planning.md、README.md；dev/fixtures/stocked_en、dev/fixtures/stocked_en_profile、dev/golden_cases/en_*.json；dev/validation.md。
+- 实施：[9437f4c](https://github.com/blizzardwj/pantry-man-skill/commit/9437f4c)。改动：SKILL.md、references/planning.md、README.md；dev/fixtures/stocked_en、dev/fixtures/stocked_en_profile、dev/golden_cases/en_*.json；dev/validation.md。
 - 验证与效果：2026-10-12 Claude Code + Haiku，新契约 en_* 用例 11/11 PASS（4 个各 2 次，免责声明用例 3 次）；旧契约对照免责声明用例 0/3、其余 4/4，见[执行报告](golden-run-2026-10-11.md#addendum-2026-10-12-language)。中文用例未在本次改动后重跑；数量基准对非中国饮食的适用性、单位换算未评估。
 
 ### 关键进展
 
 - 2026-10-12：用户决定先投入面向英文用户；实施后对照旧契约，发现食材咨询路径在旧契约下回复中文或附中文免责声明，规则 10 有具体失败依据；约定范围完成后转为 implemented。
+- 2026-10-12（验证补记）：9437f4c 全量回归 27/28；`en_add_keeps_name` 一次把 “milk” 写成 “牛奶”，重跑 4/4 通过，累计 7/8，记为间歇性问题，待 L3 观察，见[执行报告](golden-run-2026-10-11.md#addendum-2026-10-12-full)。
+
+<a id="idea-035"></a>
+## 补齐测试覆盖缺口，修订画像创建与月度统计规则
+
+- 编号：IDEA-035
+- 状态：implemented
+- 创建：2026-10-12
+- 更新：2026-10-12
+- 问题与预期结果：2026-10-12 全面检查列出未被用例覆盖的行为：采购计划的补货提示、拿手菜保供、数量校验，确认后写入清单，过期条目回答后的处置，储备询问，首次画像确认；以及 totalSpent 在 null 与 0.0 间不一致。预期这些行为都有可重复执行的用例，暴露的契约问题得到修正。
+- 范围／完成标准：新增 2 个 fixture、7 个用例并补强 2 个既有用例，Haiku 各至少 2 次通过；对暴露的问题按 [DEC-032](DECISIONS.md#dec-032) 修订 SKILL.md 与 schema.md，并回归核心用例。
+- 关联：[DEC-032](DECISIONS.md#dec-032)；[IDEA-023](#idea-023)；[验证方案](validation.md#l2-writing)。
+- 实施：本次工作区／尚未提交。改动：SKILL.md（Preferences 画像创建、Stats）、references/schema.md（totalSpent 定义与月份种子）；dev/fixtures/plan_base、dev/fixtures/fresh_only；dev/golden_cases 中 7 个新用例及 2 个补强用例。
+- 验证与效果：见[执行报告](golden-run-2026-10-11.md#addendum-2026-10-12-coverage)：新用例最终全部通过（`profile_first_plan_summary` 经规则修订与断言放宽后 3/3），规则修订后回归 9/9。多轮场景以单轮提示模拟上一轮内容；定时提醒、单位换算、包装数量记法仍未覆盖。
+
+### 关键进展
+
+- 2026-10-12：用户要求先做快速整理再补测试覆盖；新用例暴露“空画像也要创建并确认”和 totalSpent 定义两处契约问题，按 DEC-029 原则仅针对具体失败修订；约定范围完成后转为 implemented。
