@@ -1,0 +1,10 @@
+{
+  "id": "pairing_segment_pending_marked",
+  "prompt": "明后两天怎么搭",
+  "fixture": "pairing_stock_pending",
+  "assert": {
+    "response.txt": [
+      {"contains": ["鲈鱼", "待买"]}
+    ]
+  }
+}

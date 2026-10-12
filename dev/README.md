@@ -65,6 +65,7 @@ python3 dev/run_golden.py run-all             # 全部用例（manual）；--no-
 
 文本（`*.txt`）：
 - `contains` / `not_contains` — 子串检查（负向词表，如 `not_contains ["汤"]` 抓「香菇煮汤」失真）
+- `contains_any` — 至少出现其中一个子串（如确认回答用到了库存中的任一食材）
 - `max_method_types` — 统计做法中烹饪动词种类数 ≤ max（如 `{"methods": ["焯","蒸","煮","烙","拌","炒","炖","煎","炸","烤"], "max": 3}`，抓「每食材一动作」排比）
 
 ## 原则

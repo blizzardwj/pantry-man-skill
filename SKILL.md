@@ -139,7 +139,7 @@ SKILL.md 只承载通用框架——任何用户的个性化规则、模板、�
 
 ## Meal Planning
 
-Three independent features — 🛒 采购计划 Shopping Plan, 🍽 每日搭配 Daily Pairings, and 🥗 食材咨询 Ingredient Consultation — plus 📆 周计划 Weekly Plan, an orchestrator that chains the first two per the user's shopping rhythm. **Order is fixed: shopping list first, pairings second.** Pairings are derived from the confirmed list (素材→组合 dependency) — never the other way around. Each feature has its own trigger, so the user can run any of them standalone (e.g., "今晚吃什么" only needs Daily Pairings); 采购计划/每日搭配 carry a confirmation gate, 食材咨询 is read-only.
+Three independent features — 🛒 采购计划 Shopping Plan, 🍽 每日搭配 Daily Pairings, and 🥗 食材咨询 Ingredient Consultation — plus 📆 周计划 Weekly Plan, an orchestrator that chains the first two per the user's shopping rhythm. **Order is fixed when planning ahead: shopping list first, pairings second.** Pairings only use ingredients that are in stock or on the confirmed list (素材→组合 dependency) — never the other way around; a meal eaten today uses stock only. Each feature has its own trigger, so the user can run any of them standalone (e.g., "今晚吃什么" only needs Daily Pairings and current stock); 采购计划/每日搭配 carry a confirmation gate, 食材咨询 is read-only.
 
 This is the skill's value-generating feature: planning fills the shopping list, so the user confirms and adjusts instead of entering data item by item.
 
@@ -271,19 +271,29 @@ Within a category, prefer the higher-fiber-density variety when the profile call
 
 Trigger: "今晚吃什么" / "明天怎么搭" / meals for this segment — standalone, or called by the Weekly Plan orchestrator after its shopping plan is confirmed.
 
-**Ingredient pool (hard constraint):** pairings draw ONLY from
-- the current segment's confirmed shopping items (shopping.json categories.food.items — the unchecked items), plus
-- pantry stock (esp. long-cycle staples: dried goods, oils, nuts).
+**Ingredient pool (hard constraint) — pick the mode from the request:**
 
-If the shopping list has no items for the current segment, tell the user to generate/confirm a 采购计划 first — never propose ingredients that are neither bought nor stocked (素材→组合 dependency).
+| Mode | When | Pool |
+|------|------|------|
+| 当下用餐 Meal now | Meals eaten today: "今晚吃什么" / "午饭吃啥" / "今天三顿怎么吃". Also when the timing is unclear | Usable pantry stock only |
+| 时段规划 Segment planning | Future days or after shopping: "明天怎么搭" / "这几天怎么吃" / "买完之后怎么搭"; Weekly Plan step 3b | Usable pantry stock + unchecked items in shopping.json `categories.food.items` |
+
+- Usable stock = pantry items not past `expires`; unknown quantity still counts as available.
+- An unchecked shopping item is not stock. Meal now never builds a meal on it. Segment planning marks each one `（待买）` in the ingredient list and spreads them across the segment so the purchase gets used.
+- Never use `confirmation.proposedItems` or depletion candidates, and never propose ingredients that are neither in stock nor on the confirmed list (素材→组合 dependency).
+- Meal now with an empty shopping list still answers from stock. If stock cannot make a reasonable meal, say briefly what is missing; you may name the unchecked list items that would fill the gap once bought, or offer a 采购计划.
+- Segment planning with neither usable stock nor unchecked items: tell the user to generate/confirm a 采购计划 first.
 
 Flow:
 ```
-1. Run Review in feedback_flow.md on every plan, then read shopping.json
-   (current segment confirmed items, never confirmation.proposedItems)
-   + pantry.json (stock) → build the ingredient pool from the refreshed data
+1. Run Review in feedback_flow.md on every plan, then pick the mode (above)
+   → read pantry.json (stock); Segment planning also reads shopping.json
+   (unchecked food items, never confirmation.proposedItems) → build the
+   ingredient pool from the refreshed data. Meal now reads shopping.json
+   only to name missing items when stock is insufficient.
    → Also read profile.json: `exemplars`, `pairingTemplates`, prefer/avoid/cookingStyle
-2. For each day in the segment, propose 3 meals (早/午/晚) with FOUR-LEVEL
+2. For the meals in scope — Meal now: only the requested meal(s); Segment
+   planning: 3 meals (早/午/晚) for each day of the segment — propose with FOUR-LEVEL
    REFERENCE (exemplar > template > profile > generic — see [feedback_flow.md](references/feedback_flow.md)):
      ① 范例层 exemplar: user-verified concrete dishes (`profile.exemplars`).
         - 直接复用 direct reuse: if an exemplar's `ingredients` ⊆ the pool AND
@@ -304,7 +314,9 @@ Flow:
         preparation（极简分组式，见 Rules）
    Conflict: exemplars and templates are instance/structure, never break health
    constraints — profile/health rules win, exemplar/template downgraded to reference.
-3. Display as per-day blocks with meals as LIST items — the format example
+3. Meal now: show only the requested meal(s) as list items in the same
+   format. Segment planning: display as per-day blocks with meals as LIST
+   items — the format example
    below shows SHAPE ONLY: ingredients are category placeholders, generate
    your own combos, values, and cooking wording from stock + profile
    (never reuse this example's items or phrasing):
@@ -315,8 +327,9 @@ Flow:
 4. Confirmation & adjustment:
    - Invite the user to adjust any specific meal (e.g., "周四晚餐换个素的")
      → regenerate ONLY that meal, keep the rest unchanged
-   - If the user later changes the shopping list (adds/removes items), regenerate
-     the affected meals — pairings must stay consistent with the confirmed list
+   - Segment planning: if the user later changes the shopping list (adds/removes
+     items), regenerate the affected meals — pairings must stay consistent with
+     the confirmed list
 ```
 
 Rules:
@@ -373,7 +386,7 @@ Flow:
 3. Plan ONE segment per invocation (the next upcoming trip), segment by segment:
    a. Call 🛒 采购计划 Shopping Plan for this segment
       → present list → user confirms/adjusts → write to shopping.json
-   b. Call 🍽 每日搭配 Daily Pairings for this segment
+   b. Call 🍽 每日搭配 Daily Pairings in Segment planning mode for this segment
       → present per-day meal lists → user confirms/adjusts
 4. Do NOT dump the whole week at once — the second segment is planned when the
    user is ready ("继续下一段"), so its list and pairings can reflect what was

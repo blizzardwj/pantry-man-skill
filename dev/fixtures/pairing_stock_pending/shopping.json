@@ -1,0 +1,28 @@
+{
+  "meta": {
+    "lastUpdated": "2026-10-11T09:00:00+08:00"
+  },
+  "categories": {
+    "food": {
+      "name": "Food",
+      "icon": "🥬",
+      "items": [
+        {
+          "id": "shop_sb1",
+          "name": "鲈鱼",
+          "itemKey": "food_sea_bass",
+          "quantity": {"value": 1, "unit": "条"},
+          "priority": "normal",
+          "added": "2026-10-11",
+          "checked": false,
+          "tags": ["seafood"]
+        }
+      ]
+    },
+    "daily": {
+      "name": "Daily Items",
+      "icon": "🧴",
+      "items": []
+    }
+  }
+}

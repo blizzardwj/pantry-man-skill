@@ -1,0 +1,10 @@
+{
+  "id": "pairing_meal_now_empty_list",
+  "prompt": "今晚吃什么",
+  "fixture": "pairing_stock",
+  "assert": {
+    "response.txt": [
+      {"contains_any": ["鸡蛋", "西兰花", "黄瓜", "糙米"]}
+    ]
+  }
+}
