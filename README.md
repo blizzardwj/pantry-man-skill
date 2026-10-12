@@ -8,8 +8,8 @@ A skill for AI agents to manage home pantry inventory, shopping lists, and purch
 - 🛒 **Shopping List** - Manage shopping items with priorities and categories
 - 📊 **Purchase History** - Record and view purchase history with monthly stats
 - ⏰ **Expiry Tracking** - Check items expiring soon; expired items stay listed until you say they were eaten, thrown away, or are still fine
-- 🔄 **Feedback Loop** - Learns from stated preferences, feedback on meal plans, and foods you report eating until they are gone. Ordinary purchases and stock edits update inventory and purchase history without becoming preference feedback. Depleted foods may be suggested again; replenishing them clears that signal.
-- 🗓️ **Meal Planning** - Three modes: 🛒 Shopping Plan (stock-aware shopping list with a dietary-guideline quantity check and a confirmation step), 🍽 Daily Pairings (meals for today drawn from current stock; breakfast/lunch/dinner plans for later days drawn from stock + your confirmed list), and 📆 Weekly Plan (chains both per your shopping rhythm, segment by segment) — all driven by a lightweight dietary profile
+- 🔄 **Learns as you go** - Remembers the preferences and signature dishes you state. Foods you report eating up stay in the pantry at zero and may be suggested in the next shopping plan; restocking clears them.
+- 🗓️ **Meal Planning** - 🛒 Shopping Plan (stock-aware list for your next shopping trip, with a dietary-guideline quantity check, written only after you confirm), 🍽 Daily Pairings (meals for today from current stock; plans for later days can also use your shopping list), and 🥗 Ingredient Advice — all driven by a lightweight dietary profile
 
 ## Installation
 
@@ -28,23 +28,23 @@ Once installed, your AI agent can help you with:
 - "Record a purchase: milk 15 yuan, bread 12 yuan"
 - "What items are expiring this week?"
 - "Show my purchase history for last month"
-- "苹果吃完了" (updates inventory and keeps a possible replenishment signal for later plans)
+- "苹果吃完了" (keeps apples in the pantry at zero so the next shopping plan can suggest them)
 - "以后早餐多安排苹果" (records a stated preference for future pairings)
 - "列个采购清单" (Shopping Plan — stock-aware list with quantity check + confirmation step)
 - "今晚吃什么" (Daily Pairings — tonight's meal from what you already have; plans for later days can also use your confirmed shopping list)
-- "这周买什么" (Weekly Plan — chains both, segment by segment)
+- "这周买什么" (Shopping Plan for your next trip, then meal pairings for those days)
 
 ## Data Structure
 
-All data is stored in JSON files under `pantry/data/`:
+All data is stored in JSON files under `[AGENT_HOME]/pantry/data/`:
 
 | File | Purpose |
 |------|---------|
 | `pantry.json` | Food inventory by zone |
 | `shopping.json` | Shopping list |
 | `history/YYYY-MM.json` | Monthly purchase records |
-| `feedback.json` | Personalization signals, including consumed foods and stated preferences |
-| `profile.json` | Dietary profile (preferences, household, shopping rhythm) |
+| `profile.json` | Dietary profile (preferences, household, shopping rhythm, signature dishes) |
+
 See [references/schema.md](references/schema.md) for complete schema definitions.
 
 ## Compatibility

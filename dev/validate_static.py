@@ -73,8 +73,17 @@ def check_references():
         warn("no references/*.md cited in SKILL.md")
 
     print("\n[3] orphan references (in references/ but never cited)")
+    # References load on demand, so also follow links from cited reference files
+    reachable = {r for r in referenced if (REPO / r).exists()}
+    queue = list(reachable)
+    while queue:
+        for name in re.findall(r"\]\(([\w\-]+\.md)", read(REPO / queue.pop())):
+            r = f"references/{name}"
+            if r not in reachable and (REPO / r).exists():
+                reachable.add(r)
+                queue.append(r)
     actual = {f"references/{p.name}" for p in REFERENCES.glob("*.md")}
-    orphans = actual - referenced
+    orphans = actual - reachable
     if orphans:
         for o in sorted(orphans):
             warn(f"orphan reference (not cited in SKILL.md): {o}")

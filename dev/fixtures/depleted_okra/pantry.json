@@ -12,11 +12,30 @@
         {
           "id": "item_okr002",
           "name": "北豆腐",
-          "quantity": { "value": 300, "unit": "g" },
+          "quantity": {
+            "value": 300,
+            "unit": "g"
+          },
           "bought": "2026-08-28",
-          "tags": ["protein", "liver-friendly"],
+          "tags": [
+            "protein",
+            "liver-friendly"
+          ],
           "status": "fresh",
           "itemKey": "food_tofu"
+        },
+        {
+          "id": "item_okr001",
+          "name": "秋葵",
+          "itemKey": "food_okra",
+          "quantity": {
+            "value": 0,
+            "unit": "g"
+          },
+          "bought": "2026-08-20",
+          "tags": [
+            "vegetable"
+          ]
         }
       ]
     },
@@ -32,9 +51,15 @@
         {
           "id": "item_ric001",
           "name": "糙米",
-          "quantity": { "value": 1, "unit": "kg" },
+          "quantity": {
+            "value": 1,
+            "unit": "kg"
+          },
           "bought": "2026-08-13",
-          "tags": ["staple", "low-gi"],
+          "tags": [
+            "staple",
+            "low-gi"
+          ],
           "status": "fresh",
           "itemKey": "food_brown_rice"
         }

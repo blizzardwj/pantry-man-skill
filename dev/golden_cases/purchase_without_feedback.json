@@ -4,13 +4,25 @@
   "fixture": "empty",
   "assert": {
     "pantry.json": [
-      { "path": "zones.cold.items", "contains": ["苹果"] }
+      {
+        "path": "zones.cold.items",
+        "contains": [
+          "苹果"
+        ]
+      }
     ],
     "history/2026-09.json": [
-      { "path": "records", "record_exists": { "date": "2026-09-30" } }
+      {
+        "path": "records",
+        "record_exists": {
+          "date": "2026-09-30"
+        }
+      }
     ],
     "feedback.json": [
-      { "path": "records", "count_equals": 0 }
+      {
+        "exists": false
+      }
     ]
   }
 }

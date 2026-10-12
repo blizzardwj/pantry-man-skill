@@ -6,7 +6,7 @@ This repository is **pantry-man-skill**: a skill for AI agents to manage home pa
 
 ```
 SKILL.md                 # The skill itself (agent-facing instructions)
-references/              # On-demand docs (schema, quantity benchmarks, feedback flow, ingredient knowledge)
+references/              # On-demand docs (schema, planning, quantity benchmarks, ingredient knowledge)
 dev/                     # Development-only: design records, validation, regression cases, and fixtures
   IDEAS.md               # Problems, implementation progress, and outcome/evidence links
   DECISIONS.md           # Decisions, rationale, consequences, and validity/supersession

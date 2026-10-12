@@ -1,6 +1,6 @@
 # Quantity Benchmark（数量基准）
 
-> Reference data for the 🛒 Shopping Plan **quantity check** step (see SKILL.md).
+> Reference data for the 🛒 Shopping Plan **quantity check** step (see [planning.md](planning.md)).
 > All values are **general adult reference baselines** — informational, not medical advice.
 
 ## Adult Daily Reference Intake (Chinese Dietary Guidelines 2022)
@@ -16,13 +16,13 @@
 | 蛋白质 protein | ≈ 1 g/kg body weight | 60 kg adult ≈ 60 g/day |
 | 碳水化合物 carbs | 250–325 g | 2000 kcal × 50–65% |
 
-## Segment Target Conversion
+## Plan Target Conversion
 
 ```
-segment target range = daily range × segment days × household persons
+plan target range = daily range × days covered × household persons
 ```
 
-- `segment days`: the current plan segment (default 3–4; check both gauges when ambiguous)
+- `days covered`: the days the shopping plan covers (default 3–4; check both when ambiguous)
 - `household persons`: `profile.json → household.persons` (default 1)
 
 ## Typical Piece Weights (convert 个/根 to grams)
@@ -52,6 +52,6 @@ segment target range = daily range × segment days × household persons
 - Above 1.5×high → ❌ suggest a converged quantity
 - **Fresh items strict** (vegetables / fruit / fish): overage = spoilage risk, trim more aggressively
 - **Shelf-stable staples lenient** (rice / dried goods / oils): overage is not waste, may keep
-- **Soft flag only — never hard-block.** The user decides at the confirmation gate
+- **Soft flag only — never hard-block.** The user decides when confirming the list
 
 > ⚠️ Reference baselines only, not medical advice. For chronic conditions, consult a doctor or registered dietitian.

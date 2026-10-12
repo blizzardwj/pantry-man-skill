@@ -30,15 +30,5 @@
       "icon": "🧴",
       "items": []
     }
-  },
-  "confirmation": {
-    "id": "plan_probe",
-    "status": "confirmed",
-    "proposedItems": [],
-    "removedItemKeys": [
-      "food_spinach",
-      "food_celery",
-      "food_lettuce"
-    ]
   }
 }

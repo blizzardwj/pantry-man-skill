@@ -47,13 +47,13 @@
 <a id="rq-5"></a>
 ## RQ-5：用户建议与反馈的沉淀、反思与再利用
 
-- 研究状态：investigating
+- 研究状态：paused（2026-10-11：[DEC-029](DECISIONS.md#dec-029) 取消 feedback.json，吃完改以库存数量 0 表达；本问题暂停，待实际使用暴露具体问题后重开）
 - 创建：2026-08-05
-- 更新：2026-09-28
+- 更新：2026-10-11
 - 关联想法：[IDEA-009](IDEAS.md#idea-009)、[IDEA-011](IDEAS.md#idea-011)、[IDEA-018](IDEAS.md#idea-018)
-- 当前结论：明确“吃完／用完”既更新库存，也保留以后选品可参考的逐食材消耗信号；普通购买、已有库存和一次性清单修改不新增反馈。普通不买／删清单不改变旧耗尽信号，实际补货后逐项 decay。确认采购建议删 ≥3 项时先执行删改、本次补问一次，未回答不猜测、不跨计划追问。当前输入边界见 [Capture 表](../references/feedback_flow.md#capture-boundary)；2026-09-28 的耗尽与补问设计说明仍见[耗尽记录说明](#rq-5-depletion-simplified)和[补问说明](#rq-5-clarification-once)。
+- 当前结论：明确“吃完／用完”既更新库存，也保留以后选品可参考的逐食材消耗信号；普通购买、已有库存和一次性清单修改不新增反馈。普通不买／删清单不改变旧耗尽信号，实际补货后逐项 decay。确认采购建议删 ≥3 项时先执行删改、本次补问一次，未回答不猜测、不跨计划追问。当前输入边界见 [Capture 表](https://github.com/blizzardwj/pantry-man-skill/blob/7460054/references/feedback_flow.md#capture-boundary)；2026-09-28 的耗尽与补问设计说明仍见[耗尽记录说明](#rq-5-depletion-simplified)和[补问说明](#rq-5-clarification-once)。
 - 当前局限：旧 v2 的写前／恢复字段方案已由 [DEC-021](DECISIONS.md#dec-021) 替代，保留在[历史字段方案](#rq-5-runtime-v2)供追溯。多文件写入现在没有旧式自动逐项恢复；阈值反思和 importance 的其他问题仍待复核，长期效果与独立 agent 行为尚未验证。
-- 决策去向：[DEC-017](DECISIONS.md#dec-017) 明确耗尽选择性复用，[DEC-018](DECISIONS.md#dec-018) 明确本次补问；[DEC-021](DECISIONS.md#dec-021) 收窄反馈准入并替代 [DEC-019](DECISIONS.md#dec-019) 的恢复字段。[DEC-008](DECISIONS.md#dec-008)、[DEC-009](DECISIONS.md#dec-009) 保留流程组织；实例消费的后续研究见 [RQ-6](RESEARCH.md#rq-6)。实施进展分别见 [IDEA-018](IDEAS.md#idea-018) 和 [IDEA-020](IDEAS.md#idea-020)。
+- 决策去向：[DEC-017](DECISIONS.md#dec-017) 明确耗尽选择性复用，[DEC-018](DECISIONS.md#dec-018) 明确本次补问；[DEC-021](DECISIONS.md#dec-021) 收窄反馈准入并替代 [DEC-019](DECISIONS.md#dec-019) 的恢复字段。[DEC-008](DECISIONS.md#dec-008)、[DEC-009](DECISIONS.md#dec-009) 保留流程组织；实例消费的后续研究见 [RQ-6](RESEARCH.md#rq-6)。实施进展分别见 [IDEA-018](IDEAS.md#idea-018) 和 [IDEA-020](IDEAS.md#idea-020)。 2026-10-11 起整体机制由 [DEC-029](DECISIONS.md#dec-029) 收敛，本条结论保留为历史。
 
 <a id="rq-5-depletion-simplified"></a>
 ### 2026-09-28 用户澄清后的设计说明：吃完记录是选品参考
@@ -79,7 +79,7 @@
 
 本轮只分析审查问题 1、2 的共同根因，不据此批准实施。以下是候选设计，不是运行指令或已定 schema；其他问题仍保留在“当前局限”。
 
-**问题与依据。** [当前 flow](../references/feedback_flow.md) 以 `applied:false` 同时代表未落地变更和待补货候选；[当前 schema](../references/schema.md) 又把它定义为数据文件是否已更新，且只允许一个 landing。历史耗尽设计已要求“确认后写清单，购买后 decay”，当前 flow 未明确这些事件的反馈回写。一个字段无法同时表示“苹果库存已清零”和“尚未确认买苹果”。字段重载和后续步骤缺失，是同一职责划分缺口的两个表现；补字段后仍须把事件处理接入确认、购买等宿主操作。
+**问题与依据。** [当前 flow](https://github.com/blizzardwj/pantry-man-skill/blob/7460054/references/feedback_flow.md) 以 `applied:false` 同时代表未落地变更和待补货候选；[当前 schema](../references/schema.md) 又把它定义为数据文件是否已更新，且只允许一个 landing。历史耗尽设计已要求“确认后写清单，购买后 decay”，当前 flow 未明确这些事件的反馈回写。一个字段无法同时表示“苹果库存已清零”和“尚未确认买苹果”。字段重载和后续步骤缺失，是同一职责划分缺口的两个表现；补字段后仍须把事件处理接入确认、购买等宿主操作。
 
 **判断标准。** 库存事实立即生效；建议不自动成为购买意图；一次反馈的多个效果可分别核对；相同建议不会重复添加；拒绝与补货均有明确去向；待办可跨对话恢复；沿用现有文件并保持零代码可用；旧记录歧义不靠猜测批量转换。
 
@@ -380,7 +380,7 @@ feedback.json（原始）→ 确认/重复 → 画像偏好 或 偏好模板（�
 
 - 原记录日期 2026-08-05：按数据结构→触发规则→概念区分→复用规则形成历史方案；对应 [3aaed7c](https://github.com/blizzardwj/pantry-man-skill/commit/3aaed7c)、[8dbd2c1](https://github.com/blizzardwj/pantry-man-skill/commit/8dbd2c1)、[760422a](https://github.com/blizzardwj/pantry-man-skill/commit/760422a)、[2367370](https://github.com/blizzardwj/pantry-man-skill/commit/2367370)。Git 提交时间另见提交，不把该日期当作提交日期。
 - 2026-09-13：从原来的混合状态“**implemented**（2026-08-05 设计并实施；SKILL.md Feedback 章节 + schema.md；决策见 DECISIONS.md）”分离研究进展。发现上述局限；用户要求先整理文档，研究复核标 paused，历史实施进展见 [IDEA-009](IDEAS.md#idea-009)。
-- 2026-09-13：旧“rule→SKILL.md”的运行落点描述已与当前用户级规则落点不同，当前行为见 [Feedback Capture & Reuse](../SKILL.md#feedback-capture--reuse反馈沉淀与复用)；保留旧文，后续统一语义。旧“禁止一切脚本”约束的适用范围见 [DEC-011](DECISIONS.md#dec-011)。
+- 2026-09-13：旧“rule→SKILL.md”的运行落点描述已与当前用户级规则落点不同，当前行为见 [Feedback Capture & Reuse](https://github.com/blizzardwj/pantry-man-skill/blob/7460054/SKILL.md#feedback-capture--reuse反馈沉淀与复用)；保留旧文，后续统一语义。旧“禁止一切脚本”约束的适用范围见 [DEC-011](DECISIONS.md#dec-011)。
 - 2026-09-28：用户要求将审查问题 1、2 合并分析修改方案，恢复 investigating。新增[候选方案比较](#rq-5-depletion-proposal)，暂倾向事实落点与建议处置分离；保留旧设计，未批准或实施新运行契约。
 - 2026-09-28（后续澄清）：用户明确普通不买／删清单不改变耗尽事实，推荐有选择性，实际补货逐食材 decay，开发版不用兼容旧反馈。记录 [DEC-017](DECISIONS.md#dec-017)，撤回草案中的普通拒购状态及兼容推断；其余研究问题仍保留，运行契约未改。
 - 2026-09-28（第二部分确认）：用户确认补问问题已解答并要求记录；新增[补问说明](#rq-5-clarification-once)及 [DEC-018](DECISIONS.md#dec-018)，将历史“下次补问”改为本次问一次，未回答不猜测、不跨计划追问。实施与验证由 [IDEA-018](IDEAS.md#idea-018) 跟踪。
@@ -391,7 +391,7 @@ feedback.json（原始）→ 确认/重复 → 画像偏好 或 偏好模板（�
 
 依据：用户说明删改只影响本次建议，并区分“已经有了／买了”“这次不想买”和未回答；随后确认第二部分已解答。选择与取舍见 [DEC-018](DECISIONS.md#dec-018)。这是后续设计，实施进展见 [IDEA-018](IDEAS.md#idea-018)。
 
-2026-09-30 对齐说明：以下保留当时的问答与验收场景；[DEC-021](DECISIONS.md#dec-021) 已明确普通删改不新增反馈，也不再为一次性操作保存恢复记录。当前补问步骤见 [confirmation flow](../references/feedback_flow.md#confirmation-flow)。
+2026-09-30 对齐说明：以下保留当时的问答与验收场景；[DEC-021](DECISIONS.md#dec-021) 已明确普通删改不新增反馈，也不再为一次性操作保存恢复记录。当前补问步骤见 [confirmation flow](https://github.com/blizzardwj/pantry-man-skill/blob/7460054/references/feedback_flow.md#confirmation-flow)。
 
 **何时问、问几次。** 用户确认一份采购建议时，完成一轮删改后，若删掉至少 3 个不同条目且原因尚不清楚，就在本次补问一个最有帮助的问题。沿用原来的“删 ≥3 项”，不是删掉 3 个苹果，也不把改数量、换食材一概计入。已经定好的购物清单后来被单独删除某项，不自动算作这一触发。先落实用户明确的删改，不等回答才执行；同一轮只问一次。没有回答就继续，不为这次原因留下下次必问的任务；新的采购计划发生新的大量删改，可以重新触发。已解释清楚的原因不重复问。
 
@@ -414,7 +414,7 @@ feedback.json（原始）→ 确认/重复 → 画像偏好 或 偏好模板（�
 <a id="rq-5-runtime-v2"></a>
 ### 2026-09-28 历史字段方案：事实、实际更新和本次确认分开
 
-本节保留当时 [DEC-019](DECISIONS.md#dec-019) 的选择依据；其写前／恢复字段及持久化提问标记已由 [DEC-021](DECISIONS.md#dec-021) 部分替代。当前字段和步骤见 [schema.md](../references/schema.md) 与 [feedback_flow.md](../references/feedback_flow.md)，以下条目不是当前运行指令。
+本节保留当时 [DEC-019](DECISIONS.md#dec-019) 的选择依据；其写前／恢复字段及持久化提问标记已由 [DEC-021](DECISIONS.md#dec-021) 部分替代。当前字段和步骤见 [schema.md](../references/schema.md) 与 [feedback_flow.md](https://github.com/blizzardwj/pantry-man-skill/blob/7460054/references/feedback_flow.md)，以下条目不是当前运行指令。
 
 - 逐食材记录 itemKey、stockEvent、effectiveAt：名字可改，库存条目可删，食材关联仍可延续；历史购买与今天补货依据事实时间区分，未知时间不猜。
 - landings 数组保存每个实际更新的 before/after 和结果。applied 不参与推荐资格；后续事件使旧操作过时时，用 supersededBy 排除重试。比较目标当前值，优先确认是否已写成目标值；冲突时不盲目覆盖。
@@ -429,11 +429,11 @@ feedback.json（原始）→ 确认/重复 → 画像偏好 或 偏好模板（�
 
 - 研究状态：concluded
 - 创建：2026-09-08
-- 更新：2026-09-13
+- 更新：2026-10-11
 - 关联想法：[IDEA-015](IDEAS.md#idea-015)、[IDEA-016](IDEAS.md#idea-016)
 - 当前结论：本轮选型结论为实例范例与结构模板分离，并采用先泛化探索、再经用户确认提出模板的上升路径。
 - 当前局限：实验性泛化和长期满意度尚无独立验证结果；原引用与机制映射未在此次整理中重新核验。
-- 决策去向：[DEC-013](DECISIONS.md#dec-013)、[DEC-014](DECISIONS.md#dec-014)；实施与验证入口仅见关联想法
+- 决策去向：[DEC-013](DECISIONS.md#dec-013)、[DEC-014](DECISIONS.md#dec-014)；实施与验证入口仅见关联想法 2026-10-11：范例→模板上升路径与结构泛化由 [DEC-029](DECISIONS.md#dec-029) 删除，实例复用保留。
 
 ### 历史研究正文
 
@@ -599,15 +599,15 @@ feedback.json（原始）→ 确认/重复 → 画像偏好 或 偏好模板（�
 
 - 研究状态：concluded
 - 创建：2026-09-29
-- 更新：2026-09-30
+- 更新：2026-10-11
 - 关联想法：[IDEA-020](IDEAS.md#idea-020)；前序 [IDEA-018](IDEAS.md#idea-018)。
-- 当前结论：2026-09-30 用户明确选择“普通购买／库存／清单 CRUD 只落业务文件；明确消费至耗尽另记可供选择性补购的个性化信号；明确偏好与搭配评价进入反馈”。吃完说明曾有并消耗过，但来源未必是购买，也不证明长期喜爱或下次必买。一句话的业务操作与偏好分开处理；新操作不再建立写前／中断恢复记录。当前运行表见 [Capture](../references/feedback_flow.md#capture-boundary)。
+- 当前结论：2026-09-30 用户明确选择“普通购买／库存／清单 CRUD 只落业务文件；明确消费至耗尽另记可供选择性补购的个性化信号；明确偏好与搭配评价进入反馈”。吃完说明曾有并消耗过，但来源未必是购买，也不证明长期喜爱或下次必买。一句话的业务操作与偏好分开处理；新操作不再建立写前／中断恢复记录。当前运行表见 [Capture](https://github.com/blizzardwj/pantry-man-skill/blob/7460054/references/feedback_flow.md#capture-boundary)。
 - 当前局限：接受简化后，多文件更新失去旧式自动逐项恢复；现有 v2 历史记录保留但不执行旧 `landings[]`。这项取舍来自用户明确的个人助手使用目标，尚无真实语料误分类率、实际中断频率或独立跨 agent 回归数据。开发期用例定义不等于行为执行结果。
-- 决策去向：[DEC-021](DECISIONS.md#dec-021) 确定边界和简化范围；实施进展由 [IDEA-020](IDEAS.md#idea-020) 维护。旧方案 A/B/C 保留为当时比较，不是当前运行指令。
+- 决策去向：[DEC-021](DECISIONS.md#dec-021) 确定边界和简化范围；实施进展由 [IDEA-020](IDEAS.md#idea-020) 维护。旧方案 A/B/C 保留为当时比较，不是当前运行指令。 2026-10-11：反馈日志由 [DEC-029](DECISIONS.md#dec-029) 取消；业务操作与偏好分离的边界保留为 SKILL.md 基本规则。
 
 ### 问题、范围与约束
 
-以下至“研究过程记录”为 2026-09-29 的研究草案；其反馈边界、恢复要求和候选方案已由 [DEC-021](DECISIONS.md#dec-021) 取舍。当前行为以 [Capture 表](../references/feedback_flow.md#capture-boundary) 为准。
+以下至“研究过程记录”为 2026-09-29 的研究草案；其反馈边界、恢复要求和候选方案已由 [DEC-021](DECISIONS.md#dec-021) 取舍。当前行为以 [Capture 表](https://github.com/blizzardwj/pantry-man-skill/blob/7460054/references/feedback_flow.md#capture-boundary) 为准。
 
 用户说“买了苹果”是在报告一次采购与入库，不因此表示喜欢苹果或纠正 agent 的判断。“更新了 pantry 中的旧数量”只是数据修改；只有指出原记录或 agent 判断有误，才是语义上的纠错。现行 `feedback.json` 同时装可复用反馈、库存事件和写入恢复信息；`applied` 与 `status` 虽分离，却没有解释一条已处理普通购买日后如何作为反馈消费。研究对象包括购买、已有／耗尽、清单删改、记忆纠错、方案评价和混合输入。保持纯提示词／schema 核心、跨 agent 兼容和明确操作立即生效。
 
@@ -628,7 +628,7 @@ feedback.json（原始）→ 确认/重复 → 画像偏好 或 偏好模板（�
 
 ### 历史候选：输入边界与消费去向（2026-09-29）
 
-下表是用户明确消费信号边界前的研究草案。其中“苹果吃完了暂定不进入反馈”已由 [DEC-021](DECISIONS.md#dec-021) 修订；当前行为以 [Capture 表](../references/feedback_flow.md#capture-boundary) 为准。
+下表是用户明确消费信号边界前的研究草案。其中“苹果吃完了暂定不进入反馈”已由 [DEC-021](DECISIONS.md#dec-021) 修订；当前行为以 [Capture 表](https://github.com/blizzardwj/pantry-man-skill/blob/7460054/references/feedback_flow.md#capture-boundary) 为准。
 
 | 输入例子 | 首要含义与数据去向 | 是否进入反馈及理由 |
 |---|---|---|
@@ -663,4 +663,4 @@ feedback.json（原始）→ 确认/重复 → 画像偏好 或 偏好模板（�
 - 2026-09-29：根据用户对普通购买的边界澄清，核对当前 SKILL、反馈流程、schema、两项既有决策和开发期验证；提出输入准入表与三个候选。尚未选择设计、实施或验证替代流程。
 - 2026-09-29（中断恢复复杂度复核）：用户指出当时的写入恢复章节难以建立心智模型，并要求评估是否过度设计。该版 `landings[]` 对多文件购买中断、重试重复加量及新事实覆盖旧操作有明确用途；但把每次普通业务改动都写成带 before/after、applied、supersededBy 的反馈记录，增加了读写步骤与概念负担。[当时的开发期检查](feedback-refactor-review-2026-09-28.md)仅支持部分场景的文档一致性，不能证明这些故障在个人使用中频繁到值得普遍付出该成本。方案 B 的独立操作日志能澄清职责，却会增加文件与迁移工作，不能仅因“分离”就认为更简洁；方案 C 的可靠性代价也不能只凭推测排除。后续比较须以实际故障及 agent 执行负担为依据，不把此前的 B 暂定倾向视为实施选择。此次只在当时运行文档增加通俗导读，未改变恢复契约。
 - 2026-09-30：用户明确给出“买了苹果”只属入库与历史，“苹果吃完了”同时更新库存且代表已购买并消费过的可选复购线索；要求 Capture 表格化并移除数据更新／中断恢复机制。[DEC-021](DECISIONS.md#dec-021) 接受这一取舍，结论与 2026-09-29 的耗尽草案不同；研究转 concluded，实际使用效果仍待验证。
-- 2026-09-30（表达澄清）：用户要求 Capture 表单列判断反馈边界，再分别写数据更新和后续消费；[运行表](../references/feedback_flow.md#capture-boundary) 已采用四列，不改 DEC-021 的分类结果。
+- 2026-09-30（表达澄清）：用户要求 Capture 表单列判断反馈边界，再分别写数据更新和后续消费；[运行表](https://github.com/blizzardwj/pantry-man-skill/blob/7460054/references/feedback_flow.md#capture-boundary) 已采用四列，不改 DEC-021 的分类结果。

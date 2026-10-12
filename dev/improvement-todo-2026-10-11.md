@@ -3,7 +3,7 @@
 - 日期：2026-10-11
 - 对应条目：[IDEA-023](IDEAS.md#idea-023)
 - 依据：2026-10-11 对当时运行契约（SKILL.md、references/）、README 与 dev/ 记录的技术评估（对话形式，未另存原文）。缺陷来自契约对照与行号核对，未执行 agent 行为测试；本次环境无可用 Python，`validate_static.py` 未运行。
-- 状态归属：本文件只列待办、范围与验收，不记录完成状态。F-01、F-02 是 [IDEA-019](IDEAS.md#idea-019) 已有候选：F-01、F-02 已分别拆为 [IDEA-024](IDEAS.md#idea-024)、[IDEA-025](IDEAS.md#idea-025) 并由其维护进展；其余各项进展记入 IDEA-023，或拆为独立 IDEA 后回链。
+- 状态归属：本文件只列待办、范围与验收，不记录完成状态。F-01、F-02 是 [IDEA-019](IDEAS.md#idea-019) 已有候选：F-01、F-02 已分别拆为 [IDEA-024](IDEAS.md#idea-024)、[IDEA-025](IDEAS.md#idea-025) 并由其维护进展；其余各项进展记入 IDEA-023，或拆为独立 IDEA 后回链。2026-10-11 起 V-01、V-02 优先于批次 2 的其余项，见 [IDEA-031](IDEAS.md#idea-031)。
 
 **目标：先让已有规则自洽、可执行，再降低每次使用成本，最后用可复现证据支撑推广。**
 
@@ -64,7 +64,7 @@
 <a id="f-07"></a>
 ### F-07 显式记录规划时段
 
-- 投入：中｜涉及 schema｜依赖 F-01
+- 投入：中｜涉及 schema｜依赖 F-01｜处理见 [IDEA-030](IDEAS.md#idea-030)
 - 问题：每日搭配与周计划依赖“当前时段”，但 [shopping.json 条目](../references/schema.md) 无时段字段，周计划也未记录进行到哪一段，agent 只能猜。
 - 范围：`confirmation` 记录本次计划的时段起止日期；合并入清单的条目保留来源计划 ID；周计划“继续下一段”据此定位。
 - 验收：周日确认第一段后，周三说“继续下一段”，agent 能正确给出第二段日期范围且不重复第一段的待购项。
@@ -72,7 +72,7 @@
 <a id="f-08"></a>
 ### F-08 `itemKey` 一致性规则
 
-- 投入：中｜涉及 schema｜脚本支持见 A-02
+- 投入：中｜涉及 schema｜脚本支持见 A-02｜待 [IDEA-031](IDEAS.md#idea-031) 收敛后的使用情况再评估
 - 问题：[schema.md:7](../references/schema.md) 只要求“确定时复用”，没有命名规范和查找顺序，长期会出现 `food_apple`／`food_apples` 分叉，导致去重和耗尽信号失效静默失败。
 - 范围：规定命名规范（单数、统一语言、形态区分如 `food_mushroom_dried`）与新建前的查找顺序（pantry → shopping → 活跃 feedback → 最近历史）；可选在 pantry `meta` 中维护别名表。
 - 验收：已有 `food_apple` 时说“买了几个苹果”“苹果吃完了”，各文件都复用同一 key；鲜香菇与干香菇不合并。
@@ -84,7 +84,7 @@
 <a id="v-01"></a>
 ### V-01 降低单次操作的指令读取量
 
-- 投入：中
+- 投入：中｜实施见 [IDEA-031](IDEAS.md#idea-031)
 - 问题：[SKILL.md:39](../SKILL.md) 要求每次改数据前读 schema.md 与 feedback_flow.md，加一盒牛奶需读约 870 行指令；指令越长，执行越不稳定。
 - 范围：把普通增删改所需的最小字段规则内联到 SKILL.md；仅在涉及“吃完”、偏好或计划时读 feedback_flow；schema 作为字段查询而非必读。
 - 验收：普通入库／加清单只需 SKILL.md；golden case `add_inventory`、`purchase_history` 行为不变（需 A-03 执行证明）。
@@ -92,7 +92,7 @@
 <a id="v-02"></a>
 ### V-02 反馈机制做减法（需决策）
 
-- 投入：中｜需新增 DEC
+- 投入：中｜需新增 DEC｜实施见 [IDEA-031](IDEAS.md#idea-031)（[DEC-029](DECISIONS.md#dec-029)）
 - 问题：threshold hook（同日 importance ≥8）、importance 分级、`evicted`、salience floor 等用文字描述的状态机，依赖 agent 跨记录计数，未经执行验证，实际产出有限。
 - 范围：先列出每个机制在现有用例中的实际作用；保留耗尽→补购→失效与明确偏好写入画像这两条主线，其余去掉或降为可选。记录 DEC（含被拒方案）。
 - 验收：feedback_flow.md 篇幅明显下降；耗尽、补货失效、偏好写入三类 golden case 仍通过。

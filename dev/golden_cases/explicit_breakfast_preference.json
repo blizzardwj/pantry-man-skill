@@ -3,8 +3,16 @@
   "prompt": "我喜欢早餐吃洋葱和自制酸奶，以后搭配早餐时可以多考虑它们",
   "fixture": "empty",
   "assert": {
+    "profile.json": [
+      {
+        "path": "preferences.prefer",
+        "count_gte": 1
+      }
+    ],
     "feedback.json": [
-      { "path": "records", "record_exists": { "type": "preference-correction" } }
+      {
+        "exists": false
+      }
     ]
   }
 }

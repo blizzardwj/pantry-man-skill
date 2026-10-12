@@ -21,7 +21,9 @@
       }
     ],
     "feedback.json": [
-      { "path": "records", "count_equals": 0 }
+      {
+        "exists": false
+      }
     ]
   }
 }

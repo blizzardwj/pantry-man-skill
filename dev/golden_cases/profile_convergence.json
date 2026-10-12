@@ -4,7 +4,10 @@
   "fixture": "empty",
   "assert": {
     "profile.json": [
-      {"path": "preferences.prefer", "contains": ["root-vegetable-carbs"]}
+      {
+        "path": "preferences.prefer",
+        "count_gte": 1
+      }
     ]
   }
 }

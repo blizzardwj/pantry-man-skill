@@ -1,13 +1,13 @@
 # 反馈运行规则重构验证 — 2026-09-28
 
-> 历史验证记录。2026-09-30 的 [DEC-021](DECISIONS.md#dec-021) 已移除新操作的 `landings[]` 写前／恢复流程，并收窄反馈准入；下文描述的是 2026-09-28 的实现和检查，不是当前运行指令。当前行为见 [SKILL.md](../SKILL.md) 与 [feedback_flow.md](../references/feedback_flow.md)。
+> 历史验证记录。2026-09-30 的 [DEC-021](DECISIONS.md#dec-021) 已移除新操作的 `landings[]` 写前／恢复流程，并收窄反馈准入；下文描述的是 2026-09-28 的实现和检查，不是当前运行指令。当前行为见 [SKILL.md](../SKILL.md) 与 [feedback_flow.md](https://github.com/blizzardwj/pantry-man-skill/blob/7460054/references/feedback_flow.md)。
 
 范围：[IDEA-018](IDEAS.md#idea-018)，落实 [DEC-017](DECISIONS.md#dec-017)、[DEC-018](DECISIONS.md#dec-018)，字段选择见 [DEC-019](DECISIONS.md#dec-019)。撰写时实现位于工作区，后提交为 [3e6d1bd](https://github.com/blizzardwj/pantry-man-skill/commit/3e6d1bd)；设计提交基线为 `3a1628b`。本报告不表示已验证长期用户效果。
 
 ## 运行契约变化
 
 - [SKILL.md](../SKILL.md)：采购／搭配前跨日 Review；新增、移除、标记已购、记录购买共用反馈更新步骤；确认草稿与已确认清单分开。
-- [feedback_flow.md](../references/feedback_flow.md)：逐食材耗尽与补货、普通删清单、不回答、当次补问、独立落点和中断核对。
+- [feedback_flow.md](https://github.com/blizzardwj/pantry-man-skill/blob/7460054/references/feedback_flow.md)：逐食材耗尽与补货、普通删清单、不回答、当次补问、独立落点和中断核对。
 - [schema.md](../references/schema.md)：feedback v2、itemKey、stockEvent／effectiveAt、landings[]、shopping.confirmation，以及未知数量／购买细节的表示。
 - README 更新用户可见的反馈行为；开发 fixtures／字段 probe 改用 v2，原历史购买用例补上明确购买日期，避免测试要求编造日期。运行仍为纯指令和 schema，没有新增运行脚本。
 

@@ -5,455 +5,80 @@ description: Track the user's own household food stock, shopping list and purcha
 
 # Pantry Management
 
-Manage home inventory, shopping lists, and purchase records.
+Track what the user has at home, what they need to buy and what they bought, and plan purchases and meals from that.
 
-## Data Location
+## Data
 
-All data files are under each agent's home directory at [AGENT_HOME]/pantry/data:
+All files live in `[AGENT_HOME]/pantry/data/`. Field definitions: [schema.md](references/schema.md).
 
-| File | Purpose |
-|------|---------|
-| `pantry.json` | Inventory (cold/frozen/ambient/daily zones) |
-| `shopping.json` | Shopping list (food/daily categories) |
+| File | Holds |
+|------|-------|
+| `pantry.json` | What is at home, by zone (cold / frozen / ambient / daily). Eaten-up foods stay with quantity 0 |
+| `shopping.json` | What to buy (food / daily) |
 | `history/YYYY-MM.json` | Purchase records by month |
-| `feedback.json` | Personalization signals: consumed/depleted foods, stated preferences, and feedback on plans or pairings — see [feedback_flow.md](references/feedback_flow.md) |
-
-## First-Run Setup
-
-Create data only when there is something to write — the user should never see a "file not found" error either way.
-
-- **Read-only requests** (viewing inventory, the shopping list or history, checking expiry, 食材咨询): if a file or the directory is missing, answer as if it held the empty seed from [schema.md](references/schema.md) (e.g. an empty inventory). Do not create anything.
-- **Before the first write** (adding, removing or updating items, recording a purchase, capturing feedback, saving a plan or profile): run the steps below, then perform the write.
-
-1. Check if `[AGENT_HOME]/pantry/data/` exists. If not, create the directory tree.
-2. Check if `[AGENT_HOME]/pantry/data/pantry.json` exists. If not, create it with the empty seed structure from [schema.md](references/schema.md).
-3. Check if `[AGENT_HOME]/pantry/data/shopping.json` exists. If not, create it with the empty seed structure.
-4. Check if `[AGENT_HOME]/pantry/data/history/` exists. If not, create it.
-5. Check if `[AGENT_HOME]/pantry/data/feedback.json` exists. If not, create its version 2 seed from [schema.md](references/schema.md). Follow the existing-data rule in [feedback_flow.md](references/feedback_flow.md) for older records.
-
-After creating any missing files, mention it briefly together with the result of the write, e.g.:
-
-"🧺 Your pantry is set up (refrigerator, freezer, ambient, daily). Milk is now in the fridge."
-
-If all files already exist, skip silently — no need to announce. When showing an empty inventory to a user with no data yet, you may suggest a first step, e.g. "Try 'add milk to my fridge'".
-
-## Core Operations
-
-Before mutations, read the relevant structures in [schema.md](references/schema.md). Read the feedback boundary and any applicable purchase/depletion steps in [feedback_flow.md](references/feedback_flow.md). Reuse `itemKey` across inventory, shopping and feedback; item IDs identify individual entries. Apply explicit user edits directly to the business files and update their metadata; agent-generated purchase suggestions require confirmation. A pantry or shopping edit alone is not personalization feedback.
-
-### Inventory
-
-**View by zone:**
-```
-Read pantry.json → Format items from zones.cold/frozen/ambient/daily
-→ show each item's expiry state (see Expiry state; 已过期 items per Expired items)
-```
-
-**Cold-start probe on view (see Inventory Awareness below):**
-If the inventory has NO long-cycle items recorded (empty, or only short-cycle fresh items) and `meta.longCycleProbed` is not `true` → fire the one-time friendly probe along with the (empty) inventory, then show the view. Never block the view on the probe.
-
-**Add item:**
-```
-Read pantry.json → identify itemKey and existing stock → add or update the
-relevant zone in pantry.json without duplicating stock. If this is a current
-restock, read feedback.json and decay that item's older active depletion
-signals. Do not create a new feedback record for an ordinary stock update.
-"Already have" does not prove a purchase.
-```
-
-**Remove item:**
-```
-Read pantry.json → Remove from zones.{zone}.items by id → Write back
-If the user explicitly reports that they consumed the item until it was gone,
-capture one depletion signal per food in feedback.json via feedback_flow.md
-and remove only the stock covered by that statement. A plain removal request,
-spoilage or expiry does not prove consumption and creates no depletion signal.
-```
-
-**Check expiry:**
-```
-Read pantry.json → list items whose expires date is within N days (default 3),
-and list items already past expires separately as 已过期 (see Expired items)
-```
-
-**Expiry state (computed, never stored):**
-```
-Derive it from `expires` and today's local date every time it is shown or used:
-- 已过期 expired: expires is before today
-- 即将过期 expiring soon: expires is today or within the next N days (default 3)
-- otherwise no flag; an item without expires has no expiry state
-Never write a status field for inventory items. Older files may still contain
-`status` (fresh / expiring_soon / expired); ignore it and do not update it.
-```
-
-**Expired items:**
-```
-A passed expires date does not mean the item is gone. Keep it in pantry.json,
-show it as 已过期, and keep it out of the Daily Pairings pool. Never delete or
-edit it because of the date alone. When showing expired items, ask once in
-that reply what happened, and act only on the answer:
-- 扔了 / 坏了 → remove the stock covered; no depletion signal
-- 吃了 / 吃完了 → follow Remove item, including depletion capture
-- 还在 / 还能吃 → keep it; change expires only if the user gives a new date
-- No answer → leave pantry.json unchanged
-```
-
-### Shopping List
-
-**View list:**
-```
-Read shopping.json → Format items from categories.food/daily
-```
-
-**Add item:**
-```
-Read shopping.json → match itemKey among unchecked items → add/update only the
-requested item in categories.{category}.items → Write back
-Adding to the list creates no feedback record and does not replenish inventory
-or decay depletion feedback.
-```
-
-**Remove item:** remove the requested entry from `shopping.json`. Do not infer purchase, stock, or lasting dislike; leave depletion feedback unchanged. Later plans may selectively recommend it again. Do not automatically re-add it during the same adjustment.
-
-**Mark as bought:**
-```
-Read shopping.json + pantry.json + feedback.json → run the purchase steps in
-feedback_flow.md: update actual stock and, when the user says an item was bought,
-mark its matching unchecked shopping entry checked = true by default. Do not
-require the actual amount to match the planned amount. If the user says they
-bought only part or still need more, keep the entry unchecked and update the
-remaining need only when known. Record supported purchase details and decay
-only that item's older depletion.
-An ordinary purchase does not create a new feedback record.
-```
-
-### Purchase History
-
-**Record a purchase:**
-```
-1. Run the purchase steps in feedback_flow.md, including inventory, matching
-   shopping items, and older depletion signals; this is the same event as "bought".
-2. For a current purchase without a different date, use today's local date for
-   history/YYYY-MM.json. For a historical purchase with an unknown date, ask
-   for the date if a history entry is needed; do not record it under today.
-3. Recompute stats from records, validate and save. A historical purchase does
-   not establish current stock. Never invent quantities, prices or totals.
-```
-
-**View history:**
-```
-Read history/YYYY-MM.json → Format records
-```
-
-**Monthly stats:**
-```
-Read history/YYYY-MM.json → Return stats.totalSpent and stats.recordCount
-```
-
-## Feedback Capture & Reuse（反馈沉淀与复用）
-
-Capture signals that can improve future plans: explicit preferences and evaluations, plus foods the user reports consuming until they are gone. A routine purchase, stock count change, or shopping-list edit is a business operation, not a preference. **Signal log**: `feedback.json`.
-
-**反馈边界、捕获、整理和计划时复用见 [feedback_flow.md](references/feedback_flow.md)。** 核心结构摘要：
-
-- **三层 hooks（术语）**：agent 无常驻进程，反馈处理挂在宿主流程的自然执行点上——`capture hook`（对话中即时捕获）→ `threshold hook`（同日阈值静默整理）→ `review hook`（生成计划/搭配前兜底消费）。写侧（capture/threshold）与读侧（review）双向触发，同一状态机首尾相接。
-- **落点**：个性化偏好、范例和用户级流程规则沉淀到 `profile.json`；库存、清单和购买历史分别写入自己的业务文件。**Never edit SKILL.md for a user's rules.**
-- **消耗信号**：“苹果吃完了”更新库存，也在 feedback 中留下苹果的逐食材 `depleted` 信号，供以后选择性建议补购。买回或明确已有苹果后只让苹果的旧信号 `decayed`；加购、删清单或本次不买不使它失效。消耗不自动证明长期喜爱。
-- **读取与补问**：每次生成计划前读取有效消耗信号，结合画像、库存、清单和本次目标选择。采购确认中删 ≥3 项时当场补问一次；未回答不猜测、不跨计划追问。
-- 📖 **完整输入边界及消费规则见 [feedback_flow.md](references/feedback_flow.md)——捕获反馈和生成计划前必读。**
-
-SKILL.md 只承载通用框架——任何用户的个性化规则、模板、偏好都沉淀在用户数据中。
-
-## Meal Planning
-
-Three independent features — 🛒 采购计划 Shopping Plan, 🍽 每日搭配 Daily Pairings, and 🥗 食材咨询 Ingredient Consultation — plus 📆 周计划 Weekly Plan, an orchestrator that chains the first two per the user's shopping rhythm. **Order is fixed when planning ahead: shopping list first, pairings second.** Pairings only use ingredients that are in stock or on the confirmed list (素材→组合 dependency) — never the other way around; a meal eaten today uses stock only. Each feature has its own trigger, so the user can run any of them standalone (e.g., "今晚吃什么" only needs Daily Pairings and current stock); 采购计划/每日搭配 carry a confirmation gate, 食材咨询 is read-only.
-
-This is the skill's value-generating feature: planning fills the shopping list, so the user confirms and adjusts instead of entering data item by item.
-
-### User Profile (profile.json)
-
-Stored at `[AGENT_HOME]/pantry/data/profile.json` (see [schema.md](references/schema.md) for structure). **Optional and lightweight — never conduct a first-run questionnaire.**
-
-- Build the profile **gradually from conversation**: when the user mentions dietary preferences, health history, or cooking style, record it (e.g., user says "我不吃精制碳水" → `preferences.avoid += "refined-carbs"`).
-- `household.persons` (default 1): how many people the plan feeds — required by
-  the Shopping Plan quantity check. Infer from conversation (e.g., "一个人吃")
-  or default to 1.
-- If `profile.json` does not exist and the user asks for any meal planning feature (采购计划/每日搭配/周计划), create it with only what you already know (can be nearly empty) and **generate the plan anyway** — do not block on missing profile fields.
-- After the **first** generated plan, briefly show the profile summary and ask the user to confirm or correct it (one confirmation beats a questionnaire). Set `confirmed: true` after confirmation.
-- If `confirmed` is false, the plan is a proposal — invite corrections.
-
-### Inventory Awareness (stock-aware planning)
-
-Long-cycle staples (dry goods, oils, nuts, grains) are stocked for weeks, not days. Fresh items follow the shopping rhythm, but existing usable stock still counts toward the segment's needs.
-
-**Stock-aware rule:**
-```
-Read pantry.json → for each long-cycle category (oils/fats, nuts, staples,
-dry goods), if the item already exists in ambient/daily zones → SKIP it in
-the plan (or suggest a refill only if quantity is nearly depleted).
-For fresh items, subtract known usable stock from planned needs; unknown
-quantity is not zero. Do not describe an item as depleted when stock is known
-to be available. Check unchecked shopping items to avoid duplicate demand.
-```
-
-**Cold-start probe (general rule — fires on ANY inventory read, not just planning):**
-When pantry.json has no long-cycle items recorded (empty, or only short-cycle fresh items) and `meta.longCycleProbed` is not `true`, probe with ONE friendly opening — then proceed with whatever the user asked for. Never audit the whole pantry, never block the request.
-
-- **Trigger points:** Viewing inventory (primary), and 采购计划 Shopping Plan step 3 (below). Both share the same flag — whichever comes first fires the probe once.
-- **Flag semantics:** set `meta.longCycleProbed: true` in pantry.json once the user RESPONDS — whether they confirm items or say there are none. If the user doesn't answer, leave it unset; the next natural touchpoint may try the opening once more.
-- **Outcome:** confirmed items are recorded into the ambient zone (no expiry needed for staples) → future plans skip them; "none" → plans recommend staples normally (nothing in stock to skip).
-
-**UX copy pattern (de-AI-fied, 4 turns):**
-1. Acknowledge the user's identity first — never open with a data request
-2. Use empathetic inference instead of a direct question (lowers answer pressure; user only confirms)
-3. Frame the request as a service — value belongs to the user ("我来帮你记住")
-4. State the user benefit, not the agent's logic (never say "规划时我会避开")
-   - 示例开场 (long-cycle cold-start):
-     "初次接触，像你这样注重健康饮食的人，我觉得应该有干货和食用油囤货。我来帮你记住这些，更好地为您提供食材搭配。"
-   - Record what the user confirms into pantry.json (ambient zone, no expiry needed for staples) and set `meta.longCycleProbed: true` → future plans skip them (or recommend them if the user said none).
-
-**Stock grows through daily behaviors, not audits:**
-- Current purchase/restock → update pantry.json and affected depletion feedback via feedback_flow.md
-- Expiry alert → ask "吃完了、扔了，还是还在？" → update per Expired items; only an explicit depletion answer triggers depletion capture
-- Never require a one-time full inventory audit.
-
-### 🛒 采购计划 Shopping Plan (independent feature)
-
-Trigger: user wants to buy ingredients / "列个采购清单" / "帮我看看这周买什么" — standalone, or called by the Weekly Plan orchestrator.
-
-Flow:
-```
-1. Run Review in feedback_flow.md before reading the planning inputs (every
-   plan, even with no new feedback today).
-   Read profile.json (create if missing, see User Profile above) → note prefer/avoid
-   rules and `rules` (user-level flow rules — follow them; never SKILL.md edits)
-2. Read shopping.json → note unchecked items (already needed — avoid duplicates)
-3. Read pantry.json → apply the stock-aware rule: skip long-cycle items already
-   in stock (ambient/daily zones); briefly mention skipped staples (e.g.,
-   "橄榄油已有库存，未列入") so the user sees the plan is stock-aware
-   → If pantry has no long-cycle items recorded and meta.longCycleProbed is
-     not true → fire the cold-start probe (see Inventory Awareness; it may
-     already have fired on an earlier inventory view)
-4. Determine the segment length (default 3-4 days; Weekly Plan passes its segment)
-5. Recommend items by category, each with **variety AND approximate quantity**:
-```
-
-| Category | Chinese examples | Notes |
-|----------|-----------------|-------|
-| 蔬菜 vegetables | 南瓜、冬瓜、香菇、海带、菜心、生菜、青椒、黄瓜 | Prioritize per profile.prefer / avoid |
-| 水果 fruit | 桃子、苹果、梨、柑橘 | Seasonal when applicable |
-| 蛋白质 protein | 鸡蛋、鸡胸肉、虾皮、鱼、豆制品 | High-quality, low-saturated-fat sources |
-| 油脂 oils/fats | 橄榄油、坚果（南瓜子等）、鱼油类食材 | Heart-healthy unsaturated fats |
-| 主食 staples | 糙米、燕麦、全麦、薯类 | Low-GI per profile (avoid refined carbs) |
-
-These are display categories. The quantity check (step 7) uses the benchmark categories in [quantity_benchmark.md](references/quantity_benchmark.md): 蛋白质 splits into 鱼禽肉蛋 and 豆制品, 主食 into 谷类主食 and 薯类.
-
-Apply the profile: avoid `refined-carbs`/`unhealthy-fats` → choose `low-gi-carbs`/`heart-healthy-fats`/`high-protein`/`soluble-fiber` (适量水溶性膳食纤维). For each item, give a **rough quantity** (e.g., 南瓜 500g, 鸡蛋 10枚, 鸡胸肉 500g) — enough for the segment's meals.
-Within a category, prefer the higher-fiber-density variety when the profile calls for 膳食纤维 (e.g. 鲜豆类／菌藻／高纤蔬菜) — see `references/ingredient_knowledge.md` → 「膳食纤维速查（跨类别）」. Mind the 口径 there: 鲜品与干品数值不可直接比较.
-
-**Exemplar replenish（拿手菜主料保供）:**
-```
-5b. Read profile.exemplars (if any) → for each confirmed exemplar's
-    ingredients, check pantry.json stock:
-    - NOT in stock → add it to its corresponding category with note
-      「你的拿手菜『<name>』还差 <ingredient>，本次已列入」
-    - in stock → skip (the stock-aware rule above already covers it)
-    Stock absence is the only criterion — do not judge by storage shelf-life.
-    （数量仍由 step 7 QUANTITY CHECK 兜底）
-```
-
-```
-6. **SELECTIVE DEPLETION REUSE:**
-   Read active, unmerged stockEvent = depleted records from feedback.json,
-   regardless of capture date. Match by itemKey against
-   current pantry and unchecked shopping items. Select only useful candidates
-   for this profile, meal goal and quantity needs; not every depleted food must
-   appear. Label selected ones "上次已吃完，可补". Do not add shopping entries yet.
-   No carryover question about a previous plan's unanswered deletion reason.
-7. **QUANTITY CHECK — benchmark before the gate:**
-   Read [quantity_benchmark.md](references/quantity_benchmark.md) (adult daily
-   reference ranges, typical piece weights, category assignment). Assign each
-   item to a benchmark category by its Category Assignment Rules; categories
-   without a daily range there (oils/fats, nuts) are not checked. For each
-   benchmark category, compute the segment target range = daily range × segment days ×
-   `household.persons` (default 1), compare with the proposed total, and show
-   a compact check report: ✅ within range / ⚠️ slightly over or under / ❌ way
-   off — each with a suggested converged quantity.
-   - Fresh items (vegetables, fruit, fish) — strict: overage means spoilage
-   - Shelf-stable staples (rice, dried goods, oils) — lenient: extra stock is fine
-   - Soft flag only, never hard-block — the user decides at the confirmation gate
-   Example: "蔬菜 914g/天 vs 300–500 ❌ → 建议 ~1600g（绿叶菜减半）"
-8. **CONFIRMATION GATE — do NOT add proposed items to the shopping list yet:**
-   Show the proposed list (category + item + quantity, with the check report
-   from step 7) and ask the user to confirm or adjust (quantities, items,
-   budget). Save this proposal separately in shopping.json.confirmation per
-   schema.md; reuse its ID for follow-up adjustments. Proposed items there
-   are not shopping items and cannot enter the Daily Pairings pool.
-   Apply explicit edits immediately. Run the confirmation steps in
-   feedback_flow.md: ≥3 distinct deletions with unknown reasons → ask once
-   now, after edits; ask at most once in the current confirmation conversation.
-   No reply does not block the edits or an already confirmed purchase list.
-   Only on confirmation, merge adjusted items into categories.food.items
-   without duplicates and mark confirmation.status = confirmed. Then tell the
-   user: "已加入购物清单，可继续修改数量或删除". This does not mean bought.
-```
-
-### 🍽 每日搭配 Daily Pairings (independent feature)
-
-Trigger: "今晚吃什么" / "明天怎么搭" / meals for this segment — standalone, or called by the Weekly Plan orchestrator after its shopping plan is confirmed.
-
-**Ingredient pool (hard constraint) — pick the mode from the request:**
-
-| Mode | When | Pool |
-|------|------|------|
-| 当下用餐 Meal now | Meals eaten today: "今晚吃什么" / "午饭吃啥" / "今天三顿怎么吃". Also when the timing is unclear | Usable pantry stock only |
-| 时段规划 Segment planning | Future days or after shopping: "明天怎么搭" / "这几天怎么吃" / "买完之后怎么搭"; Weekly Plan step 3b | Usable pantry stock + unchecked items in shopping.json `categories.food.items` |
-
-- Usable stock = pantry items not past `expires`; unknown quantity still counts as available.
-- An unchecked shopping item is not stock. Meal now never builds a meal on it. Segment planning marks each one `（待买）` in the ingredient list and spreads them across the segment so the purchase gets used.
-- Never use `confirmation.proposedItems` or depletion candidates, and never propose ingredients that are neither in stock nor on the confirmed list (素材→组合 dependency).
-- Meal now with an empty shopping list still answers from stock. If stock cannot make a reasonable meal, say briefly what is missing; you may name the unchecked list items that would fill the gap once bought, or offer a 采购计划.
-- Segment planning with neither usable stock nor unchecked items: tell the user to generate/confirm a 采购计划 first.
-
-Flow:
-```
-1. Run Review in feedback_flow.md on every plan, then pick the mode (above)
-   → read pantry.json (stock); Segment planning also reads shopping.json
-   (unchecked food items, never confirmation.proposedItems) → build the
-   ingredient pool from the refreshed data. Meal now reads shopping.json
-   only to name missing items when stock is insufficient.
-   → Also read profile.json: `exemplars`, `pairingTemplates`, prefer/avoid/cookingStyle
-2. For the meals in scope — Meal now: only the requested meal(s); Segment
-   planning: 3 meals (早/午/晚) for each day of the segment — propose with FOUR-LEVEL
-   REFERENCE (exemplar > template > profile > generic — see [feedback_flow.md](references/feedback_flow.md)):
-     ① 范例层 exemplar: user-verified concrete dishes (`profile.exemplars`).
-        - 直接复用 direct reuse: if an exemplar's `ingredients` ⊆ the pool AND
-          its `meal` matches the slot (or `any`) → cite it in-context（"照你
-          上次的蒸鲷鱼山药做"）; when several fit, rotate to avoid repetition.
-        - 结构泛化 structure generalization（experimental）: map the exemplar's
-          ingredients to categories（鲷鱼→fish/protein，山药→root-staple）, then
-          swap in same-category items already in the pool → propose a new combo
-          that keeps the structure but changes the ingredients（如「蒸鲷鱼山药」
-          →「蒸鳕鱼土豆」）. This tests whether the structure generalizes before
-          it is ever promoted to a template.
-     ② 模板层 template: confirmed `pairingTemplates` for that meal define the
-        structure (e.g. breakfast = protein + root/tuber + 2-3 veg + fruit +
-        yogurt); multiple templates for one meal → rotate to avoid repetition
-     ③ 画像层 profile: prefer/avoid/cookingStyle govern ingredient choice & method
-     ④ 通用准则层 generic: FIXED 3-PART PATTERN — every pairing MUST include:
-        ① 食材组合 ingredients  ② 价值 value/why  ③ 做法 minimal grouped
-        preparation（极简分组式，见 Rules）
-   Conflict: exemplars and templates are instance/structure, never break health
-   constraints — profile/health rules win, exemplar/template downgraded to reference.
-3. Meal now: show only the requested meal(s) as list items in the same
-   format. Segment planning: display as per-day blocks with meals as LIST
-   items — the format example
-   below shows SHAPE ONLY: ingredients are category placeholders, generate
-   your own combos, values, and cooking wording from stock + profile
-   (never reuse this example's items or phrasing):
-   📅 周三（8/5）
-   - 早餐：主食类 + 蛋白类 + 蔬果类（价值：为什么这样搭）→ 做法：一句话
-   - 午餐：蛋白类 + 绿叶菜类 + 根茎类主食（价值：营养理由一句话）→ 做法：蛋白蒸或烙，绿叶菜焯水拌油
-   - 晚餐：低GI主食类 + 清爽蔬菜类 + 干鲜类（价值：营养理由一句话）→ 做法：主食焯水，蔬菜生切，干鲜拌入
-4. Confirmation & adjustment:
-   - Invite the user to adjust any specific meal (e.g., "周四晚餐换个素的")
-     → regenerate ONLY that meal, keep the rest unchanged
-   - Segment planning: if the user later changes the shopping list (adds/removes
-     items), regenerate the affected meals — pairings must stay consistent with
-     the confirmed list
-```
-
-Rules:
-- Combos honor profile.prefer/avoid and cookingStyle (e.g., 凉拌/煮/蒸/烙, 能生吃不焯水)
-- 食材组合 = 只列食材名称（可带数量），不带做法动词/成菜名/刀工词——写"冬瓜"不写"冬瓜汤"、写"里脊肉"不写"里脊肉丝"（价值与做法另列，见下）
-- 价值 = the nutritional/health reason for THIS combo, 1 short phrase
-- 做法 = 极简分组式，以整个食材组合为单位设计，不是"每食材一动作"的排比：
-  ① 最少方法种类——先想整组能否用同一种方法一次完成，能就一种；跨类别
-     食材也优先合并（如山药+冬瓜+胡萝卜→同锅煮汤、西兰花+香菇→同锅焯水
-     拌油、全部蒸后撒调料），不因"类别不同"就各配一种方法
-  ② 一种不够才按处理需求分组（能生吃的不焯水，需熟的才焯水/蒸/煮/烙），
-     每组一句（"X、Y 焯水拌油，Z 生切"）
-  ③ 目标：方法种类最少、烹饪强度最低，最大限度保留原始营养与风味
-
-### 🥗 食材咨询 Ingredient Consultation (independent feature)
-
-Trigger: user names a food category / specific food and asks how to eat or pair it ("海带怎么吃" / "魔芋怎么搭" / "这类食材怎么搭") — distinct from 采购计划 (买什么) and 每日搭配 (今天吃什么).
-
-Flow:
-```
-1. Map the food to its category in [ingredient_knowledge.md](references/ingredient_knowledge.md)
-   → read that category's three parts (① 特性 ② 提味原理 ③ 安全建议).
-   → For 纤维含量/排序/选品类问题（"哪种纤维高"、"这次该多买哪类"、"纤维够不够"）
-     ALSO read the 「膳食纤维速查（跨类别）」section — cross-category ranking lives
-     there, not in the per-category tables. Check 口径 first (鲜重/干重、
-     不溶性/总纤维): numbers with different baselines are NOT comparable.
-2. Read profile.json if it exists (never create it here; without it, give the
-   general answer) → apply prefer/avoid/cookingStyle/health as the personalization
-   layer (e.g. 肝功能不佳 → 控钠建议生效；avoid refined-carbs → 不用糖提味).
-3. Output the combined answer — grounded in the knowledge file, personalized by profile:
-   ① 特性（简要带出为什么这么吃）② 提味/做法方向（提味原理 × cookingStyle）
-   ③ 安全建议（按画像过滤：控钠/控糖/护肝等生效）.
-4. Include the health disclaimer when the answer touches chronic conditions
-   (see ⚠️ Health Disclaimer below).
-```
-
-Rules:
-- This entry answers "how to handle / flavor / watch out for THIS food category" — NOT "今天三顿怎么组合" (that is 每日搭配), NOT a fixed recipe list (无固定食谱；跨食材组合保持动态).
-- 通用知识 from ingredient_knowledge.md, 个性化 from profile.json — never hardcode a user's rules into SKILL.md.
-- If the user follows up with "今晚怎么吃这个", hand off to 每日搭配 (it draws the actual meal combo from current stock).
-
-### 📆 周计划 Weekly Plan (orchestrator)
-
-Trigger: "这周买什么" / "本周怎么安排" / weekly planning. This feature chains 🛒 采购计划 and 🍽 每日搭配 above (not 食材咨询) — it does NOT duplicate their logic.
-
-Flow:
-```
-1. Load context:
-   - Read profile.json (create if missing, see User Profile)
-   - Read shopping.json → note unchecked items (avoid duplicates)
-   - Read pantry.json → apply the stock-aware rule; fire the cold-start probe
-     if needed (see Inventory Awareness; may already have fired)
-2. Split the week by profile.shoppingRhythm (default: 2 trips/week, 3-4 days per
-   trip, e.g. Sunday + Wednesday) → segments (e.g., Sun-Wed, Wed-Sat)
-3. Plan ONE segment per invocation (the next upcoming trip), segment by segment:
-   a. Call 🛒 采购计划 Shopping Plan for this segment
-      → present list → user confirms/adjusts → write to shopping.json
-   b. Call 🍽 每日搭配 Daily Pairings in Segment planning mode for this segment
-      → present per-day meal lists → user confirms/adjusts
-4. Do NOT dump the whole week at once — the second segment is planned when the
-   user is ready ("继续下一段"), so its list and pairings can reflect what was
-   actually bought and consumed in the first segment. If the user explicitly
-   asks to see the whole week up front, draft all segments but still confirm
-   each segment's list before writing.
-5. First plan only: show profile summary → ask user to confirm/correct →
-   update profile.json → set confirmed: true (see User Profile)
-```
-
-### ⚠️ Health Disclaimer
-
-Health-related recommendations (diabetes, heart disease, liver conditions, etc.) are **informational, not medical advice**. Always include with any plan for users with chronic conditions:
-
-> "以上为一般性饮食建议，不构成医疗建议。如有重大健康问题，请咨询医生或注册营养师。"
-
-## Item ID Generation
-
-Use format: `{type}_{random_6_chars}` (e.g., `item_a1b2c3`, `shop_x9y8z7`, `rec_m5n6p7`)
-
-## Timestamp Format
-
-- Dates: `YYYY-MM-DD` (e.g., `2026-04-01`)
-- Datetimes: ISO 8601 with timezone (e.g., `2026-04-01T17:45:00+08:00`)
-
-## References
-
-- See [schema.md](references/schema.md) for complete data structure definitions.
-- See [quantity_benchmark.md](references/quantity_benchmark.md) for the adult
-  daily intake baselines used by the Shopping Plan quantity check.
-- See [ingredient_knowledge.md](references/ingredient_knowledge.md) for per-category food knowledge (特性/提味原理/安全建议) used by 食材咨询, plus the cross-category 「膳食纤维速查」 used by 食材咨询 and 采购计划 selection.
+| `profile.json` | Optional: household size, health, preferences, cooking style, shopping rhythm, signature dishes, the user's own rules |
+
+A `feedback.json` left by older versions is no longer used; leave it untouched.
+
+**Creating data:** read-only requests never create files — a missing file reads as its empty seed from schema.md. Before the first write, create the directory, `history/`, and any missing `pantry.json` / `shopping.json` seed, then mention it briefly with the result ("🧺 Your pantry is set up. Milk is now in the fridge.").
+
+## Ground Rules
+
+These override habit; each exists because the obvious behavior is wrong here.
+
+1. **Change data only from what the user said.** Never invent quantities, dates, prices or totals. Unknown is `null` or omitted — never 0.
+2. **Keep facts apart.** "家里有" is not a purchase; "买了" is not a preference; adding to the list is not buying; removing something once is not a dislike.
+3. **Expired is not gone; thrown away is not eaten.**
+4. **Eaten up → quantity 0, not deleted.** It is a hint for later shopping plans; a restock replaces it.
+5. **Not bought means not at home.** A meal for today uses stock only.
+6. **Your suggestions need confirmation; the user's edits do not.** Write a generated shopping plan only after the user confirms it; apply explicit edits directly.
+7. **One food, one `itemKey`**, reused across pantry, list and history. Keep different forms apart (fresh vs dried mushrooms).
+8. **The user's rules go to profile.json**, never into this skill.
+9. **Health disclaimer:** when advice involves a chronic condition in the profile, add "以上为一般性饮食建议，不构成医疗建议。如有重大健康问题，请咨询医生或注册营养师。"
+
+## Operations
+
+### Inventory — pantry.json
+
+- **Add / update:** match by `itemKey` and update the existing entry instead of duplicating it. Restocking an eaten-up item sets the new quantity (`null` if unknown).
+- **Eaten up** ("苹果吃完了"): set that food's quantity to 0, keeping one entry per food. Only an explicit statement counts.
+- **Remove** ("删掉" / "扔了" / "坏了"): delete the entry. Nothing else is recorded.
+- **View:** list by zone with expiry state; put eaten-up items on one short line ("已吃完：苹果、黄瓜").
+- **Expiry state** is computed every time from `expires` and today's date, never stored: 已过期 = before today; 即将过期 = today through N days ahead (default 3). Ignore any `status` field in older files.
+- **Expired items** stay in the file and out of meal suggestions. When showing them, ask once: "吃完了、扔了，还是还在？" — eaten: quantity 0; thrown away: remove; still fine: keep (change `expires` only if the user gives a date). No answer: change nothing.
+- **No staples yet:** if the pantry has no long-cycle staples (grains, oils, dried goods, nuts) and `meta.longCycleProbed` is not true, ask once, briefly and warmly, whether they keep such staples. Record what they confirm in the ambient zone and set the flag once they answer. Never ask for a full inventory.
+
+### Shopping list — shopping.json
+
+- **Add / remove:** change only the requested entry (match unchecked entries by `itemKey`).
+- **Bought** ("买了苹果"): mark the matching unchecked entry `checked: true` (keep it unchecked if they bought only part), update the pantry with the amount if known, and record the purchase.
+
+### Purchases — history/YYYY-MM.json
+
+- **Record:** one record per purchase. A current purchase uses today's date. For a past purchase with an unknown date, ask before recording; a past purchase alone does not change current stock or the list.
+- **Stats:** after every write, recompute `stats.recordCount` and `stats.totalSpent` (known totals only — say so when some are missing).
+- **View / monthly stats:** read the month's file.
+
+### Preferences — profile.json
+
+- Record explicit statements as they come up ("我不吃精制碳水" → `preferences.avoid`). Never run a questionnaire. Your guesses are not preferences until the user confirms them.
+- Signature dishes the user confirms go to `exemplars`; workflow rules ("生成采购计划前先确认人数") go to `rules` and are followed in later plans.
+- Feedback on a plan ("太油了") fixes the current output; save it only when the user means it to last.
+- On the first planning request, create profile.json with whatever is known and plan anyway. After that first plan, show the profile summary once and set `confirmed: true` when the user confirms.
+
+## Planning
+
+Read [planning.md](references/planning.md) before any of these:
+
+| Request | Feature |
+|---------|---------|
+| "列个采购清单" / "这周买什么" | 🛒 Shopping plan — stock-aware list with quantities, written only after confirmation |
+| "今晚吃什么" / "明天怎么搭" | 🍽 Meal pairings — from what is at home (plus the list for later days) |
+| "海带怎么吃" in light of their stock or profile | 🥗 Ingredient advice — read-only |
 
 ## Scheduled Reminders (Optional)
 
-If the host agent can run scheduled or periodic tasks, offer these reminders and create them with the host's own scheduling mechanism, in the user's local timezone, only after the user agrees. If the host has no such mechanism, skip this section; every check below can also run on request (e.g. "看看有什么快过期").
+If the host agent can run scheduled or periodic tasks, offer these reminders and create them with the host's own scheduling mechanism, in the user's local timezone, only after the user agrees. If the host has no such mechanism, skip this section; every check can also run on request (e.g. "看看有什么快过期").
 
 Each reminder only reads data and sends a message — it never modifies files. Any update happens later, from the user's reply, through the operations above.
 
@@ -461,5 +86,10 @@ Each reminder only reads data and sends a message — it never modifies files. A
 |----------|--------------------|-------|---------|
 | Shopping list | Daily 12:00 and 17:30 | Read `[AGENT_HOME]/pantry/data/shopping.json`; count unchecked items | Only if count > 0: 🛒 Shopping List Reminder: You have {count} items to purchase |
 | Expiring soon | Daily 08:00 | Read `[AGENT_HOME]/pantry/data/pantry.json`; items whose `expires` is within 3 days | ⚠️ {count} item(s) expiring soon: {item names} |
-| Expired items | Daily or periodic | Same file; items past `expires` | ⚠️ {item names} 已过期——吃完了、扔了，还是还在？ (handle the answer per Expired items) |
-| Low stock (optional) | Weekly, Monday 09:00 | Same file; items whose known quantity is running low | Suggest adding them to the shopping list; add only after the user agrees |
+| Expired items | Daily or periodic | Same file; items past `expires` | ⚠️ {item names} 已过期——吃完了、扔了，还是还在？ |
+| Low stock (optional) | Weekly, Monday 09:00 | Same file; items at quantity 0 or running low | Suggest adding them to the shopping list; add only after the user agrees |
+
+## Formats
+
+- IDs: `{type}_{6 random chars}` — `item_a1b2c3`, `shop_x9y8z7`, `rec_m5n6p7`, `ex_a1b2c3`
+- Dates `YYYY-MM-DD`; datetimes ISO 8601 with timezone (`2026-04-01T17:45:00+08:00`)

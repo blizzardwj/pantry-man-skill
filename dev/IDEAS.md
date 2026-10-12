@@ -77,6 +77,8 @@
 | [IDEA-027](#idea-027) | 运行文档内矛盾清理（待办 F-04） |
 | [IDEA-028](#idea-028) | 首次写入前才初始化、收窄触发描述（待办 F-05） |
 | [IDEA-029](#idea-029) | 库存过期状态读取时计算（待办 F-06） |
+| [IDEA-030](#idea-030) | 采购提案记录时段与来源计划（待办 F-07） |
+| [IDEA-031](#idea-031) | 按奥卡姆剃刀与 YAGNI 收敛运行契约（待办 V-01、V-02） |
 
 <a id="idea-001"></a>
 ## First-Run 初始化
@@ -107,7 +109,7 @@
 - 编号：IDEA-002
 - 状态：implemented
 - 创建：2026-08-04
-- 更新：2026-09-13
+- 更新：2026-10-11
 - 范围／完成标准：建立画像驱动的周规划；后续拆分由 IDEA-008 承接。
 - 关联：[DEC-002](DECISIONS.md#dec-002)；后续 [IDEA-008](IDEAS.md#idea-008)
 - 实施：[6d00a33](https://github.com/blizzardwj/pantry-man-skill/commit/6d00a33)
@@ -125,6 +127,7 @@
 ### 关键进展
 
 - 2026-09-13：补录编号与追溯入口；原实施状态表述为“**implemented**（2026-08-05 重构后由「规划流程重构」条目承接，见下）”。状态摘要现由本条独占维护，历史讨论不作为当前契约。
+- 2026-10-11：周计划不再是独立编排功能，“这周买什么”即下一趟采购计划（[IDEA-031](#idea-031)、[DEC-029](DECISIONS.md#dec-029)）；本条原完成记录保留。
 
 <a id="idea-003"></a>
 ## 画像收敛改进：从对话提取仍需多轮沟通
@@ -154,7 +157,7 @@
 - 编号：IDEA-004
 - 状态：implemented
 - 创建：2026-08-04
-- 更新：2026-09-13
+- 更新：2026-10-11
 - 范围／完成标准：通过日常行为和轻量探测积累库存，避免首次全量盘点。
 - 关联：[IDEA-007](IDEAS.md#idea-007)；[DEC-003](DECISIONS.md#dec-003)
 - 实施：[70f628b](https://github.com/blizzardwj/pantry-man-skill/commit/70f628b)
@@ -176,6 +179,7 @@
 ### 关键进展
 
 - 2026-09-13：补录编号与追溯入口；原实施状态表述为“**implemented**（SKILL.md Inventory Awareness 子节 + Step 1/3 升级）”。状态摘要现由本条独占维护，历史讨论不作为当前契约。
+- 2026-10-11：冷启动 4 轮话术规范删除，只保留“没有储备时友好地问一次”（[IDEA-031](#idea-031)、[DEC-029](DECISIONS.md#dec-029)）。
 
 <a id="idea-005"></a>
 ## 研究问题：画像收敛（RQ-A / RQ-C）
@@ -248,7 +252,7 @@
 - 编号：IDEA-008
 - 状态：implemented
 - 创建：2026-08-05
-- 更新：2026-09-13
+- 更新：2026-10-11
 - 范围／完成标准：采购计划、每日搭配独立，周计划按段编排并经确认闸门写入。
 - 关联：[DEC-004](DECISIONS.md#dec-004)；前序 [IDEA-002](IDEAS.md#idea-002)
 - 实施：[aaf3813](https://github.com/blizzardwj/pantry-man-skill/commit/aaf3813)
@@ -263,6 +267,7 @@
 ### 关键进展
 
 - 2026-09-13：补录编号与追溯入口；原实施状态表述为“**implemented**（commit aaf3813）”。状态摘要现由本条独占维护，历史讨论不作为当前契约。
+- 2026-10-11：周计划编排器与提案持久化由 [IDEA-031](#idea-031) 收敛；采购与搭配分离、确认后才写入保留。
 
 <a id="idea-009"></a>
 ## 研究问题：用户建议与反馈的沉淀、反思与再利用
@@ -270,11 +275,11 @@
 - 编号：IDEA-009
 - 状态：implemented
 - 创建：2026-08-05
-- 更新：2026-09-13
+- 更新：2026-10-11
 - 范围／完成标准：反馈捕获、整理与复用接入数据及计划流程；此次不修复已发现的语义缺口。
 - 关联：[RQ-5](RESEARCH.md#rq-5)；[DEC-007](DECISIONS.md#dec-007)；后续 [IDEA-011](IDEAS.md#idea-011)、[IDEA-015](IDEAS.md#idea-015)
 - 实施：[ba3c75b](https://github.com/blizzardwj/pantry-man-skill/commit/ba3c75b)、[9f3ead5](https://github.com/blizzardwj/pantry-man-skill/commit/9f3ead5)、[2b91c88](https://github.com/blizzardwj/pantry-man-skill/commit/2b91c88)、[76b6399](https://github.com/blizzardwj/pantry-man-skill/commit/76b6399)、[d27171b](https://github.com/blizzardwj/pantry-man-skill/commit/d27171b)、[7cb0318](https://github.com/blizzardwj/pantry-man-skill/commit/7cb0318)、[6b20ccc](https://github.com/blizzardwj/pantry-man-skill/commit/6b20ccc)、[e8b81bb](https://github.com/blizzardwj/pantry-man-skill/commit/e8b81bb)、[6e6da4d](https://github.com/blizzardwj/pantry-man-skill/commit/6e6da4d)
-- 验证与效果：历史结果未独立复验，效果待观察；[证据核对](documentation-review-2026-09-13.md#historical-evidence)。 相关[用例定义](golden_cases/stock_change_deplete.json)，不代表已有通过结果。
+- 验证与效果：历史结果未独立复验，效果待观察；[证据核对](documentation-review-2026-09-13.md#historical-evidence)。 相关[用例定义](historical_cases/stock_change_deplete.json)，不代表已有通过结果。
 
 ### 历史背景与讨论
 
@@ -284,6 +289,7 @@
 ### 关键进展
 
 - 2026-09-13：补录编号与追溯入口；原实施状态表述为“**implemented**（2026-08-05 设计并实施，commit 2b91c88..6e6da4d）”。状态摘要现由本条独占维护，历史讨论不作为当前契约。 本次审查发现的 feedback/reuse 问题集中登记于 [RQ-5](RESEARCH.md#rq-5) 的当前局限，后续另行修复。
+- 2026-10-11：feedback.json 反馈机制整体取消，偏好直接写 profile，吃完以库存数量 0 表达（[IDEA-031](#idea-031)、[DEC-029](DECISIONS.md#dec-029)）；本条历史保留。
 
 <a id="idea-010"></a>
 ## 采购计划数量校验：膳食指南基准 + 确认闸门前校验步骤
@@ -313,7 +319,7 @@
 - 编号：IDEA-011
 - 状态：implemented
 - 创建：2026-08-09
-- 更新：2026-09-13
+- 更新：2026-10-11
 - 范围／完成标准：提取 feedback flow，并在反馈处理和计划生成入口建立引用。
 - 关联：[RQ-5](RESEARCH.md#rq-5)；[DEC-008](DECISIONS.md#dec-008)、[DEC-009](DECISIONS.md#dec-009)；前序 [IDEA-009](IDEAS.md#idea-009)
 - 实施：[60e34ae](https://github.com/blizzardwj/pantry-man-skill/commit/60e34ae)
@@ -331,6 +337,7 @@
 ### 关键进展
 
 - 2026-09-13：补录编号与追溯入口；原实施状态表述为“**implemented** (commit 60e34ae)”。状态摘要现由本条独占维护，历史讨论不作为当前契约。 本次审查发现的 feedback/reuse 问题集中登记于 [RQ-5](RESEARCH.md#rq-5) 的当前局限，后续另行修复。
+- 2026-10-11：references/feedback_flow.md 已删除，内容并入 SKILL.md 基本规则与 references/planning.md（[IDEA-031](#idea-031)）。
 
 <a id="idea-012"></a>
 ## SKILL.md 示例与输出解耦：示例锚定问题
@@ -466,7 +473,7 @@
 - 编号：IDEA-018
 - 状态：implemented
 - 创建：2026-09-28
-- 更新：2026-09-30
+- 更新：2026-10-11
 - 问题与预期结果：applied 同时表示落点完成与待补货候选；需分开事实变更与选品参考，避免普通不买／删清单被过度解读。
 - 范围／完成标准：运行契约覆盖多落点、逐食材耗尽与补货、跨日选择性参考、普通删清单不改变耗尽事实、补货逐项 decay；确认建议删 ≥3 项时先执行删改、本次补问一次，按真实回答处理，未回答不猜测、不追问。字段、各入口步骤与同轮已问识别落入 SKILL.md 及 references；开发版旧反馈不迁移，仅定义归档重建行为，不执行真实数据清理。
 - 关联：[耗尽记录说明](RESEARCH.md#rq-5-depletion-simplified)、[补问说明与验收场景](RESEARCH.md#rq-5-clarification-once)、[早期比较](RESEARCH.md#rq-5-depletion-proposal)；前序 [IDEA-009](#idea-009)、[IDEA-011](#idea-011)，后续 [IDEA-020](#idea-020) 的反馈边界与恢复机制替代、[IDEA-021](#idea-021) 的购买语义调整；当时决策 [DEC-017](DECISIONS.md#dec-017)、[DEC-018](DECISIONS.md#dec-018)、[DEC-019](DECISIONS.md#dec-019)，后续替代见 [DEC-021](DECISIONS.md#dec-021)。
@@ -483,6 +490,7 @@
 - 2026-09-29：用户进一步质疑把普通购买写为反馈的消费价值；新的输入边界研究由 [IDEA-020](#idea-020) 承接，本项已完成范围及其历史结果不变。
 - 2026-09-29：用户指出普通“买了苹果”应按个人购物清单的日常语义勾选；该独立调整由 [IDEA-021](#idea-021) 承接，不更改本项的历史完成范围。
 - 2026-09-30：[IDEA-020](#idea-020) 和 [DEC-021](DECISIONS.md#dec-021) 移除了本项中的写前／恢复部分，保留逐食材耗尽信号与选择性补购；当时实现和验证仍由上述提交及报告追溯。
+- 2026-10-11：耗尽候选生命周期改为跟随库存条目（数量 0 → 补货写入新数量），不再需要跨文件失效判断（[IDEA-031](#idea-031)、[DEC-029](DECISIONS.md#dec-029)）。
 
 <a id="idea-019"></a>
 ## 语音输入条件下的范围收敛与核心流程改进
@@ -504,6 +512,7 @@
 - 2026-10-11：候选 1（每日搭配食材池）、候选 2（过期删除）列入 [待办清单](improvement-todo-2026-10-11.md) 的 F-01、F-02，排入第一批；进展仍由本条维护，状态不变。
 - 2026-10-11：用户要求开始修复 F-01；候选 1 拆为 [IDEA-024](#idea-024) 实施并由其维护进展（同 IDEA-020 承接反馈部分的做法）。本条其余候选仍为 idea。
 - 2026-10-11：用户要求修复 F-02；候选 2 拆为 [IDEA-025](#idea-025) 实施并由其维护进展。本条其余候选（3、5、6）仍为 idea。
+- 2026-10-11：候选 3（反馈 importance 与明确操作边界）随 [IDEA-031](#idea-031) 取消反馈机制而不再适用；候选 5、6 仍为 idea。
 
 <a id="idea-020"></a>
 ## 用户输入进入反馈的边界：业务操作与可复用反馈分离
@@ -511,7 +520,7 @@
 - 编号：IDEA-020
 - 状态：implemented
 - 创建：2026-09-29
-- 更新：2026-09-30
+- 更新：2026-10-11
 - 问题与预期结果：普通购买、已有库存及一次性清单操作曾与可复用个性化信号混写在 `feedback.json`，且每次操作都承担中断恢复记录。按用户本轮说明，普通 CRUD 直接更新业务文件；明确消费至耗尽则同时留下选择性补购信号。
 - 范围／完成标准：Capture 用表格明确普通购买、已有、消费完、丢弃、清单操作、偏好和搭配评价的分界；当前购买更新 pantry/shopping/history 而不新建反馈，旧耗尽信号逐项结束；删除运行契约中的 `landings[]` 写前和恢复流程，CRUD 直接落业务文件；schema、README、开发样例同步；保留现有 v2 历史数据但不执行旧操作字段。采购计划仍选择性复用消耗信号，不据吃完自动判定长期喜爱。
 - 关联：[RQ-7](RESEARCH.md#rq-7)；前序 [IDEA-018](#idea-018)；新决策 [DEC-021](DECISIONS.md#dec-021)，部分替代 [DEC-019](DECISIONS.md#dec-019) 的恢复机制，保留 [DEC-017](DECISIONS.md#dec-017) 的选择性耗尽复用。
@@ -525,6 +534,7 @@
 - 2026-09-30：运行契约、schema、用户文档和开发用例已按 [DEC-021](DECISIONS.md#dec-021) 更新；静态与 JSON 检查通过，转为 implemented。保留已有 v2 记录，不把旧写入进度作为任务执行；独立 agent 行为回归尚未完成。
 - 2026-09-30（文档对齐）：Capture 表单列标明“是否属于 feedback”及理由，并把消费去向放在独立一列；当前工作区／尚未提交。此次是表达方式澄清，不更改 DEC-021 的边界。
 - 2026-09-30（关联文档复核）：对齐 RQ-5/RQ-7 当前摘要、DEC-017 后续关系、IDEAS 提交链接及开发用例／样例；历史报告注明旧契约范围。检查结果见[复核记录](feedback-alignment-review-2026-09-30.md)，当前工作区／尚未提交。
+- 2026-10-11：反馈日志取消，业务操作与偏好分离的边界保留为 SKILL.md 基本规则（[IDEA-031](#idea-031)、[DEC-029](DECISIONS.md#dec-029)）。
 
 <a id="idea-021"></a>
 ## 日常购买报告默认完成对应购物项
@@ -578,6 +588,7 @@
 ### 关键进展
 
 - 2026-10-11：用户要求在技术评估基础上建立待办清单，覆盖主要问题修复、价值削弱因素修复及按投入产出比排序的扩大使用工作；新建清单，状态为 idea，尚未决定实施批次。
+- 2026-10-11：F-07 经讨论放弃（[IDEA-030](#idea-030)）：跨会话续接时段的场景低频，以当天日期推算即可满足多数情况，新增字段与分支与收敛方向相反。用户随后确认 V-01、V-02 优先于 F-08、A-02，并选择反馈方案 B，由 [IDEA-031](#idea-031) 实施；F-08 待收敛后的使用情况再评估。
 
 <a id="idea-024"></a>
 ## 每日搭配食材池按用餐时点区分（待办 F-01）
@@ -674,9 +685,43 @@
 - 问题与预期结果：库存条目存储 `status`（fresh / expiring_soon / expired），没有流程随日期更新，存储值会过时并与 `expires` 矛盾。预期过期状态始终按日期正确显示，无需人工或定时更新。
 - 范围／完成标准：按 [待办 F-06](improvement-todo-2026-10-11.md#f-06)。SKILL.md 新增 Expiry state 计算规则（已过期／即将过期，默认 3 天），查看库存与过期检查引用它，禁止为库存条目写 `status`、旧值忽略不回写；schema.md 将 `status` 标为 legacy；schema 黄金样例按当前写入约定更新；新增“旧 status 与日期矛盾”用例。不迁移或清理用户旧数据。
 - 关联：[DEC-027](DECISIONS.md#dec-027)；与 [IDEA-025](#idea-025)（过期保留并询问）配合；[IDEA-023](#idea-023)；无新增研究条目。
-- 实施：本次工作区／尚未提交。改动：SKILL.md（View by zone、Check expiry、新增 Expiry state）、references/schema.md（pantry 条目 `status` 行）；dev/schema_probe/pantry.json（去掉 `status`，补上必填的 `itemKey`）；新增 fixture `stale_status`（牛奶 `expires` 2026-10-01 但 `status` 为 fresh）与 golden case `stale_status_ignored`。现有 fixture 中的 `status` 作为旧数据保留，用于兼容读取。
+- 实施：[7460054](https://github.com/blizzardwj/pantry-man-skill/commit/7460054)。改动：SKILL.md（View by zone、Check expiry、新增 Expiry state）、references/schema.md（pantry 条目 `status` 行）；dev/schema_probe/pantry.json（去掉 `status`，补上必填的 `itemKey`）；新增 fixture `stale_status`（牛奶 `expires` 2026-10-01 但 `status` 为 fresh）与 golden case `stale_status_ignored`。现有 fixture 中的 `status` 作为旧数据保留，用于兼容读取。
 - 验证与效果：2026-10-11 Node 解析修改后的 schema 样例、新 fixture 与用例 JSON 通过；人工核对运行文档中库存 `status` 仅剩 schema legacy 说明与 SKILL.md 忽略规则。本次环境无可用 Python，`dev/validate_static.py`（含 schema 字段覆盖检查）未运行；新用例未交给独立 agent 执行。待办 F-06 的“3 天前写入、今天到期”验收依赖运行当天日期，静态 fixture 无法固定，改用已过期日期与过时 `status` 矛盾的场景代替。
 
 ### 关键进展
 
 - 2026-10-11：用户要求修复待办 F-06；按 [DEC-027](DECISIONS.md#dec-027) 实施，约定范围完成后转为 implemented（验证缺口见上）。核对中发现 schema 黄金样例的库存条目缺少必填 `itemKey`，一并补上。
+
+<a id="idea-030"></a>
+## 采购提案记录时段与来源计划（待办 F-07）
+
+- 编号：IDEA-030
+- 状态：dropped
+- 创建：2026-10-11
+- 更新：2026-10-11
+- 问题与预期结果：[待办 F-07](improvement-todo-2026-10-11.md#f-07) 认为每日搭配与周计划依赖的“当前时段”只存在于对话中，跨会话说“继续下一段”时 agent 只能猜日期，拟在 `shopping.json.confirmation` 记录时段起止日期、清单条目记录来源计划 `planId`。
+- 范围／完成标准：放弃，不实施。
+- 关联：[IDEA-023](#idea-023)；后续 [IDEA-031](#idea-031)。[DEC-004](DECISIONS.md#dec-004) 当时否决 segment 字段的判断继续有效。
+- 实施：2026-10-11 曾在工作区实现（schema 两个新字段、周计划 4 条分支、两个用例），未提交；用户已撤回全部文件改动。当时草拟的 DEC-028 未保留，编号不复用。
+- 验证与效果：无（未提交、未执行）。
+
+### 关键进展
+
+- 2026-10-11：实现后用户追问该场景是否常见。复核结论：时段多数情况可由当天日期、用户所说日期和采购节奏推出；必须依赖存储日期的只有“当前段未结束就提前规划下一段”“间隔多日仍要接续原段”等低频情况；需求来自文档推演而非真实失败，测试只能使用 2030 年日期规避运行日期，`planId` 无读取方。新增必填字段与分支与“减少规则”方向相反，放弃。
+
+<a id="idea-031"></a>
+## 按奥卡姆剃刀与 YAGNI 收敛运行契约（待办 V-01、V-02）
+
+- 编号：IDEA-031
+- 状态：implemented
+- 创建：2026-10-11
+- 更新：2026-10-11
+- 问题与预期结果：普通增删改须先读 SKILL.md、schema.md、feedback_flow.md 约 6.4 万字符；规则随案例累加，反馈部分是无使用证据的文字状态机，规则越多遵守率越低。预期普通操作只读 SKILL.md，规划细节按需加载，删除没有失败案例支撑的机制，用户可见行为保持。
+- 范围／完成标准：按 [DEC-029](DECISIONS.md#dec-029)。SKILL.md 重写为数据位置、9 条基本规则、各类操作要点、规划入口表、提醒表与格式；新建 references/planning.md 承载采购计划、每日搭配、食材咨询；删除 references/feedback_flow.md；schema.md 去掉 feedback.json 与 `confirmation`，定义数量 0 为“吃完”，画像简化并兼容旧字段；README、AGENTS.md 目录说明、quantity_benchmark.md 引用同步。F-01～F-06 的语义保留（食材池两种模式、过期保留并询问、只读不建文件、过期状态计算、宿主无关提醒、归类一致）。开发侧：fixture 去掉 feedback.json，`depleted_okra` 改为秋葵数量 0；依赖反馈机制的 `refill_decay`、`stock_change_deplete` 移入 historical_cases，新增 `eaten_up_keeps_zero`、`restock_after_eaten_up`；其余用例的 feedback 断言改为“不创建 feedback.json”，偏好用例改为断言 profile；schema 样例同步；历史文档中指向 feedback_flow.md 的 12 处链接改为提交 7460054 的固定链接。
+- 关联：[DEC-029](DECISIONS.md#dec-029)；[待办 V-01、V-02](improvement-todo-2026-10-11.md#v-01)、[IDEA-023](#idea-023)；前序 [IDEA-009](#idea-009)、[IDEA-011](#idea-011)、[IDEA-018](#idea-018)、[IDEA-020](#idea-020)；[RQ-5](RESEARCH.md#rq-5) 暂停。
+- 实施：本次工作区／尚未提交。
+- 验证与效果：2026-10-11 字符数：SKILL.md 33.6k → 7.8k，planning.md 4.7k，schema.md 19.8k → 6.8k，feedback_flow.md 11.2k → 删除；普通增删改的必读量约 6.4 万 → 7.8k 字符。Node 解析全部 fixture、用例与 schema 样例 JSON 通过；本地 Markdown 链接与锚点检查见本条关键进展。本次环境无可用 Python，`validate_static.py` 与 `run_golden.py` 未运行；简化前后没有执行基线，行为等价性未经验证。效果待用户实际使用观察，重点看：“吃完”后的数量 0 是否被正确写入并在采购计划中提示，过期询问、当天搭配只用库存是否仍被遵守。
+
+### 关键进展
+
+- 2026-10-11：用户认同“简单操作也要读大量说明”是本质问题，撤回 F-07，要求按奥卡姆剃刀与 YAGNI 收敛基本功能与反馈流程，反馈选方案 B，之后通过实际使用观察效果；按 DEC-029 实施，约定范围完成后转为 implemented（验证缺口见上）。

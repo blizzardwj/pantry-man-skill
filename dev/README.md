@@ -45,9 +45,10 @@ python3 dev/run_golden.py run-all             # 全部用例（manual）；--no-
   "prompt": "我喜欢早餐吃洋葱和自制酸奶，以后搭配早餐时可以多考虑它们",
   "fixture": "empty",
   "assert": {
-    "feedback.json": [
-      {"path": "records", "record_exists": {"type": "preference-correction"}}
-    ]
+    "profile.json": [
+      {"path": "preferences.prefer", "count_gte": 1}
+    ],
+    "feedback.json": [{"exists": false}]
   }
 }
 ```

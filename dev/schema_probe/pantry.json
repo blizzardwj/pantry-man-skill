@@ -13,10 +13,24 @@
           "id": "item_probe1",
           "name": "牛奶",
           "itemKey": "food_milk",
-          "quantity": {"value": 2, "unit": "L"},
+          "quantity": {
+            "value": 2,
+            "unit": "L"
+          },
           "bought": "2026-08-13",
           "expires": "2026-08-20",
-          "tags": ["dairy"]
+          "tags": [
+            "dairy"
+          ]
+        },
+        {
+          "id": "item_probe2",
+          "name": "苹果",
+          "itemKey": "food_apple",
+          "quantity": {
+            "value": 0,
+            "unit": "个"
+          }
         }
       ]
     },
