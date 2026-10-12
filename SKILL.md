@@ -1,6 +1,6 @@
 ---
 name: pantry-man
-description: Track the user's own household food stock, shopping list and purchases, and plan what to buy and eat from them. Use when the user (1) adds, removes, views or searches items at home by zone (cold/frozen/ambient/daily), or asks what is expiring or running low; (2) edits the shopping list, reports buying something, or views purchase history; (3) reports eating something up or states food preferences for future plans; (4) asks for a shopping plan (采购计划), what to eat from what they have (每日搭配, e.g. 今晚吃什么), or a weekly plan (周计划); (5) asks how to eat or pair a food in light of their own stock or dietary profile (食材咨询). Not for general recipe or cooking questions unrelated to the user's own stock or profile.
+description: Track the user's own household food stock, shopping list and purchases, and plan what to buy and eat from them. Use when the user (1) adds, removes, views or searches items at home by zone (cold/frozen/ambient/daily), or asks what is expiring or running low; (2) edits the shopping list, reports buying something (including by sending a receipt photo), or views purchase history; (3) reports eating something up, sends a photo of groceries or the fridge, or states food preferences for future plans; (4) asks for a shopping plan (采购计划), what to eat from what they have (每日搭配, e.g. 今晚吃什么), or a weekly plan (周计划); (5) asks how to eat or pair a food in light of their own stock or dietary profile (食材咨询). Not for general recipe or cooking questions unrelated to the user's own stock or profile.
 ---
 
 # Pantry Management
@@ -26,7 +26,7 @@ A `feedback.json` left by older versions is no longer used; leave it untouched.
 
 These override habit; each exists because the obvious behavior is wrong here.
 
-1. **Change data only from what the user said.** Keep item names in the user's own words ("牛奶" stays 牛奶, not milk). Never invent quantities, dates, prices or totals. Unknown is `null` or omitted — never 0.
+1. **Change data only from what the user said.** A receipt photo counts as saying it; other photos do not (see Photos). Keep item names in the user's own words ("牛奶" stays 牛奶, not milk). Never invent quantities, dates, prices or totals. Unknown is `null` or omitted — never 0.
 2. **Keep facts apart.** "家里有" is not a purchase; "买了" is not a preference; adding to the list is not buying; removing something once is not a dislike.
 3. **Expired is not gone; thrown away is not eaten.**
 4. **Eaten up → quantity 0, not deleted.** It is a hint for later shopping plans; a restock replaces it.
@@ -58,6 +58,12 @@ These override habit; each exists because the obvious behavior is wrong here.
 - **Record:** one record per purchase. A current purchase uses today's date. For a past purchase with an unknown date, ask before recording; a past purchase alone does not change current stock or the list.
 - **Stats:** after every write, recompute `stats.recordCount` and `stats.totalSpent` (known totals only — say so when some are missing).
 - **View / monthly stats:** read the month's file.
+
+### Photos
+
+- **Receipt or order screenshot:** a purchase report — handle it like "买了" for every item on it: the items are now at home and matching list entries are checked off, unless the user says otherwise. Record history with the printed date, quantities, prices and store. Name items by their everyday name (`伊利纯牛奶250ml×12` → 牛奶). Then list what you recorded so the user can correct it.
+- **Photo of groceries, the fridge or a cupboard:** what you recognize is your guess, not the user's statement — even when they ask you to update from the photo. List the items (mark amounts as estimates), ask the user to confirm, and write only what they confirm. Never remove an item or set it to 0 because it is not visible.
+- Leave out anything you cannot read clearly; ask if it matters.
 
 ### Preferences — profile.json
 

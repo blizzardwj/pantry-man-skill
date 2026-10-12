@@ -107,6 +107,9 @@ python dev/run_golden.py run-all [--no-wait]           # 全部用例；--no-wai
 | `pairing_meal_now_stock_only` | 当天搭配只用库存，待买不算 |
 | `first_run_view_no_init` | 只读请求不建文件 |
 | `voice_multi_op` | 一句话多项操作：买了、吃完、扔了 |
+| `photo_receipt_records_purchase` | 小票照片直接记为购买：入库、勾选清单、按小票日期与金额记历史 |
+| `photo_receipt_unreadable_no_guess` | 小票部分被遮挡：看不清的单价与合计不写、不推算，看得清的照常记录，并告知用户 |
+| `photo_fridge_confirm_first` | 冰箱照片先列识别结果并请求确认，确认前不写入；看不到的条目不删除、不置 0 |
 
 全部用例见 [golden_cases/](golden_cases/)；已被新规则替代的旧用例在 [historical_cases/](historical_cases/)，只供追溯，不参与运行。
 
@@ -126,6 +129,7 @@ python dev/run_golden.py run-all [--no-wait]           # 全部用例；--no-wai
 ```
 
 - `fixture`：`dev/fixtures/<name>/` 的初始数据，复制到临时 home 的 `pantry/data/`；`null` 表示尚无数据，不创建 `pantry/data/`（首次使用场景）。
+- `attachments`（可选）：用户随消息发来的文件（如照片），取自 [attachments/](attachments/)；prepare 复制到临时 home 的 `attachments/`，并在委托提示词中列出路径，要求 agent 先查看。
 - `assert` 的键是目标文件：`pantry/data/` 下的 `*.json`（结构化断言），或 home 根目录的 `response.txt`（agent 回复文本）。
 
 <a id="l2-predicates"></a>
@@ -149,6 +153,8 @@ python dev/run_golden.py run-all [--no-wait]           # 全部用例；--no-wai
 <a id="l2-writing"></a>
 ### 编写用例
 
+- 图片附件：仓库内的测试图片均为合成图（代码渲染的小票与冰箱示意图，以及图像模型生成的带遮挡小票照片），用于检验规则执行，不代表真实照片的识别效果；真实照片在 L3 中验证。生成后须核对：看得清的文字与断言一致，被遮挡处透不出可辨认的内容。
+- 负面用例要遮住所有可推出答案的线索：例如只遮单价、留着合计，agent 可以合理推算，就测不到“不猜”。
 - 日期固定：过期用已过去的固定日期；需要“未来”的场景用远期日期；不断言依赖运行日期的内容（如 `history/<当月>.json` 的文件名）。
 - 文本断言只捕捉已知的失真形态；避免把“提及”误判为“使用”，必要时用 `not_matches` 限定到食材行。
 - 一个用例对应一条规则或一个真实失败；用户可见的承诺（如 README 示例）应有对应用例。
@@ -239,6 +245,7 @@ python dev\run_golden.py assert $id --home $p.home
 3. 查看库存 → 过期条目仍在、询问一次处置，并按回答处理（吃完 → 0；扔了 → 删除；还在 → 保留）。
 4. “这周买什么” → 只规划下一趟采购，确认后才写入 `shopping.json`。
 5. 语音输入 → 多项操作逐项生效；`name` 为原话，没有错字或翻译。
+6. 照片 → 小票：直接入库、勾选清单、历史中的日期和金额与小票一致；食材或冰箱照片：先列识别结果并请求确认，确认前 diff 为空，看不到的条目未被删除或置 0。
 
 <a id="l3-record"></a>
 ### 记录与归因

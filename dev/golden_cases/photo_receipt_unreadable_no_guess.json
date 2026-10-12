@@ -1,0 +1,53 @@
+{
+  "id": "photo_receipt_unreadable_no_guess",
+  "prompt": "这是买菜的小票，帮我记一下",
+  "fixture": "voice_multi_op",
+  "attachments": [
+    "receipt_hema_20261010_occluded.jpg"
+  ],
+  "assert": {
+    "history/2026-10.json": [
+      {
+        "path": "records",
+        "record_exists": {
+          "date": "2026-10-10",
+          "total": null
+        }
+      }
+    ],
+    "pantry.json": [
+      {
+        "path": "zones.cold.items",
+        "contains": [
+          "菠菜"
+        ]
+      }
+    ],
+    "shopping.json": [
+      {
+        "path": "categories.food.items",
+        "record_exists": {
+          "name": "牛奶",
+          "checked": true
+        }
+      }
+    ],
+    "response.txt": [
+      {
+        "contains_any": [
+          "看不清",
+          "无法辨认",
+          "无法识别",
+          "遮挡",
+          "不清楚",
+          "污渍"
+        ]
+      }
+    ],
+    "feedback.json": [
+      {
+        "exists": false
+      }
+    ]
+  }
+}

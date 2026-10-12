@@ -1,0 +1,41 @@
+{
+  "id": "photo_receipt_records_purchase",
+  "prompt": "这是买菜的小票，帮我记一下",
+  "fixture": "voice_multi_op",
+  "attachments": [
+    "receipt_hema_20261010.png"
+  ],
+  "assert": {
+    "shopping.json": [
+      {
+        "path": "categories.food.items",
+        "record_exists": {
+          "name": "牛奶",
+          "checked": true
+        }
+      }
+    ],
+    "pantry.json": [
+      {
+        "path": "zones.cold.items",
+        "contains": [
+          "菠菜"
+        ]
+      }
+    ],
+    "history/2026-10.json": [
+      {
+        "path": "records",
+        "record_exists": {
+          "date": "2026-10-10",
+          "total": 44.4
+        }
+      }
+    ],
+    "feedback.json": [
+      {
+        "exists": false
+      }
+    ]
+  }
+}

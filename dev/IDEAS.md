@@ -80,6 +80,7 @@
 | [IDEA-030](#idea-030) | 采购提案记录时段与来源计划（待办 F-07） |
 | [IDEA-031](#idea-031) | 按奥卡姆剃刀与 YAGNI 收敛运行契约（待办 V-01、V-02） |
 | [IDEA-032](#idea-032) | 首次 agent 执行暴露的问题修复：名称保留原话、用例断言修正 |
+| [IDEA-033](#idea-033) | 照片输入：小票直接记录、识别类照片先确认（待办 A-04 扩展） |
 
 <a id="idea-001"></a>
 ## First-Run 初始化
@@ -595,6 +596,7 @@
 - 2026-10-11：A-03 首轮完成：Claude Code + Haiku 执行全部 19 个用例，15/19 通过，失败经 [IDEA-032](#idea-032) 修复后重跑 8/8 通过；执行脚本 `dev/run_cases_claude.ps1`，见 [执行报告](golden-run-2026-10-11.md)。跨宿主执行与多次重复稳定性仍未做。
 - 2026-10-12：A-04 完成：README 以“Recommended Hosts”推荐带语音输入、可从手机／聊天访问、可定时的个人助理型 agent（如 Hermes），编码类 agent 说明为试用与开发测试用；新增“一句话多项操作”语音示例，并用新用例 `voice_multi_op`（买了牛奶菠菜、鸡蛋吃完、过期酸奶扔了）以 Claude Code + Haiku 执行 3 次，3/3 PASS，见[执行报告](golden-run-2026-10-11.md#addendum-2026-10-12)。仅改 README，SKILL.md 保持宿主无关；本次工作区／尚未提交。
 - 2026-10-12：新增交互测试（现为 [验证方案 L3](validation.md#l3)）作为第三种验证方式（用户直接与宿主 agent 对话），覆盖宿主内手动复现用例、触发测试、日常使用观察（快照对比、检查清单、使用记录与四类归因），以及把实际问题转成回归用例的流程；作为 V-07 的执行方法，可在 Hermes + deepseek-flash 等宿主与模型上复用。本次工作区／尚未提交。
+- 2026-10-12：A-04 扩展为语音与拍照输入，由 [IDEA-033](#idea-033) 实施（[DEC-030](DECISIONS.md#dec-030)）；README 推荐宿主与示例同步。
 
 <a id="idea-024"></a>
 ## 每日搭配食材池按用餐时点区分（待办 F-01）
@@ -753,3 +755,21 @@
 ### 关键进展
 
 - 2026-10-11：用户安装 Claude Code 并要求用 Haiku 执行每个用例；首轮 15/19，按失败原因区分 skill 缺陷与用例问题后修复，约定范围完成后转为 implemented（验证缺口见上）。
+
+<a id="idea-033"></a>
+## 照片输入：小票直接记录、识别类照片先确认（待办 A-04 扩展）
+
+- 编号：IDEA-033
+- 状态：implemented
+- 创建：2026-10-12
+- 更新：2026-10-12
+- 问题与预期结果：用户提出除语音外也可拍照发给 agent。契约原先只按“用户所说”改数据，未定义照片含义；冰箱照片还有把未拍到的条目误删的风险。预期小票拍照即可记账，食材／冰箱照片先确认再写入且不误删。
+- 范围／完成标准：按 [DEC-030](DECISIONS.md#dec-030)。SKILL.md 基本规则 1 与新增 Operations › Photos、description 提及照片；README 推荐宿主与“Say it or show it”示例；runner 支持用例 `attachments`（复制到临时 home 并写入委托提示词）；新增合成图片与两个用例，Haiku 各 3 次通过，并回归核心用例。
+- 关联：[DEC-030](DECISIONS.md#dec-030)；[IDEA-023](#idea-023)（待办 A-04）；[验证方案](validation.md#core-cases)。
+- 实施：本次工作区／尚未提交。改动：SKILL.md、README.md；dev/run_golden.py（`attachments`）、dev/attachments/（合成小票、冰箱示意图）、golden case `photo_receipt_records_purchase`、`photo_fridge_confirm_first`；dev/validation.md、dev/README.md。
+- 验证与效果：2026-10-12 Claude Code + Haiku：首轮小票 2/3、冰箱 0/3；修正规则措辞与用例提示后小票 3/3、冰箱 3/3，核心 7 用例回归 7/7，见[执行报告](golden-run-2026-10-11.md#addendum-2026-10-12-photo)。测试图为合成图，不代表真实照片的识别效果；真实照片待 L3 交互测试。
+
+### 关键进展
+
+- 2026-10-12：首轮两个失败均已定位：小票用例提示“刚才”与小票日期矛盾，且契约未说明小票是否算历史补记（agent 未勾选清单）；规则 1 改成“所说或清楚展示的”反被理解为可直接写入清楚的识别结果。改为“小票视同陈述、其他照片不视同”，并写明小票默认物品已到家、识别类即使被要求更新也先确认；重跑通过，约定范围完成后转为 implemented。
+- 2026-10-12（验证补记）：新增用例 `photo_receipt_unreadable_no_guess`，使用用户以图像模型生成的带遮挡小票照片（单价与合计同时遮挡，排除推算路径），检验“看不清的不猜”；Haiku 3/3 PASS，见[执行报告](golden-run-2026-10-11.md#addendum-2026-10-12-photo)。无已知合计时 `stats.totalSpent` 在 null 与 0.0 间不一致，按 YAGNI 暂不加规则。

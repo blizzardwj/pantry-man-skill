@@ -23,6 +23,7 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parent.parent
 CASES_DIR = REPO / "dev" / "golden_cases"
 FIXTURES_DIR = REPO / "dev" / "fixtures"
+ATTACHMENTS_DIR = REPO / "dev" / "attachments"
 DATA_SUBDIR = Path("pantry") / "data"
 
 sys.path.insert(0, str(Path(__file__).parent / "lib"))
@@ -50,13 +51,27 @@ def setup_fixture(fixture_name, agent_home):
     return data_dir
 
 
+def setup_attachments(case, agent_home):
+    """Copy files the user 'sends' (e.g. photos) into <home>/attachments; return their paths."""
+    paths = []
+    for name in case.get("attachments", []):
+        src = ATTACHMENTS_DIR / name
+        if not src.is_file():
+            raise SystemExit(f"attachment not found: {src}")
+        dst = agent_home / "attachments" / name
+        dst.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(src, dst)
+        paths.append(dst)
+    return paths
+
+
 def target_path(agent_home, data_dir, target):
     if target == "response.txt":
         return agent_home / "response.txt"
     return data_dir / target
 
 
-def delegation_prompt(case, data_dir, agent_home):
+def delegation_prompt(case, data_dir, agent_home, attachments=()):
     prompt = (
         "你是 pantry-man skill 的执行者。用 pantry-man-skill 的规则处理下面这条用户指令。\n\n"
         "【数据目录覆盖 — 必须遵守】\n"
@@ -66,6 +81,14 @@ def delegation_prompt(case, data_dir, agent_home):
         f"先读取 {REPO / 'SKILL.md'}，并按需读取 {REPO / 'references'} 下的文件，严格遵守其流程。\n\n"
         "【用户指令】\n"
         f"{case['prompt']}\n\n"
+    )
+    if attachments:
+        prompt += (
+            "【用户随消息发来的图片】\n"
+            + "".join(f"- {p}\n" for p in attachments)
+            + "先用 Read 查看图片，再按 skill 规则处理。\n\n"
+        )
+    prompt += (
         "【完成标准】\n"
         f"- 数据只写到 {data_dir}，不碰其他路径\n"
         "- 最后用一两句话报告：改动了哪些文件、加了/改了什么数据"
@@ -117,12 +140,13 @@ def cmd_prepare(case_id):
     case = load_case(case_id)
     agent_home = Path(tempfile.mkdtemp(prefix="pantry_golden_"))
     data_dir = setup_fixture(case["fixture"], agent_home)
+    attachments = setup_attachments(case, agent_home)
     out = {
         "case_id": case_id,
         "prompt": case["prompt"],
         "home": str(agent_home),
         "data_dir": str(data_dir),
-        "delegation_prompt": delegation_prompt(case, data_dir, agent_home),
+        "delegation_prompt": delegation_prompt(case, data_dir, agent_home, attachments),
     }
     print(json.dumps(out, ensure_ascii=False, indent=2))
 
@@ -138,6 +162,7 @@ def cmd_run(case_id, no_wait=False):
     print(f"\n{'=' * 52}\ncase: {case_id}\n  prompt: {case['prompt']}")
     agent_home = Path(tempfile.mkdtemp(prefix="pantry_golden_"))
     data_dir = setup_fixture(case["fixture"], agent_home)
+    setup_attachments(case, agent_home)
     print(f"  agent home: {agent_home}")
     print(f"  data dir:   {data_dir}")
     if not no_wait:
@@ -154,6 +179,7 @@ def cmd_run_all(no_wait=False):
         print(f"\n{'=' * 52}\ncase: {cid}\n  prompt: {case['prompt']}")
         agent_home = Path(tempfile.mkdtemp(prefix="pantry_golden_"))
         setup_fixture(case["fixture"], agent_home)
+        setup_attachments(case, agent_home)
         if not no_wait:
             input("\n  [manual] run the prompt against the agent, then press Enter...")
         all_ok = report(cid, run_assertions(case, agent_home)) and all_ok

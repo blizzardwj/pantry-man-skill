@@ -27,6 +27,7 @@ pantry-man-skill 的**设计文档与开发期验证层**，与可选运行时�
 - `golden_cases/` — 用例定义（`{id, prompt, fixture, assert}`，与执行者无关）
 - `historical_cases/` — 已被新规则替代的旧用例，只供追溯，不参与运行
 - `fixtures/` — 用例的初始数据（每个 fixture 一个目录）
+- `attachments/` — 用例中用户发来的文件（合成的小票、冰箱示意图与带遮挡的小票照片）
 - `schema_probe/` — schema 黄金样例，供 L1 字段覆盖检查
 - `golden-run-YYYY-MM-DD.md` — L2 执行报告，由 IDEAS 条目链接
 - `usage-log.md` — L3 日常使用记录（首次记录时创建）
