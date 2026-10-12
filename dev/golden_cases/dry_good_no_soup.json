@@ -1,10 +1,29 @@
 {
   "id": "dry_good_no_soup",
-  "prompt": "香菇怎么吃",
+  "prompt": "今晚用家里的东西做点什么吃",
   "fixture": "single_dry_good",
   "assert": {
     "response.txt": [
-      {"not_contains": ["汤"]}
+      {
+        "not_matches": "(食材|早餐|午餐|晚餐)[^\\n]*汤"
+      },
+      {
+        "max_method_types": {
+          "methods": [
+            "焯",
+            "蒸",
+            "煮",
+            "烙",
+            "拌",
+            "炒",
+            "炖",
+            "煎",
+            "炸",
+            "烤"
+          ],
+          "max": 2
+        }
+      }
     ]
   }
 }

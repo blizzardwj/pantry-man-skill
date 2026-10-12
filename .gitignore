@@ -17,3 +17,6 @@ __pycache__/
 
 # future features
 future_feats/
+
+# Golden case run logs (dev/run_cases_claude.ps1)
+dev/.golden_results/

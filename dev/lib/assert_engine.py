@@ -3,7 +3,7 @@
 Evaluates assertions against agent-mutated data files after a golden case runs.
 Two target kinds, inferred from file extension:
   - *.json -> structural assertions (path + predicate)
-  - *.txt  -> text assertions (substring contains / not_contains / contains_any)
+  - *.txt  -> text assertions (substring contains / not_contains / contains_any, regex not_matches)
 
 Structural predicates (on a dot-separated `path` inside the JSON):
   contains      list[str]  every name present in the array (match by `name` field)
@@ -15,6 +15,7 @@ Structural predicates (on a dot-separated `path` inside the JSON):
 """
 
 import json
+import re
 
 
 class AssertionError(Exception):
@@ -93,6 +94,9 @@ def evaluate_text(text, assertion):
     if "not_contains" in assertion:
         hit = [w for w in assertion["not_contains"] if w in text]
         return (not hit, f"text not_contains {assertion['not_contains']} (found: {hit})")
+    if "not_matches" in assertion:
+        hit = re.search(assertion["not_matches"], text)
+        return (hit is None, f"text not_matches /{assertion['not_matches']}/ (found: {hit.group(0) if hit else None!r})")
     if "contains_any" in assertion:
         hit = [w for w in assertion["contains_any"] if w in text]
         return (bool(hit), f"text contains_any {assertion['contains_any']} (found: {hit})")

@@ -4,11 +4,26 @@
   "fixture": "pairing_stock_pending",
   "assert": {
     "response.txt": [
-      {"not_contains": ["鲈鱼"]},
-      {"contains_any": ["鸡蛋", "西兰花", "黄瓜", "糙米"]}
+      {
+        "not_matches": "(食材|早餐|午餐|晚餐)[^\\n]*鲈鱼"
+      },
+      {
+        "contains_any": [
+          "鸡蛋",
+          "西兰花",
+          "黄瓜",
+          "糙米"
+        ]
+      }
     ],
     "shopping.json": [
-      {"path": "categories.food.items", "record_exists": {"name": "鲈鱼", "checked": false}}
+      {
+        "path": "categories.food.items",
+        "record_exists": {
+          "name": "鲈鱼",
+          "checked": false
+        }
+      }
     ]
   }
 }

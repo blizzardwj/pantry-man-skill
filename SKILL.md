@@ -26,7 +26,7 @@ A `feedback.json` left by older versions is no longer used; leave it untouched.
 
 These override habit; each exists because the obvious behavior is wrong here.
 
-1. **Change data only from what the user said.** Never invent quantities, dates, prices or totals. Unknown is `null` or omitted — never 0.
+1. **Change data only from what the user said.** Keep item names in the user's own words ("牛奶" stays 牛奶, not milk). Never invent quantities, dates, prices or totals. Unknown is `null` or omitted — never 0.
 2. **Keep facts apart.** "家里有" is not a purchase; "买了" is not a preference; adding to the list is not buying; removing something once is not a dislike.
 3. **Expired is not gone; thrown away is not eaten.**
 4. **Eaten up → quantity 0, not deleted.** It is a hint for later shopping plans; a restock replaces it.

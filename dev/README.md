@@ -14,6 +14,8 @@ pantry-man-skill 的**设计文档与开发期验证层**，与可选运行时�
 - `improvement-todo-YYYY-MM-DD.md` — 待办清单（范围与验收），完成状态由对应 IDEAS 条目维护
 - `validate_static.py` — L1 静态校验（零 LLM），自动化 AGENTS.md Verification Checklist
 - `run_golden.py` — L2 runner：setup fixture → executor 跑 prompt → 断言数据状态
+- `run_cases_claude.ps1` — 用 `claude -p` 作为 executor 批量执行用例（agent 在临时 home 内运行，仓库只供读取 skill）
+- `golden-run-YYYY-MM-DD.md` — 用例执行报告（执行者、模型、通过率与失败分析），由 IDEAS 条目链接
 - `lib/assert_engine.py` — 断言引擎（纯函数，零 LLM）
 - `fixtures/` — 初始数据快照（每个 fixture 一个目录，含 pantry.json 等）
 - `golden_cases/` — 用例定义（`{id, prompt, fixture, assert}`，agent 无关）
@@ -33,6 +35,10 @@ python3 dev/run_golden.py prepare <case_id>   # setup fixture，输出 {home, da
 python3 dev/run_golden.py assert <case_id> --home <home>   # 对执行结果断言
 python3 dev/run_golden.py run <case_id>       # manual：prepare + 暂停 + assert
 python3 dev/run_golden.py run-all             # 全部用例（manual）；--no-wait 跳过暂停，断言当前状态
+
+# L2 自动执行：Claude Code CLI 作为执行者（PowerShell）
+pwsh dev/run_cases_claude.ps1 -Ids add_inventory,eaten_up_keeps_zero -Model haiku   # 省略 -Ids 跑全部用例
+# 结果在 dev/.golden_results/（summary.tsv 与各用例 agent／assert 日志，不入库）
 ```
 
 ## Golden case 定义
@@ -70,6 +76,7 @@ python3 dev/run_golden.py run-all             # 全部用例（manual）；--no-
 文本（`*.txt`）：
 - `contains` / `not_contains` — 子串检查（负向词表，如 `not_contains ["汤"]` 抓「香菇煮汤」失真）
 - `contains_any` — 至少出现其中一个子串（如确认回答用到了库存中的任一食材）
+- `not_matches` — 正则不匹配（如 `(食材|早餐|午餐|晚餐)[^\n]*鲈鱼` 只检查食材行，允许在说明中提及“鲈鱼不计入今晚”）
 - `max_method_types` — 统计做法中烹饪动词种类数 ≤ max（如 `{"methods": ["焯","蒸","煮","烙","拌","炒","炖","煎","炸","烤"], "max": 3}`，抓「每食材一动作」排比）
 
 ## 原则

@@ -33,7 +33,7 @@ Food inventory organized by storage zone.
 | Field | Type | Description | Example |
 |-------|------|-------------|---------|
 | `id` | string | Unique identifier | `item_a1b2c3` |
-| `name` | string | Item name | `milk` |
+| `name` | string | Item name in the user's own words; never translated | `牛奶` |
 | `itemKey` | string | Stable identity; required for new/updated entries | `food_milk` |
 | `quantity` | object / null | Known amount, `value: 0` when eaten up, or `null` when unknown | `{"value": 1, "unit": "L"}` |
 | `bought` | string | Purchase date (optional; omit if unknown or not a purchase) | `2026-04-01` |
@@ -62,7 +62,7 @@ Shopping list organized by category.
 | Field | Type | Description | Example |
 |-------|------|-------------|---------|
 | `id` | string | Unique identifier | `shop_x9y8z7` |
-| `name` | string | Item name | `tomato` |
+| `name` | string | Item name in the user's own words | `番茄` |
 | `itemKey` | string | Stable identity shared with inventory | `food_tomato` |
 | `quantity` | object / null | Requested amount; `null` when the user did not say | `{"value": 3, "unit": "pcs"}` |
 | `priority` | string | Optional: low / normal / high | `normal` |
@@ -90,7 +90,7 @@ Purchase records organized by month.
 |-------|------|-------------|---------|
 | `id` | string | Unique identifier | `rec_m5n6p7` |
 | `date` | string | Purchase date | `2026-04-01` |
-| `items` | array | Purchased items: `name`, `itemKey`, optional `quantity` (actual amount), optional `price` | `[{"name": "milk", "itemKey": "food_milk", "price": 15.0}]` |
+| `items` | array | Purchased items: `name`, `itemKey`, optional `quantity` (actual amount), optional `price` | `[{"name": "牛奶", "itemKey": "food_milk", "price": 15.0}]` |
 | `total` | number | Total spent (optional; unknown is not zero) | `27.0` |
 | `store` | string | Store name (optional) | `Xiaoxiang` |
 | `notes` | string | Notes (optional) | `weekend shopping` |

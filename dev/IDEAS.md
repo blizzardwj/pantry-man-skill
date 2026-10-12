@@ -79,6 +79,7 @@
 | [IDEA-029](#idea-029) | 库存过期状态读取时计算（待办 F-06） |
 | [IDEA-030](#idea-030) | 采购提案记录时段与来源计划（待办 F-07） |
 | [IDEA-031](#idea-031) | 按奥卡姆剃刀与 YAGNI 收敛运行契约（待办 V-01、V-02） |
+| [IDEA-032](#idea-032) | 首次 agent 执行暴露的问题修复：名称保留原话、用例断言修正 |
 
 <a id="idea-001"></a>
 ## First-Run 初始化
@@ -589,6 +590,9 @@
 
 - 2026-10-11：用户要求在技术评估基础上建立待办清单，覆盖主要问题修复、价值削弱因素修复及按投入产出比排序的扩大使用工作；新建清单，状态为 idea，尚未决定实施批次。
 - 2026-10-11：F-07 经讨论放弃（[IDEA-030](#idea-030)）：跨会话续接时段的场景低频，以当天日期推算即可满足多数情况，新增字段与分支与收敛方向相反。用户随后确认 V-01、V-02 优先于 F-08、A-02，并选择反馈方案 B，由 [IDEA-031](#idea-031) 实施；F-08 待收敛后的使用情况再评估。
+- 2026-10-11：按 DEC-029 收敛后的契约逐项复核待办，见[复核](improvement-todo-2026-10-11.md#review-2026-10-11)：F-01～F-06、V-01、V-02 范围已覆盖，F-07、F-08 失效（F-08 转观察项），V-04 基本已覆盖，A-02、V-05 范围缩小并搁置；以三阶段计划替代初版批次，当前主线为 V-07 实际使用与 A-03 运行核心用例。
+- 2026-10-11：`validate_static.py` 首次在本机运行通过（FAIL 0、WARN 0），runner 新增的 null fixture、`exists`、`contains_any` 及数量路径断言经无 agent 自测符合预期；golden case 仍未经 agent 执行，A-03 剩余部分为把 delegation_prompt 交给 agent 执行。
+- 2026-10-11：A-03 首轮完成：Claude Code + Haiku 执行全部 19 个用例，15/19 通过，失败经 [IDEA-032](#idea-032) 修复后重跑 8/8 通过；执行脚本 `dev/run_cases_claude.ps1`，见 [执行报告](golden-run-2026-10-11.md)。跨宿主执行与多次重复稳定性仍未做。
 
 <a id="idea-024"></a>
 ## 每日搭配食材池按用餐时点区分（待办 F-01）
@@ -606,6 +610,7 @@
 ### 关键进展
 
 - 2026-10-11：用户要求开始修复待办 F-01；从 IDEA-019 候选 1 拆出，按 [DEC-023](DECISIONS.md#dec-023) 实施，约定范围完成后转为 implemented（验证缺口见上）。
+- 2026-10-11（验证补记）：`contains_any` 谓词用手写 response.txt 自测 PASS（`pairing_meal_now_empty_list`）；skill 行为仍未经 agent 执行。
 
 <a id="idea-025"></a>
 ## 过期条目保留并询问处置（待办 F-02）
@@ -640,6 +645,7 @@
 ### 关键进展
 
 - 2026-10-11：用户要求修复待办 F-03；按 [DEC-025](DECISIONS.md#dec-025) 实施，约定范围完成后转为 implemented（验证缺口见上）。
+- 2026-10-11（验证补记）：用户在本机 conda Python 运行 `python dev/validate_static.py`，基于提交 dd69d90（工作区另有仅文档改动）：FAIL 0、WARN 0，检查 [4] 的宿主命令与未锚定路径规则首次执行通过；待办 F-03 的“0 FAIL、0 WARN”验收达成。agent 复跑同一结果。
 
 <a id="idea-027"></a>
 ## 运行文档内矛盾清理（待办 F-04）
@@ -674,6 +680,7 @@
 ### 关键进展
 
 - 2026-10-11：用户要求修复待办 F-05；按 [DEC-026](DECISIONS.md#dec-026) 实施，约定范围完成后转为 implemented（验证缺口见上）。
+- 2026-10-11（验证补记）：用 conda Python 自测修改后的 `run_golden.py`（不经 agent）：`first_run_view_no_init` prepare 后数据目录不存在、三项 `exists: false` 断言 PASS；`first_run_add_initializes` 未写入时 `exists: true` 与内容断言按预期 FAIL。这只验证 runner 与断言本身，skill 行为仍未经 agent 执行。
 
 <a id="idea-029"></a>
 ## 库存过期状态读取时计算（待办 F-06）
@@ -725,3 +732,22 @@
 ### 关键进展
 
 - 2026-10-11：用户认同“简单操作也要读大量说明”是本质问题，撤回 F-07，要求按奥卡姆剃刀与 YAGNI 收敛基本功能与反馈流程，反馈选方案 B，之后通过实际使用观察效果；按 DEC-029 实施，约定范围完成后转为 implemented（验证缺口见上）。
+- 2026-10-11（验证补记）：基于提交 dd69d90（工作区另有仅文档改动），`validate_static.py` 由用户与 agent 各运行一次，FAIL 0、WARN 0，含传递式孤立引用检查与 53 个样例字段覆盖。`eaten_up_keeps_zero`、`restock_after_eaten_up` 的断言在未改动 fixture 上按预期 FAIL、在模拟正确结果上 PASS，说明 `quantity.value` 路径断言有效。这些是静态与断言层验证；skill 行为仍未经 agent 执行，效果待真实使用（V-07）与 A-03。
+- 2026-10-11（验证补记）：首次由 agent 执行全部 19 个用例（Claude Code + Haiku），15 PASS；4 个失败中 2 个为 skill 缺陷（名称被翻译为英文）、2 个为用例问题，由 [IDEA-032](#idea-032) 修复后重跑 8/8 PASS。“吃完置 0”“补货写入新数量”“过期保留并询问”“当天搭配只用库存”“只读不建文件”的对应用例均通过。见 [执行报告](golden-run-2026-10-11.md)。
+
+<a id="idea-032"></a>
+## 首次 agent 执行暴露的问题修复：名称保留原话、用例断言修正
+
+- 编号：IDEA-032
+- 状态：implemented
+- 创建：2026-10-11
+- 更新：2026-10-11
+- 问题与预期结果：首次由 agent 执行全部用例（[执行报告](golden-run-2026-10-11.md)），19 个中 4 个失败：用户说“牛奶”却写入 `milk`（2 例，skill 缺陷）；搭配回复正确说明“鲈鱼不计入今晚”却被 `not_contains` 判失败（断言过严）；`dry_good_no_soup` 用食材咨询去测原本发生在每日搭配的失真（用例对象错位）。预期修复后这 4 个用例稳定通过。
+- 范围／完成标准：SKILL.md 基本规则 1 补“名称保留用户原话、不翻译”，schema.md 的 `name` 说明与示例改为中文原话；断言引擎新增正则谓词 `not_matches`；`pairing_meal_now_stock_only` 只检查食材／餐次行；`dry_good_no_soup` 改为搭配请求并断言食材行不含“汤”、做法种类 ≤2；新增 `dev/run_cases_claude.ps1` 作为 `claude -p` 执行脚本，结果目录 `dev/.golden_results/` 加入 .gitignore；dev/README.md 同步。
+- 关联：[IDEA-023](#idea-023)（待办 A-03）、[IDEA-031](#idea-031)；[DEC-010](DECISIONS.md#dec-010)（dry_good_no_soup 的原始回归来源）；[DEC-029](DECISIONS.md#dec-029)（只为具体失败新增规则）。无新增决策或研究条目。
+- 实施：本次工作区／尚未提交。
+- 验证与效果：2026-10-11 修复后用 Claude Code + Haiku 重跑 4 个用例各 2 次，8/8 PASS；`not_matches` 对真实回复 PASS、对构造的违规回复 FAIL。单一模型与执行者，其余 15 个用例未在修复后重跑；其他模型是否也会翻译名称未测试。
+
+### 关键进展
+
+- 2026-10-11：用户安装 Claude Code 并要求用 Haiku 执行每个用例；首轮 15/19，按失败原因区分 skill 缺陷与用例问题后修复，约定范围完成后转为 implemented（验证缺口见上）。
